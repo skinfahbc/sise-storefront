@@ -1025,7 +1025,7 @@ function featuredRack(){
  const dots=h('div',{class:'sise-rack-dots'});
  const prev=h('button',{class:'sise-rack-arrow','aria-label':'کیف قبلی',onclick:()=>select(active-1)},'‹');
  const next=h('button',{class:'sise-rack-arrow','aria-label':'کیف بعدی',onclick:()=>select(active+1)},'›');
- const cards=items.map((p,i)=>h('button',{type:'button',class:'sise-rack-item','aria-label':'انتخاب '+p.title,style:{'--bag-delay':(i*.13)+'s'},onclick:()=>select(i,false),onmouseenter:()=>{if(matchMedia('(hover:hover)').matches)select(i,false)}},
+ const cards=items.map((p,i)=>h('button',{type:'button',class:'sise-rack-item','aria-label':'انتخاب '+p.title,style:{'--bag-delay':(i*.13)+'s'},onclick:()=>{select(i,false);openProduct(p.id)},onmouseenter:()=>{if(matchMedia('(hover:hover)').matches)select(i,false)}},
   h('span',{class:'sise-rack-hanger'},h('i',{})),
   h('span',{class:'sise-rack-photo'},h('img',{src:p.images[0],alt:p.title,loading:'lazy'})),
   disc(p)?h('span',{class:'sise-rack-discount'},fa(disc(p))+'٪ تخفیف'):null
