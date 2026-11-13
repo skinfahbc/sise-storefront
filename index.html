@@ -724,18 +724,24 @@ html{overflow-x:hidden;max-width:100%}
 .sise-rack-head p{margin:0;color:#888;font-size:11px}
 .sise-rack-swipe{font-size:10px;color:#999;white-space:nowrap}
 .sise-rack-frame{position:relative;padding-top:0}
-.sise-rack-bar{height:5px;border-radius:5px;background:linear-gradient(90deg,#28251f,#c4a46c,#28251f);box-shadow:0 4px 8px #0002;margin:0 5%}
-.sise-rack-rail{display:flex;align-items:flex-start;justify-content:flex-start;gap:clamp(12px,3vw,30px);overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:0 max(12px,calc(50% - 88px)) 10px;scrollbar-width:none}
-.sise-rack-rail::-webkit-scrollbar{display:none}
-.sise-rack-item{position:relative;flex:0 0 clamp(128px,22vw,176px);min-height:225px;display:flex;flex-direction:column;align-items:center;padding:0 9px 8px;border:0;background:transparent;cursor:pointer;scroll-snap-align:center;opacity:.48;transform:scale(.78);transform-origin:top center;transition:opacity .28s,transform .28s}
-.sise-rack-item.active{opacity:1;transform:scale(1.08);z-index:2}
-.sise-rack-item.near{opacity:.72;transform:scale(.88)}
-.sise-rack-hanger{height:36px;width:24px;border:2px solid #b4935c;border-top:0;border-radius:0 0 14px 14px;position:relative;display:block;margin:0 auto 5px}
+.sise-rack-bar{height:5px;border-radius:5px;background:linear-gradient(90deg,#28251f,#c4a46c,#28251f);box-shadow:0 4px 8px #0002;margin:0 3%}
+.sise-rack-rail{position:relative;display:flex;align-items:stretch;gap:0;height:clamp(250px,40vw,350px);padding:0 4% 8px;overflow:hidden;overscroll-behavior-x:contain;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.sise-rack-item{position:relative;display:block;flex:1 1 0;min-width:0;height:100%;padding:0;border:0;background:transparent;cursor:pointer;z-index:1;opacity:.92;transition:flex-grow .55s cubic-bezier(.2,.8,.2,1),opacity .35s; -webkit-tap-highlight-color:transparent}
+.sise-rack-item.active{flex-grow:3.4;z-index:5;opacity:1}
+.sise-rack-item.near{flex-grow:1.5;z-index:3;opacity:1}
+@media(hover:hover){
+ .sise-rack-item:hover{flex-grow:3.4;z-index:5;opacity:1}
+ .sise-rack-item:has(+ .sise-rack-item:hover),.sise-rack-item:hover + .sise-rack-item{flex-grow:1.5;z-index:3}
+}
+.sise-rack-hanger{position:absolute;top:0;left:50%;transform:translateX(-50%);height:38px;width:24px;border:2px solid #b4935c;border-top:0;border-radius:0 0 14px 14px;display:block;margin:0;z-index:2}
 .sise-rack-hanger:before{content:'';position:absolute;top:-12px;left:6px;width:9px;height:13px;border:2px solid #b4935c;border-bottom:0;border-radius:10px 10px 0 0}
 .sise-rack-hanger i{position:absolute;bottom:-5px;left:8px;width:5px;height:9px;background:#b4935c;border-radius:0 0 4px 4px}
-.sise-rack-photo{width:100%;height:158px;display:flex;align-items:center;justify-content:center}
-.sise-rack-photo img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 9px 8px #0002)}
-.sise-rack-discount{position:absolute;top:48px;right:5px;padding:3px 6px;border-radius:2px;background:#171717;color:#fff;font-size:9px}
+.sise-rack-photo{position:absolute;top:36px;left:-55%;width:210%;height:calc(100% - 42px);display:flex;align-items:flex-start;justify-content:center;pointer-events:none;transform-origin:50% 0;animation:siseBagIdle 4.6s ease-in-out var(--bag-delay,0s) infinite;transition:filter .4s,transform .7s cubic-bezier(.34,1.56,.64,1)}
+.sise-rack-photo img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 7px #0002);pointer-events:none}
+.sise-rack-item.active .sise-rack-photo,.sise-rack-item:hover .sise-rack-photo{filter:drop-shadow(0 16px 13px #0003);transform:scale(1.055);animation-duration:2.8s}
+.sise-rack-item.near .sise-rack-photo{transform:scale(1.015)}
+.sise-rack-discount{position:absolute;top:48px;right:0;padding:3px 6px;border-radius:2px;background:#171717;color:#fff;font-size:9px;z-index:4}
+@keyframes siseBagIdle{0%,100%{rotate:-1.3deg}50%{rotate:1.3deg}}
 .sise-rack-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin:8px auto 18px}
 .sise-rack-arrow{width:30px;height:30px;border:1px solid #ddd;border-radius:50%;background:white;color:#555;font-size:19px;cursor:pointer}
 .sise-rack-arrow:disabled{opacity:.35}
@@ -750,9 +756,9 @@ html{overflow-x:hidden;max-width:100%}
 .sise-rack-prices b{font-size:13px}
 .sise-rack-prices span{font-size:10px;color:#98784b}
 .sise-rack-open{padding:8px 24px;border:1px solid #222;background:#171717;color:#fff;font:11px inherit;cursor:pointer}
-@media(min-width:700px){.sise-rack-section{padding:28px 22px}.sise-rack-rail{justify-content:center;padding-left:15px;padding-right:15px}.sise-rack-item{flex-basis:170px}.sise-rack-photo{height:175px}}
-@media(max-width:480px){.sise-rack-section{margin:20px -2px 26px;padding:20px 6px}.sise-rack-head h3{font-size:18px}.sise-rack-swipe{font-size:9px}.sise-rack-item{flex-basis:132px;min-height:205px}.sise-rack-photo{height:145px}}
-@media(prefers-reduced-motion:reduce){.sise-rack-rail{scroll-behavior:auto}.sise-rack-item{transition:none}}
+@media(min-width:700px){.sise-rack-section{padding:28px 22px}.sise-rack-rail{padding-left:5%;padding-right:5%}}
+@media(max-width:480px){.sise-rack-section{margin:20px -2px 26px;padding:20px 6px}.sise-rack-head h3{font-size:18px}.sise-rack-swipe{font-size:9px}.sise-rack-rail{height:260px;padding-inline:2%}}
+@media(prefers-reduced-motion:reduce){.sise-rack-item,.sise-rack-photo{transition:none;animation:none!important}}
 
 </style>
 </head>
@@ -1013,13 +1019,13 @@ function secHead(t,extra){return h('div',{class:'sec-h'},h('h3',{},t),extra)}
 function featuredRack(){
  const items=S.products.filter(p=>p.featured&&p.images&&p.images[0]&&qtyOf(p)>0);
  if(!items.length)return null;
- let active=0,startX=0;
+ let active=0,drag=null;
  const rail=h('div',{class:'sise-rack-rail','aria-label':'رگال منتخب‌های SISE'});
  const detail=h('div',{class:'sise-rack-detail'});
  const dots=h('div',{class:'sise-rack-dots'});
  const prev=h('button',{class:'sise-rack-arrow','aria-label':'کیف قبلی',onclick:()=>select(active-1)},'‹');
  const next=h('button',{class:'sise-rack-arrow','aria-label':'کیف بعدی',onclick:()=>select(active+1)},'›');
- const cards=items.map((p,i)=>h('button',{type:'button',class:'sise-rack-item','aria-label':'انتخاب '+p.title,onclick:()=>select(i)},
+ const cards=items.map((p,i)=>h('button',{type:'button',class:'sise-rack-item','aria-label':'انتخاب '+p.title,style:{'--bag-delay':(i*.13)+'s'},onclick:()=>select(i,false),onmouseenter:()=>{if(matchMedia('(hover:hover)').matches)select(i,false)}},
   h('span',{class:'sise-rack-hanger'},h('i',{})),
   h('span',{class:'sise-rack-photo'},h('img',{src:p.images[0],alt:p.title,loading:'lazy'})),
   disc(p)?h('span',{class:'sise-rack-discount'},fa(disc(p))+'٪ تخفیف'):null
@@ -1033,10 +1039,15 @@ function featuredRack(){
   add(detail,[h('h4',{},p.title),h('p',{class:'sise-rack-desc'},p.desc||'انتخاب ویژه SISE'),h('div',{class:'sise-rack-prices'},p.oldPrice>p.price?h('del',{},money(p.oldPrice)):null,h('b',{},money(p.price)),disc(p)?h('span',{},fa(disc(p))+'٪ تخفیف'):null),h('button',{class:'sise-rack-open',onclick:()=>openProduct(p.id)},'مشاهده و سفارش')]);
   prev.disabled=items.length<2;next.disabled=items.length<2;
  };
- function select(n){active=(n+items.length)%items.length;update();const card=cards[active];if(card)card.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
+ function select(n,scroll=true){active=(n+items.length)%items.length;update();if(scroll&&cards[active])cards[active].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
  items.forEach((p,i)=>dots.append(h('button',{class:'sise-rack-dot'+(i===0?' on':''),'aria-label':'کیف '+fa(i+1),onclick:()=>select(i)})));
- rail.addEventListener('touchstart',e=>{startX=e.touches[0].clientX},{passive:true});
- rail.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>45)select(active+(dx<0?1:-1))},{passive:true});
+ rail.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;drag={x:e.clientX,moved:false};});
+ rail.addEventListener('pointermove',e=>{
+  if(!drag||e.pointerType==='mouse')return;
+  if(Math.abs(e.clientX-drag.x)>7)drag.moved=true;
+  if(drag.moved){const el=document.elementFromPoint(e.clientX,e.clientY),card=el&&el.closest?el.closest('.sise-rack-item'):null;if(card){const idx=cards.indexOf(card);if(idx>=0&&idx!==active)select(idx,false)}}
+ });
+ ['pointerup','pointercancel'].forEach(t=>rail.addEventListener(t,()=>{drag=null}));
  rail.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')select(active+1);if(e.key==='ArrowRight')select(active-1)});
  update();
  return h('section',{class:'sise-rack-section'},
