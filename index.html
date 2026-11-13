@@ -1059,17 +1059,19 @@ function srQuick(list,start){
   if(src)srCutC(src).then(u=>{if(t!==tok)return;im.src=u;im.classList.remove('ld')});else im.classList.remove('ld');
   if(sway&&g.animate)g.animate([{rotate:'0deg'},{rotate:'8deg',offset:.25},{rotate:'-4deg',offset:.55},{rotate:'1.5deg',offset:.8},{rotate:'0deg'}],{duration:1100,easing:'ease-out'});
   nm.textContent=p.title;
+  if(p.desc){const ds=h('p',{class:'sq-desc'},p.desc);nm.after(ds)}
   pr.replaceChildren(h('s',{},fa(p.oldPrice)),h('b',{},fa(p.price)+' '+S.store.currency),h('i',{},fa(disc(p))+'٪'));
   tabs.replaceChildren(...(imgs.length>1?imgs.map((_,k)=>h('button',{type:'button','aria-pressed':String(k===ii),onclick:()=>{ii=k;paint(true)}},k===0?'روبه‌رو':k===1?'پشت':'نمای '+fa(k+1))):[]))}
  ov.append(h('button',{class:'sq-x',type:'button',onclick:close},'بستن'),
   h('button',{class:'sq-n p',type:'button','aria-label':'قبلی',onclick:()=>step(-1)},'→'),h('button',{class:'sq-n n',type:'button','aria-label':'بعدی',onclick:()=>step(1)},'←'),
-  st,nm,pr,tabs,h('button',{class:'sq-go',type:'button',onclick:()=>{const id=list[ci].id;close();openProduct(id)}},'مشاهده و خرید'));
+  st,nm,pr,tabs,h('button',{class:'sq-go',type:'button',onclick:()=>{const id=list[ci].productId||(!list[ci].customRack?list[ci].id:'');close();if(id)openProduct(id)}},list[ci].productId||!list[ci].customRack?'مشاهده و خرید':'بستن'));
  ov.addEventListener('click',e=>{if(e.target===ov)close()});
  ov.addEventListener('pointerdown',e=>{sx=e.clientX});
  ov.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx;sx=null;if(Math.abs(dx)>50)step(dx<0?1:-1)});
  document.addEventListener('keydown',kd);document.body.append(ov);paint(true)}
 function saleRail(){
- const R=S.rack||{},list=S.products.filter(p=>p.featured!==false&&disc(p)>0&&(p.rackImage||(p.images&&p.images[0]))).sort((a,b)=>disc(b)-disc(a)).slice(0,Math.min(10,Math.max(3,+R.limit||10)));
+ const R=S.rack||{},custom=Array.isArray(R.items)&&R.items.length?R.items.filter(x=>x.active!==false&&x.image).map(x=>({id:x.id,productId:x.productId,title:x.title,desc:x.desc,price:+x.price||0,oldPrice:+x.oldPrice||0,rackImage:x.image,images:[x.image,x.backImage].filter(Boolean),label:x.label,customRack:true})):null;
+ const list=(custom||S.products.filter(p=>p.featured!==false&&disc(p)>0&&(p.rackImage||(p.images&&p.images[0]))).sort((a,b)=>disc(b)-disc(a))).slice(0,Math.min(10,Math.max(3,+R.limit||10)));
  if(list.length<3)return null;
  let moved=false,down=null,hot=null,lastX=0;
  const row=h('div',{class:'sr-row',role:'list'},h('i',{class:'sr-rail'}));
@@ -1592,7 +1594,7 @@ function stockF(p){const inp=h('input',{class:'in',type:'text',inputmode:'numeri
  sbFetch('/rest/v1/stock?pid=eq.'+encodeURIComponent(p.id)+'&select=qty',{auth:true}).then(r=>{if(r&&r[0]){inp.value=r[0].qty;st.textContent='موجودی فعلی روی سرور'}else{inp.value=+p.stock||0;st.textContent='هنوز در انبار ثبت نشده؛ با «ذخیره موجودی» ثبت می‌شود'}}).catch(e=>{inp.value=+p.stock||0;st.textContent='خطا: '+e.message});
  return h('div',{style:{display:'grid',gap:'6px'}},h('div',{class:'row',style:{flexWrap:'wrap'}},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn',type:'button',onclick:save},'ذخیره موجودی')),st)}
 function lifeF(s){const info=h('small',{class:'fh'},stLeft(s)),sel=h('select',{class:'in',onchange:()=>{s.life=+sel.value;s.created=Date.now();commit();info.textContent=stLeft(s)}},[[24,'۲۴ ساعت'],[72,'۳ روز'],[168,'یک هفته'],[720,'یک ماه'],[0,'بدون انقضا']].map(([v,l])=>h('option',{value:String(v)},l)));sel.value=String(+s.life||0);return h('div',{style:{display:'grid',gap:'6px'}},sel,info,h('small',{class:'fh'},'شمارش از لحظه ثبت یا تغییر مدت شروع می‌شود و بعد از اتمام، استوری در سایت دیده نمی‌شود و با انتشار بعدی از سرور پاک می‌شود.'))}
-const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['chat','گفتگوی همگانی','users'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
+const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['chat','گفتگوی همگانی','users'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
 const ADM={open:false};
 const enDigits=s=>String(s||'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 function openAdminLogin(){if(ADM.open)return;let c;const ss=sbSess();
@@ -1613,6 +1615,27 @@ function openAdmin(){const body=h('div',{class:'adm-b'}),tabs=h('div',{class:'ta
  ADM.go=k=>{admTab=k;draw()};document.body.append(root);document.body.classList.add('lock');ADM.open=true;draw()}
 
 const PANELS={
+rack(){
+ const R=S.rack||(S.rack={title:'منتخب‌های SISE',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن کیف کلیک کنید',limit:10,items:[]});
+ if(!Array.isArray(R.items))R.items=[];
+ const productOpts=[['','بدون اتصال به محصول'],...S.products.map(p=>[p.id,p.title])];
+ const items=listEd(R.items,(it)=>[
+  g2(fld('نام کیف',tx(it,'title')),fld('محصول مرتبط (اختیاری)',pick(it,'productId',productOpts))),
+  fld('توضیحات و نوشته کیف',tx(it,'desc',{area:true,rows:3})),
+  g2(fld('قیمت فروش',tx(it,'price',{num:true})),fld('قیمت قبل از تخفیف',tx(it,'oldPrice',{num:true}))),
+  g2(fld('درصد تخفیف',tx(it,'discount',{num:true})),tog(it,'active','نمایش در رگال')),
+  fld('عکس اصلی کیف · پس‌زمینه شفاف پیشنهاد می‌شود',imgField(it,'image',{max:2200,q:.94,clearable:true,alpha:true})),
+  fld('عکس پشت کیف (اختیاری)',imgField(it,'backImage',{max:2200,q:.94,clearable:true,alpha:true})),
+  fld('متن دکمه/برچسب (اختیاری)',tx(it,'label'))
+ ],()=>({id:uid(),title:'کیف جدید',desc:'',price:0,oldPrice:0,discount:0,image:'',backImage:'',active:true,productId:'',label:''}),
+ {title:it=>it.title||'کیف بدون نام',addLabel:'افزودن کیف به رگال',thumb:it=>it.image||'',collapse:true});
+ return[
+  card('مدیریت مستقل رگال',h('p',{},'کیف‌های این بخش مستقل از گالری محصولات مدیریت می‌شوند. عکس، نوشته و قیمت هر کیف را همین‌جا وارد کنید. برای اتصال دکمه خرید به صفحه محصول، محصول مرتبط را انتخاب کنید؛ در غیر این صورت کیف فقط در رگال و پیش‌نمایش نمایش داده می‌شود.'),
+   g2(fld('عنوان رگال',tx(R,'title')),fld('تعداد نمایش (۳ تا ۱۰)',tx(R,'limit',{num:true}))),
+   fld('متن راهنمای زیر رگال',tx(R,'hint',{area:true,rows:2})),items,
+   h('div',{class:'row'},h('button',{class:'btn',onclick:()=>{commit();sbPush();toast('تنظیمات رگال ذخیره و برای انتشار ارسال شد')}},I('check',16),'ذخیره و انتشار رگال'))),
+  card('راهنمای مدیریت',h('small',{class:'fh'},'ترتیب کیف‌ها را با فلش‌های بالا و پایین عوض کنید. خاموش‌کردن «نمایش در رگال» کیف را از سایت پنهان می‌کند؛ حذف، فقط همان آیتم رگال را پاک می‌کند و محصول اصلی دست‌نخورده می‌ماند.'))]
+},
 inventory(){let map=null,err='',nf={};const box=h('div',{class:'lst'}),LOW=3;
  const mAdm=p=>map&&map[p.id]!=null?map[p.id]:null;
  const upsert=rows=>sbFetch('/rest/v1/stock?on_conflict=pid',{method:'POST',auth:true,headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:rows});
