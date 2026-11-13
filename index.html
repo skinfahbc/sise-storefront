@@ -717,50 +717,58 @@ html{overflow-x:hidden;max-width:100%}
 @media (min-width:1280px){.app{max-width:1240px}.hd{width:min(100%,1240px)}.grid{gap:24px}}
 
 /* SISE Sale Rail — close adaptation of the supplied hanging-bag reference */
-.sise-sale-section{margin:30px 0 38px;padding:22px 12px 24px;background:#0e0c0a;color:#f1ece4;border:1px solid #3a352f;border-radius:4px;overflow:visible;font-family:"Vazirmatn",Tahoma,sans-serif}
-.sise-sale-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 5px 30px}
-.sise-sale-head small{font:700 9px "Space Grotesk",sans-serif;letter-spacing:2.5px;color:#bda77f}
-.sise-sale-head h3{margin:7px 0 4px;font-size:18px;font-weight:700;color:#f1ece4}
-.sise-sale-head p{margin:0;color:#9a938a;font-size:10px}
-.sise-sale-top-tag{font-size:11px;color:#e5533d;white-space:nowrap}
-.sise-sale-frame{position:relative;padding-top:0}
-.sise-sale-bar{height:3px;border-radius:2px;background:#cfc6b8;box-shadow:0 3px 8px #0005;margin:0 2%}
-.sise-sale-row{position:relative;display:flex;height:clamp(260px,40vw,360px);padding:0 4% 8px;touch-action:pan-y;-webkit-user-select:none;user-select:none}
-.sise-sale-item{position:relative;display:block;flex:1 1 0;min-width:0;height:100%;padding:0;border:0;background:transparent;cursor:pointer;z-index:1;transition:flex-grow .55s cubic-bezier(.2,.8,.2,1);-webkit-tap-highlight-color:transparent}
-.sise-sale-item.hot{flex-grow:3.4;z-index:5}
-.sise-sale-hook{position:absolute;top:0;left:50%;transform:translateX(-50%);height:35px;width:22px;border:1.5px solid #bda77f;border-top:0;border-radius:0 0 12px 12px;display:block;z-index:2}
-.sise-sale-hook:before{content:"";position:absolute;top:-11px;left:5px;width:9px;height:12px;border:1.5px solid #bda77f;border-bottom:0;border-radius:10px 10px 0 0}
-.sise-sale-hook i{position:absolute;bottom:-5px;left:7px;width:5px;height:8px;background:#bda77f;border-radius:0 0 4px 4px}
-.sise-sale-photo{position:absolute;top:32px;left:-55%;width:210%;height:calc(100% - 38px);display:flex;align-items:flex-start;justify-content:center;pointer-events:none;transform-origin:50% 0;animation:siseSaleIdle 4.6s ease-in-out var(--sale-delay,0s) infinite;transition:filter .4s,transform .7s cubic-bezier(.34,1.56,.64,1)}
-.sise-sale-photo img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 7px #0006);pointer-events:none}
-.sise-sale-item.hot .sise-sale-photo{filter:drop-shadow(0 18px 14px #0008);transform:scale(1.07);animation-duration:2.8s}
-.sise-sale-item.hot+.sise-sale-item .sise-sale-photo{rotate:3.5deg}
-.sise-sale-item:has(+.sise-sale-item.hot) .sise-sale-photo{rotate:-3.5deg}
-@media(hover:hover){
- .sise-sale-item:hover{flex-grow:3.4;z-index:5}
- .sise-sale-item:has(+.sise-sale-item:hover),.sise-sale-item:hover+.sise-sale-item{flex-grow:1.5;z-index:3}
- .sise-sale-item:hover .sise-sale-photo{filter:drop-shadow(0 18px 14px #0008);transform:scale(1.07)}
+/* ---- رگال تخفیف‌خورده‌ها ---- */
+.srl .sr-row{position:relative;display:flex;margin:14px auto 0;--h:clamp(280px,46vw,410px);height:var(--h);max-width:calc(var(--n,8)*140px + 40px);touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.srl .sr-rail{position:absolute;inset-inline:-8px;top:0;height:3px;border-radius:2px;background:var(--fg);opacity:.55}
+.sr-it{flex:1 1 0;min-width:0;position:relative;height:100%;padding:0;background:none;border:0;cursor:pointer;color:inherit;font:inherit;transition:flex-grow .55s cubic-bezier(.2,.8,.2,1);-webkit-tap-highlight-color:transparent}
+.sr-g{position:absolute;top:0;left:50%;translate:-50% 0;width:calc(var(--h)*.6);display:block;transform-origin:50% 0;scale:.72;transition:scale .7s cubic-bezier(.34,1.56,.64,1),rotate .9s cubic-bezier(.34,1.56,.64,1),filter .4s ease;pointer-events:none;animation:srIdle 4.6s ease-in-out var(--d,0s) infinite}
+.sr-w{display:block;width:2px;height:16px;margin:0 auto;background:var(--faint)}
+.sr-c{display:block;position:relative;height:calc(var(--h)*.66)}
+.sr-c img{width:100%;height:100%;object-fit:contain;object-position:50% 0;display:block;filter:drop-shadow(0 10px 10px rgba(0,0,0,.35));transition:opacity .4s}
+.sr-c img.ld{opacity:0}
+.sr-off{position:absolute;top:22px;inset-inline-start:0;background:var(--bad);color:#fff;font-size:12px;font-weight:700;padding:0 9px;border-radius:99px;line-height:1.7}
+.sr-t{display:block;margin-top:8px;text-align:center;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s}
+.sr-t s{color:var(--faint);font-weight:400;font-size:11px;margin-inline-end:6px}
+.srl .sr-hint{margin:14px 0 0;text-align:center;font-size:12px;color:var(--faint)}
+@keyframes srIdle{0%,100%{rotate:-1.3deg}50%{rotate:1.3deg}}
+@keyframes srLive{0%{rotate:0deg}25%{rotate:3deg}75%{rotate:-3deg}100%{rotate:0deg}}
+@media (hover:hover){
+ .sr-it:hover{flex-grow:3.4;z-index:5}
+ .sr-it:has(+ .sr-it:hover),.sr-it:hover + .sr-it{flex-grow:1.5}
+ .sr-it:hover .sr-g{scale:1;filter:drop-shadow(0 18px 14px rgba(0,0,0,.25));animation:srLive 2.8s ease-in-out .15s infinite}
+ .sr-it:hover .sr-t{opacity:1}
+ .sr-it:hover + .sr-it .sr-g{rotate:3.5deg}
+ .sr-it:has(+ .sr-it:hover) .sr-g{rotate:-3.5deg}
 }
-.sise-sale-badge{position:absolute;top:43px;right:0;padding:3px 6px;border-radius:2px;background:#e5533d;color:#fff;font-size:9px;z-index:6}
-@keyframes siseSaleIdle{0%,100%{rotate:-1.3deg}50%{rotate:1.3deg}}
-.sise-sale-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin:7px auto 17px}
-.sise-sale-nav{width:32px;height:32px;border:1px solid #3a352f;border-radius:50%;background:transparent;color:#cfc6b8;font-size:19px;cursor:pointer}
-.sise-sale-nav:disabled{opacity:.35}
-.sise-sale-dots{display:flex;align-items:center;gap:9px}
-.sise-sale-dot{width:6px;height:6px;padding:0;border:0;border-radius:50%;background:#625b52;cursor:pointer}
-.sise-sale-dot.on{background:#f1ece4;transform:scale(1.4)}
-.sise-sale-detail{text-align:center;min-height:95px;padding:0 8px}
-.sise-sale-detail h4{margin:0 0 7px;font-size:14px;font-weight:600;color:#f1ece4}
-.sise-sale-hint{margin:0;color:#9a938a;font-size:11px}
-.sise-sale-prices{display:flex;justify-content:center;align-items:center;gap:10px;margin:10px 0}
-.sise-sale-prices s{font-size:10px;color:#9a938a}
-.sise-sale-prices b{font-size:13px;color:#f1ece4}
-.sise-sale-percent{font-size:10px;color:#e5533d}
-.sise-sale-open{padding:9px 24px;border:1px solid #cfc6b8;background:#f1ece4;color:#0e0c0a;font:500 11px "Vazirmatn",Tahoma,sans-serif;cursor:pointer}
-@media(min-width:700px){.sise-sale-section{padding:28px 22px}.sise-sale-row{padding-inline:5%}}
-@media(max-width:520px){.sise-sale-section{margin:22px -2px 28px;padding:20px 6px}.sise-sale-head h3{font-size:17px}.sise-sale-row{height:260px;padding-inline:2%}.sise-sale-top-tag{font-size:10px}}
-@media(prefers-reduced-motion:reduce){.sise-sale-item,.sise-sale-photo{transition:none;animation:none!important}}
+.sr-it.hot{flex-grow:3.4;z-index:5}
+.sr-it:has(+ .sr-it.hot),.sr-it.hot + .sr-it{flex-grow:1.5}
+.sr-it.hot .sr-g{scale:1;filter:drop-shadow(0 18px 14px rgba(0,0,0,.25));animation:srLive 2.8s ease-in-out .15s infinite}
+.sr-it.hot .sr-t{opacity:1}
+.sr-it.hot + .sr-it .sr-g{rotate:3.5deg}
+.sr-it:has(+ .sr-it.hot) .sr-g{rotate:-3.5deg}
+@media (prefers-reduced-motion:reduce){.sr-g{animation:none!important;transition:none!important}}
 
+.sq{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:60px 16px calc(24px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 74%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);touch-action:pan-y;animation:srFade .3s ease;overflow-y:auto}
+@keyframes srFade{from{opacity:0}to{opacity:1}}
+.sq-st{width:min(80vw,340px);height:min(44vh,400px);flex:none}
+.sq-g{height:100%;display:flex;flex-direction:column;align-items:center;transform-origin:50% 0}
+.sq-g .sr-w{height:26px;flex:none}
+.sq-g img{flex:1;min-height:0;width:100%;object-fit:contain;object-position:50% 0;display:block;filter:drop-shadow(0 16px 14px rgba(0,0,0,.3));transition:opacity .35s}
+.sq-g img.ld{opacity:0}
+.sq h4{margin:6px 0 0;font-size:15px;font-weight:700;text-align:center}
+.sq-pr{display:flex;gap:10px;align-items:center;justify-content:center;font-size:14px}
+.sq-pr s{color:var(--faint);font-size:12px}.sq-pr b{font-weight:600}
+.sq-pr i{font-style:normal;background:var(--bad);color:#fff;font-size:12px;font-weight:700;padding:0 9px;border-radius:99px}
+.sq-tabs{display:flex;gap:6px;margin-top:4px}
+.sq-tabs button,.sq-x,.sq-n{background:none;color:var(--fg);font:inherit;cursor:pointer;border:1px solid var(--faint)}
+.sq-tabs button{font-size:13px;padding:4px 16px;border-radius:99px}
+.sq-tabs button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.sq-go{margin-top:8px;width:min(300px,80vw);padding:12px;font:inherit;font-weight:700;font-size:14px;border:0;border-radius:99px;cursor:pointer;background:var(--accent);color:var(--on-accent)}
+.sq-x{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));inset-inline-start:16px;padding:6px 14px;border-radius:99px;font-size:13px}
+.sq-n{position:absolute;top:44%;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:18px}
+.sq-n.p{inset-inline-end:max(12px,env(safe-area-inset-right,0px))}.sq-n.n{inset-inline-start:max(12px,env(safe-area-inset-left,0px))}
+@media (max-width:520px){.sq-n{top:auto;bottom:calc(30px + env(safe-area-inset-bottom,0px))}}
+@media (prefers-reduced-motion:reduce){.sq,.sq-g{animation:none!important}}
 </style>
 </head>
 <body>
@@ -1017,60 +1025,75 @@ let _ps=0;addEventListener('resize',()=>{const p=innerWidth>=900?10:8;if(_ps&&p!
 setInterval(()=>{try{if(purgeSt(S)){refreshStories();}}catch(e){}},60000);
 function renderMain(){applyFav();const app=$('#app');app.innerHTML='';const v={home:homeView,categories:catView,cart:cartView,track:trackView,pay:payView,chat:chatView}[cur]||homeView;add(app,[v()]);app.classList.toggle('home',!!$('.hero',app));updateHd();revealInit()}
 function secHead(t,extra){return h('div',{class:'sec-h'},h('h3',{},t),extra)}
-function featuredRack(){
- const items=S.products.filter(p=>p.featured!==false&&p.oldPrice>p.price&&p.images&&p.images[0]&&qtyOf(p)>0).slice(0,9);
- if(!items.length)return null;
- const maxOff=Math.max(...items.map(disc));
- let active=-1,drag=null,moved=false,lastX=0,lastHot=null;
- const row=h('div',{class:'sise-sale-row','aria-label':'کیف‌های تخفیف‌خورده روی رگال',role:'list'});
- const rail=h('div',{class:'sise-sale-rail','aria-hidden':'true'});
- const detail=h('div',{class:'sise-sale-detail','aria-live':'polite'});
- const dots=h('div',{class:'sise-sale-dots'});
- const prev=h('button',{class:'sise-sale-nav','aria-label':'محصول قبلی',onclick:()=>select(active<0?items.length-1:active-1)},'‹');
- const next=h('button',{class:'sise-sale-nav','aria-label':'محصول بعدی',onclick:()=>select(active<0?0:active+1)},'›');
- const cards=items.map((p,i)=>{
-  const card=h('button',{type:'button',class:'sise-sale-item','aria-label':p.title,role:'listitem',style:{'--sale-delay':(-i*.7)+'s'},onclick:()=>{if(moved){moved=false;return}openProduct(p.id)},onmouseenter:()=>{if(matchMedia('(hover:hover)').matches)select(i,false)},onmouseleave:()=>{if(matchMedia('(hover:hover)').matches)select(-1,false)},onfocus:()=>select(i,false),onblur:e=>{if(!e.currentTarget.parentElement.contains(e.relatedTarget))select(-1,false)}},
-   h('span',{class:'sise-sale-hook'},h('i',{})),
-   h('span',{class:'sise-sale-photo'},h('img',{src:p.images[0],alt:p.title,loading:'lazy',decoding:'async'})),
-   h('span',{class:'sise-sale-badge'},fa(disc(p))+'٪'));
-  return card;
- });
- cards.forEach(x=>row.append(x));
- const update=()=>{
-  cards.forEach((x,i)=>{x.classList.toggle('hot',i===active);x.setAttribute('aria-pressed',i===active?'true':'false')});
-  [...dots.children].forEach((x,i)=>x.classList.toggle('on',i===active));
-  detail.innerHTML='';
-  if(active<0){add(detail,h('p',{class:'sise-sale-hint'},'موس یا انگشت را روی کیف‌ها بکشید؛ برای جزئیات کلیک کنید.'));return}
-  const p=items[active];
-  add(detail,[h('h4',{},p.title),h('div',{class:'sise-sale-prices'},h('s',{},money(p.oldPrice)),h('b',{},money(p.price)),h('span',{class:'sise-sale-percent'},fa(disc(p))+'٪ تخفیف')),h('button',{class:'sise-sale-open',onclick:()=>openProduct(p.id)},'مشاهده جزئیات و سفارش')]);
- };
- function select(n,scroll=false){
-  active=n<0?-1:(n+items.length)%items.length;update();
-  if(scroll&&active>=0&&cards[active])cards[active].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
- }
- items.forEach((p,i)=>dots.append(h('button',{class:'sise-sale-dot','aria-label':'محصول '+fa(i+1),onclick:()=>select(i)})));
- function hit(e){
-  const el=document.elementFromPoint(e.clientX,e.clientY),card=el&&el.closest?el.closest('.sise-sale-item'):null;
-  const dir=e.clientX>=lastX?1:-1;lastX=e.clientX;
-  if(card){const i=cards.indexOf(card);if(i>=0&&i!==active){select(i,false);const im=card.querySelector('img');if(im&&im.animate)im.animate([{rotate:'0deg'},{rotate:(dir*7)+'deg',offset:.25},{rotate:(-dir*4)+'deg',offset:.6},{rotate:'0deg'}],{duration:850,easing:'ease-out'})}}
- }
- row.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;drag={x:e.clientX};lastX=e.clientX;moved=false});
- row.addEventListener('pointermove',e=>{if(!drag||e.pointerType==='mouse')return;if(Math.abs(e.clientX-drag.x)>8)moved=true;if(moved)hit(e)});
- const endDrag=()=>{drag=null;if(moved)setTimeout(()=>{moved=false},180);setTimeout(()=>{if(!drag)select(-1,false)},450)};
- ['pointerup','pointercancel'].forEach(t=>row.addEventListener(t,endDrag));
- row.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')select(active<0?0:active+1);if(e.key==='ArrowRight')select(active<0?items.length-1:active-1)});
- dots.addEventListener('keydown',e=>{if(e.key==='Escape')select(-1,false)});
- update();
- return h('section',{class:'sise-sale-section'},
-  h('div',{class:'sise-sale-head'},h('div',{},h('small',{},'SISE / SALE EDIT'),h('h3',{},'تخفیف‌خورده‌ها'),h('p',{},'انتخاب‌های ویژه با قیمت‌های استثنایی')),h('span',{class:'sise-sale-top-tag'},'تا '+fa(maxOff)+'٪ تخفیف')),
-  h('div',{class:'sise-sale-frame'},h('div',{class:'sise-sale-bar'}),row),
-  h('div',{class:'sise-sale-controls'},prev,dots,next),detail
- );
-}
+function srCut(orig){let src=orig,svg=false;if(src.startsWith('data:image/svg+xml')){try{const t=decodeURIComponent(src.slice(src.indexOf(',')+1)).replace(/<rect width="\d+" height="\d+" fill="url\(#[gr][^"]*\)"\/>/g,'').replace(/<ellipse[^>]*filter=[^>]*\/>/,'');src='data:image/svg+xml;utf8,'+encodeURIComponent(t);svg=true}catch(e){}}
+ return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.onerror=()=>res(orig);im.onload=()=>{try{
+ const k=Math.min(1,420/Math.max(im.naturalWidth,im.naturalHeight)),w=Math.max(2,Math.round(im.naturalWidth*k)),hh=Math.max(2,Math.round(im.naturalHeight*k)),c=document.createElement('canvas');c.width=w;c.height=hh;
+ const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,w,hh);const d=x.getImageData(0,0,w,hh),a=d.data,seen=new Uint8Array(w*hh),q=[];
+ const push=i=>{if(!seen[i]){seen[i]=1;q.push(i)}};
+ if(svg){for(let i=0;i<seen.length;i++)if(a[i*4+3]<8)seen[i]=1}else{
+ for(let i=0;i<w;i++){push(i);push((hh-1)*w+i)}for(let j=0;j<hh;j++){push(j*w);push(j*w+w-1)}
+ const df=(i,n)=>Math.abs(a[i*4]-a[n*4])+Math.abs(a[i*4+1]-a[n*4+1])+Math.abs(a[i*4+2]-a[n*4+2]);
+ for(let h0=0;h0<q.length;h0++){const i=q[h0],cx=i%w,cy=(i/w)|0;
+  for(const n of[cx>0?i-1:-1,cx<w-1?i+1:-1,cy>0?i-w:-1,cy<hh-1?i+w:-1])if(n>=0&&!seen[n]&&df(i,n)<12)push(n)}}
+ let cnt=0;for(let i=0;i<seen.length;i++)if(seen[i])cnt++;
+ if(cnt<seen.length*.12){res(orig);return}
+ let x0=w,y0=hh,x1=0,y1=0;
+ for(let i=0;i<seen.length;i++){const cx=i%w,cy=(i/w)|0;
+  if(seen[i]){a[i*4+3]=0;continue}
+  const edge=(cx>0&&seen[i-1])||(cx<w-1&&seen[i+1])||(cy>0&&seen[i-w])||(cy<hh-1&&seen[i+w]);
+  if(edge&&!svg)a[i*4+3]=170;
+  if(cx<x0)x0=cx;if(cx>x1)x1=cx;if(cy<y0)y0=cy;if(cy>y1)y1=cy}
+ if(x1<=x0||y1<=y0){res(orig);return}
+ x.putImageData(d,0,0);const o=document.createElement('canvas');o.width=x1-x0+1;o.height=y1-y0+1;o.getContext('2d').drawImage(c,x0,y0,o.width,o.height,0,0,o.width,o.height);
+ res(o.toDataURL('image/png'))}catch(e){res(orig)}};im.src=src})}
+const SRQ={};const srCutC=src=>SRQ[src]||(SRQ[src]=srCut(src));
+function srQuick(list,start){
+ let ci=start,ii=0,tok=0,sx=null;
+ const ov=h('div',{class:'sq',role:'dialog','aria-modal':'true'}),st=h('div',{class:'sq-st'}),nm=h('h4',{}),pr=h('div',{class:'sq-pr'}),tabs=h('div',{class:'sq-tabs'});
+ const close=()=>{ov.remove();document.removeEventListener('keydown',kd)};
+ const step=d=>{ci=(ci+d+list.length)%list.length;ii=0;paint(true)};
+ const kd=e=>{if(e.key==='Escape')close();if(e.key==='ArrowLeft')step(1);if(e.key==='ArrowRight')step(-1)};
+ function paint(sway){const p=list[ci],t=++tok,imgs=(p.images||[]).slice(0,4),src=imgs[ii]||imgs[0]||'';
+  const im=h('img',{class:'ld',alt:p.title}),g=h('div',{class:'sq-g'},h('i',{class:'sr-w'}),im);
+  st.replaceChildren(g);
+  if(src)srCutC(src).then(u=>{if(t!==tok)return;im.src=u;im.classList.remove('ld')});else im.classList.remove('ld');
+  if(sway&&g.animate)g.animate([{rotate:'0deg'},{rotate:'8deg',offset:.25},{rotate:'-4deg',offset:.55},{rotate:'1.5deg',offset:.8},{rotate:'0deg'}],{duration:1100,easing:'ease-out'});
+  nm.textContent=p.title;
+  pr.replaceChildren(h('s',{},fa(p.oldPrice)),h('b',{},fa(p.price)+' '+S.store.currency),h('i',{},fa(disc(p))+'٪'));
+  tabs.replaceChildren(...(imgs.length>1?imgs.map((_,k)=>h('button',{type:'button','aria-pressed':String(k===ii),onclick:()=>{ii=k;paint(true)}},k===0?'روبه‌رو':k===1?'پشت':'نمای '+fa(k+1))):[]))}
+ ov.append(h('button',{class:'sq-x',type:'button',onclick:close},'بستن'),
+  h('button',{class:'sq-n p',type:'button','aria-label':'قبلی',onclick:()=>step(-1)},'→'),h('button',{class:'sq-n n',type:'button','aria-label':'بعدی',onclick:()=>step(1)},'←'),
+  st,nm,pr,tabs,h('button',{class:'sq-go',type:'button',onclick:()=>{const id=list[ci].id;close();openProduct(id)}},'مشاهده و خرید'));
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});
+ ov.addEventListener('pointerdown',e=>{sx=e.clientX});
+ ov.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx;sx=null;if(Math.abs(dx)>50)step(dx<0?1:-1)});
+ document.addEventListener('keydown',kd);document.body.append(ov);paint(true)}
+function saleRail(){
+ const list=S.products.filter(p=>p.featured!==false&&disc(p)>0&&p.images&&p.images[0]).sort((a,b)=>disc(b)-disc(a)).slice(0,10);
+ if(list.length<3)return null;
+ let moved=false,down=null,hot=null,lastX=0;
+ const row=h('div',{class:'sr-row',role:'list'},h('i',{class:'sr-rail'}));
+ row.style.setProperty('--n',list.length);
+ const swing=(b,dir)=>{const g=b.firstChild;if(!g||!g.animate)return;g.animate([{rotate:'0deg'},{rotate:dir*9+'deg',offset:.25},{rotate:-dir*5+'deg',offset:.55},{rotate:dir*2+'deg',offset:.8},{rotate:'0deg'}],{duration:1100,easing:'ease-out'})};
+ list.forEach((p,i)=>{
+  const b=h('button',{class:'sr-it',type:'button',role:'listitem','aria-label':p.title,onclick:()=>{if(moved){moved=false;return}srQuick(list,i)}},
+   h('span',{class:'sr-g'},h('i',{class:'sr-w'}),
+    h('span',{class:'sr-c'},h('img',{class:'ld',alt:p.title,decoding:'async'}),h('span',{class:'sr-off'},fa(disc(p))+'٪')),
+    h('span',{class:'sr-t'},h('s',{},fa(p.oldPrice)),fa(p.price)+' '+S.store.currency)));
+  b.style.setProperty('--d',(-i*.7)+'s');
+  {const im=b.querySelector('img'),src=(p.images&&p.images[0])||'';if(src)srCut(src).then(u=>{im.src=u;im.classList.remove('ld')});else im.classList.remove('ld')}
+  b.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')swing(b,1)});
+  row.append(b)});
+ const hit=e=>{const el=document.elementFromPoint(e.clientX,e.clientY),b=el&&el.closest?el.closest('.sr-it'):null,dir=e.clientX>=lastX?1:-1;lastX=e.clientX;if(b&&b!==hot){if(hot)hot.classList.remove('hot');b.classList.add('hot');hot=b;swing(b,dir)}};
+ const end=()=>{down=null;setTimeout(()=>{if(hot&&!down){hot.classList.remove('hot');hot=null}},450)};
+ row.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;down={x:e.clientX};lastX=e.clientX;moved=false});
+ row.addEventListener('pointermove',e=>{if(!down||e.pointerType==='mouse')return;if(Math.abs(e.clientX-down.x)>8)moved=true;if(moved)hit(e)});
+ ['pointerup','pointercancel'].forEach(t=>row.addEventListener(t,end));
+ return h('section',{class:'srl'},secHead('تخفیف‌خورده‌ها',h('button',{onclick:()=>go('categories')},'مشاهده همه')),row,h('p',{class:'sr-hint'},'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید'))}
 function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;return[
  hn,!hn&&sh.stories&&storiesSec(false),
  sh.intro&&h('section',{class:'intro glass'},h('span',{class:'star',html:ic('star',34)}),h('span',{class:'k'},A.kicker),h('h3',{},A.introTitle),h('p',{},A.introText)),
- featuredRack(),
+ sh.products&&saleRail(),
  sh.products&&h('section',{},secHead('جدیدترین محصولات',h('button',{onclick:()=>go('categories')},'مشاهده همه')),(()=>{const sec=h('div',{});const newest=[...S.products].sort((a,b)=>(+b.createdAt||+b.created_at||0)-(+a.createdAt||+a.created_at||0));sec.append(pagedGrid(newest,()=>sec.parentElement));return sec})()),
  sh.features&&h('section',{class:'feat'},S.features.map(f=>h('div',{class:'fc glass'},h('span',{class:'fi',html:ic(f.icon,26)}),h('b',{},f.title),h('span',{},f.text)))),
  sh.night&&h('button',{class:'night glass',onclick:toggleMode},h('span',{class:'ni',html:ic('moon',24)}),h('span',{class:'nt'},h('small',{},A.nightHint),h('b',{},A.nightTitle)),h('span',{class:'tg'+(isDark()?' on':'')})),
