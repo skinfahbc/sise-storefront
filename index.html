@@ -1617,6 +1617,15 @@ const PANELS={
 rack(){
  const R=S.rack||(S.rack={title:'منتخب‌های SISE',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن کیف کلیک کنید',limit:10,items:[]});
  if(!Array.isArray(R.items))R.items=[];
+ // First-time setup: copy the exact products currently shown by the legacy rack
+ // into editable independent rack entries. Never replace an existing custom list.
+ if(!R.items.length){
+  const starter=S.products.filter(p=>p.featured!==false&&disc(p)>0&&(p.rackImage||(p.images&&p.images[0]))).sort((a,b)=>disc(b)-disc(a)).slice(0,Math.min(10,Math.max(3,+R.limit||10)));
+  if(starter.length){
+   R.items=starter.map(p=>({id:uid(),title:p.title||'کیف منتخب',desc:p.desc||p.description||'',price:+p.price||0,oldPrice:+p.oldPrice||0,discount:disc(p),image:p.rackImage||(p.images&&p.images[0])||'',backImage:(p.images&&p.images[1])||'',active:true,productId:p.id||'',label:p.label||''}));
+   commit();
+  }
+ }
  const productOpts=[['','بدون اتصال به محصول'],...S.products.map(p=>[p.id,p.title])];
  const items=listEd(R.items,(it)=>[
   g2(fld('نام کیف',tx(it,'title')),fld('محصول مرتبط (اختیاری)',pick(it,'productId',productOpts))),
