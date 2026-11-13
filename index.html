@@ -1049,7 +1049,7 @@ function srCut(orig){let src=orig,svg=false;if(src.startsWith('data:image/svg+xm
 const SRQ={};const srCutC=src=>SRQ[src]||(SRQ[src]=srCut(src));
 function srQuick(list,start){
  let ci=start,ii=0,tok=0,sx=null;
- const ov=h('div',{class:'sq',role:'dialog','aria-modal':'true'}),st=h('div',{class:'sq-st'}),nm=h('h4',{}),pr=h('div',{class:'sq-pr'}),tabs=h('div',{class:'sq-tabs'});
+ const ov=h('div',{class:'sq',role:'dialog','aria-modal':'true'}),st=h('div',{class:'sq-st'}),nm=h('h4',{}),ds=h('p',{class:'sq-desc'}),pr=h('div',{class:'sq-pr'}),tabs=h('div',{class:'sq-tabs'});
  const close=()=>{ov.remove();document.removeEventListener('keydown',kd)};
  const step=d=>{ci=(ci+d+list.length)%list.length;ii=0;paint(true)};
  const kd=e=>{if(e.key==='Escape')close();if(e.key==='ArrowLeft')step(1);if(e.key==='ArrowRight')step(-1)};
@@ -1058,13 +1058,12 @@ function srQuick(list,start){
   st.replaceChildren(g);
   if(src)srCutC(src).then(u=>{if(t!==tok)return;im.src=u;im.classList.remove('ld')});else im.classList.remove('ld');
   if(sway&&g.animate)g.animate([{rotate:'0deg'},{rotate:'8deg',offset:.25},{rotate:'-4deg',offset:.55},{rotate:'1.5deg',offset:.8},{rotate:'0deg'}],{duration:1100,easing:'ease-out'});
-  nm.textContent=p.title;
-  if(p.desc){const ds=h('p',{class:'sq-desc'},p.desc);nm.after(ds)}
+  nm.textContent=p.title;ds.textContent=p.desc||'';ds.hidden=!p.desc;
   pr.replaceChildren(h('s',{},fa(p.oldPrice)),h('b',{},fa(p.price)+' '+S.store.currency),h('i',{},fa(disc(p))+'٪'));
   tabs.replaceChildren(...(imgs.length>1?imgs.map((_,k)=>h('button',{type:'button','aria-pressed':String(k===ii),onclick:()=>{ii=k;paint(true)}},k===0?'روبه‌رو':k===1?'پشت':'نمای '+fa(k+1))):[]))}
  ov.append(h('button',{class:'sq-x',type:'button',onclick:close},'بستن'),
   h('button',{class:'sq-n p',type:'button','aria-label':'قبلی',onclick:()=>step(-1)},'→'),h('button',{class:'sq-n n',type:'button','aria-label':'بعدی',onclick:()=>step(1)},'←'),
-  st,nm,pr,tabs,h('button',{class:'sq-go',type:'button',onclick:()=>{const id=list[ci].productId||(!list[ci].customRack?list[ci].id:'');close();if(id)openProduct(id)}},list[ci].productId||!list[ci].customRack?'مشاهده و خرید':'بستن'));
+  st,nm,ds,pr,tabs,h('button',{class:'sq-go',type:'button',onclick:()=>{const id=list[ci].productId||(!list[ci].customRack?list[ci].id:'');close();if(id)openProduct(id)}},list[ci].productId||!list[ci].customRack?'مشاهده و خرید':'بستن'));
  ov.addEventListener('click',e=>{if(e.target===ov)close()});
  ov.addEventListener('pointerdown',e=>{sx=e.clientX});
  ov.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx;sx=null;if(Math.abs(dx)>50)step(dx<0?1:-1)});
@@ -1072,7 +1071,7 @@ function srQuick(list,start){
 function saleRail(){
  const R=S.rack||{},custom=Array.isArray(R.items)&&R.items.length?R.items.filter(x=>x.active!==false&&x.image).map(x=>({id:x.id,productId:x.productId,title:x.title,desc:x.desc,price:+x.price||0,oldPrice:+x.oldPrice||0,rackImage:x.image,images:[x.image,x.backImage].filter(Boolean),label:x.label,customRack:true})):null;
  const list=(custom||S.products.filter(p=>p.featured!==false&&disc(p)>0&&(p.rackImage||(p.images&&p.images[0]))).sort((a,b)=>disc(b)-disc(a))).slice(0,Math.min(10,Math.max(3,+R.limit||10)));
- if(list.length<3)return null;
+ if(!list.length)return null;
  let moved=false,down=null,hot=null,lastX=0;
  const row=h('div',{class:'sr-row',role:'list'},h('i',{class:'sr-rail'}));
  row.style.setProperty('--n',list.length);
@@ -1623,7 +1622,7 @@ rack(){
   g2(fld('نام کیف',tx(it,'title')),fld('محصول مرتبط (اختیاری)',pick(it,'productId',productOpts))),
   fld('توضیحات و نوشته کیف',tx(it,'desc',{area:true,rows:3})),
   g2(fld('قیمت فروش',tx(it,'price',{num:true})),fld('قیمت قبل از تخفیف',tx(it,'oldPrice',{num:true}))),
-  g2(fld('درصد تخفیف',tx(it,'discount',{num:true})),tog(it,'active','نمایش در رگال')),
+  g2(fld('درصد تخفیف (قیمت قبل از تخفیف خودکار محاسبه می‌شود)',pctF(it)),tog(it,'active','نمایش در رگال')),
   fld('عکس اصلی کیف · پس‌زمینه شفاف پیشنهاد می‌شود',imgField(it,'image',{max:2200,q:.94,clearable:true,alpha:true})),
   fld('عکس پشت کیف (اختیاری)',imgField(it,'backImage',{max:2200,q:.94,clearable:true,alpha:true})),
   fld('متن دکمه/برچسب (اختیاری)',tx(it,'label'))
