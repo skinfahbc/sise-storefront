@@ -725,7 +725,7 @@ html{overflow-x:hidden;max-width:100%}
 .sise-rack-swipe{font-size:10px;color:#999;white-space:nowrap}
 .sise-rack-frame{position:relative;padding-top:0}
 .sise-rack-bar{height:5px;border-radius:5px;background:linear-gradient(90deg,#28251f,#c4a46c,#28251f);box-shadow:0 4px 8px #0002;margin:0 3%}
-.sise-rack-rail{position:relative;display:flex;align-items:stretch;gap:0;height:clamp(250px,40vw,350px);padding:0 4% 8px;overflow:hidden;overscroll-behavior-x:contain;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.sise-rack-rail{position:relative;display:flex;align-items:stretch;gap:0;height:clamp(250px,40vw,350px);padding:0 5% 8px;overflow:visible;overscroll-behavior-x:contain;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .sise-rack-item{position:relative;display:block;flex:1 1 0;min-width:0;height:100%;padding:0;border:0;background:transparent;cursor:pointer;z-index:1;opacity:.92;transition:flex-grow .55s cubic-bezier(.2,.8,.2,1),opacity .35s; -webkit-tap-highlight-color:transparent}
 .sise-rack-item.active{flex-grow:3.4;z-index:5;opacity:1}
 .sise-rack-item.near{flex-grow:1.5;z-index:3;opacity:1}
@@ -1025,21 +1025,21 @@ function featuredRack(){
  const dots=h('div',{class:'sise-rack-dots'});
  const prev=h('button',{class:'sise-rack-arrow','aria-label':'کیف قبلی',onclick:()=>select(active-1)},'‹');
  const next=h('button',{class:'sise-rack-arrow','aria-label':'کیف بعدی',onclick:()=>select(active+1)},'›');
- const cards=items.map((p,i)=>h('button',{type:'button',class:'sise-rack-item','aria-label':'انتخاب '+p.title,style:{'--bag-delay':(i*.13)+'s'},onclick:()=>{select(i,false);openProduct(p.id)},onmouseenter:()=>{if(matchMedia('(hover:hover)').matches)select(i,false)}},
+ const cards=items.map((p,i)=>h('button',{type:'button',class:'sise-rack-item','aria-label':'انتخاب '+p.title,style:{'--bag-delay':(i*.13)+'s'},onclick:()=>{select(i,false);openProduct(p.id)},onmouseenter:()=>{if(matchMedia('(hover:hover)').matches)select(i,false)},onmouseleave:()=>{if(matchMedia('(hover:hover)').matches)select(-1,false)},onfocus:()=>select(i,false),onblur:e=>{if(!e.currentTarget.parentElement.contains(e.relatedTarget))select(-1,false)}},
   h('span',{class:'sise-rack-hanger'},h('i',{})),
   h('span',{class:'sise-rack-photo'},h('img',{src:p.images[0],alt:p.title,loading:'lazy'})),
   disc(p)?h('span',{class:'sise-rack-discount'},fa(disc(p))+'٪ تخفیف'):null
  ));
  cards.forEach(x=>rail.append(x));
  const update=()=>{
-  cards.forEach((x,i)=>{x.classList.toggle('active',i===active);x.classList.toggle('near',Math.abs(i-active)===1);x.setAttribute('aria-pressed',i===active?'true':'false')});
+  cards.forEach((x,i)=>{x.classList.toggle('active',i===active);x.classList.toggle('near',active>=0&&Math.abs(i-active)===1);x.setAttribute('aria-pressed',i===active?'true':'false')});
   [...dots.children].forEach((x,i)=>x.classList.toggle('on',i===active));
-  const p=items[active];
+  const p=items[Math.max(0,active)];
   detail.innerHTML='';
   add(detail,[h('h4',{},p.title),h('p',{class:'sise-rack-desc'},p.desc||'انتخاب ویژه SISE'),h('div',{class:'sise-rack-prices'},p.oldPrice>p.price?h('del',{},money(p.oldPrice)):null,h('b',{},money(p.price)),disc(p)?h('span',{},fa(disc(p))+'٪ تخفیف'):null),h('button',{class:'sise-rack-open',onclick:()=>openProduct(p.id)},'مشاهده و سفارش')]);
   prev.disabled=items.length<2;next.disabled=items.length<2;
  };
- function select(n,scroll=true){active=(n+items.length)%items.length;update();if(scroll&&cards[active])cards[active].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
+ function select(n,scroll=true){active=n<0?-1:(n+items.length)%items.length;update();if(scroll&&active>=0&&cards[active])cards[active].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
  items.forEach((p,i)=>dots.append(h('button',{class:'sise-rack-dot'+(i===0?' on':''),'aria-label':'کیف '+fa(i+1),onclick:()=>select(i)})));
  rail.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;drag={x:e.clientX,moved:false};});
  rail.addEventListener('pointermove',e=>{
