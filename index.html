@@ -1069,7 +1069,7 @@ function srQuick(list,start){
  ov.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx;sx=null;if(Math.abs(dx)>50)step(dx<0?1:-1)});
  document.addEventListener('keydown',kd);document.body.append(ov);paint(true)}
 function saleRail(){
- const R=S.rack||{},custom=Array.isArray(R.items)&&R.items.length?R.items.filter(x=>x.active!==false&&x.image).map(x=>({id:x.id,productId:x.productId,title:x.title,desc:x.desc,price:+x.price||0,oldPrice:+x.oldPrice||0,rackImage:x.image,images:[x.image,x.backImage].filter(Boolean),label:x.label,customRack:true})):null;
+ const R=S.rack||{},hasCustomImages=Array.isArray(R.items)&&R.items.some(x=>x&&x.image),custom=hasCustomImages?R.items.filter(x=>x.active!==false&&x.image).map(x=>({id:x.id,productId:x.productId,title:x.title,desc:x.desc,price:+x.price||0,oldPrice:+x.oldPrice||0,rackImage:x.image,images:[x.image,x.backImage].filter(Boolean),label:x.label,customRack:true})):null;
  const list=(custom||S.products.filter(p=>p.featured!==false&&disc(p)>0&&(p.rackImage||(p.images&&p.images[0]))).sort((a,b)=>disc(b)-disc(a))).slice(0,Math.min(10,Math.max(3,+R.limit||10)));
  if(!list.length)return null;
  let moved=false,down=null,hot=null,lastX=0;
@@ -1619,10 +1619,10 @@ rack(){
  if(!Array.isArray(R.items))R.items=[];
  // First-time setup: copy the exact products currently shown by the legacy rack
  // into editable independent rack entries. Never replace an existing custom list.
- if(!R.items.length){
+ if(!R.items.some(x=>x&&x.image)){
   const starter=S.products.filter(p=>p.featured!==false&&disc(p)>0&&(p.rackImage||(p.images&&p.images[0]))).sort((a,b)=>disc(b)-disc(a)).slice(0,Math.min(10,Math.max(3,+R.limit||10)));
   if(starter.length){
-   R.items=starter.map(p=>({id:uid(),title:p.title||'کیف منتخب',desc:p.desc||p.description||'',price:+p.price||0,oldPrice:+p.oldPrice||0,discount:disc(p),image:p.rackImage||(p.images&&p.images[0])||'',backImage:(p.images&&p.images[1])||'',active:true,productId:p.id||'',label:p.label||''}));
+   R.items=[...R.items,...starter.map(p=>({id:uid(),title:p.title||'کیف منتخب',desc:p.desc||p.description||'',price:+p.price||0,oldPrice:+p.oldPrice||0,discount:disc(p),image:p.rackImage||(p.images&&p.images[0])||'',backImage:(p.images&&p.images[1])||'',active:true,productId:p.id||'',label:p.label||''}))];
    commit();
   }
  }
