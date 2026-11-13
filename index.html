@@ -1565,7 +1565,7 @@ function imgField(o,k,opts={}){const pv=h('div',{class:'pv'}),url=h('input',{cla
  file.onchange=async()=>{const f=file.files[0];if(!f)return;try{o[k]=await readFile(f,{max:opts.max||1400,q:opts.q||.84,keepAlpha:opts.alpha});if(opts.video){o.type=f.type.startsWith('video/')?'video':'image';if(o.type==='video'){const d=await vidThumb(o[k],400);if(d)o.thumb=d}else o.thumb=''}url.value='';draw();commit();toast('بارگذاری شد');if(opts.video&&typeof ADM!=='undefined'&&ADM.go)ADM.go('stories')}catch(e){toast(e.message||'بارگذاری انجام نشد')}file.value=''};
  url.onchange=()=>{o[k]=url.value.trim();if(opts.video)o.type=/\.(mp4|webm|mov)(\?|$)/i.test(o[k])?'video':'image';draw();commit()};
  draw();return h('div',{class:'imf'},pv,h('div',{class:'ct'},h('div',{class:'row'},h('span',{class:'up btn sec'},I('plus',18),opts.video?'عکس یا ویدیو':'انتخاب تصویر',file),opts.clearable?h('button',{class:'btn dg',type:'button',onclick:()=>{o[k]='';url.value='';draw();commit()}},I('trash',16)):null),url))}
-function listEd(arr,render,mk,{title,addLabel='افزودن',fixed,min=0,thumb,collapse}={}){const box=h('div',{class:'lst'}),OPEN=new Set();
+function listEd(arr,render,mk,{title,addLabel='افزودن',fixed,min=0,thumb,collapse,editAction=false}={}){const box=h('div',{class:'lst'}),OPEN=new Set();
  const draw=()=>{box.innerHTML='';arr.forEach((it,i)=>{const mv=d=>()=>{const j=i+d;if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];commit();draw()};
   const key=it.id||i,isOpen=!collapse||OPEN.has(key),rich=!!(thumb||collapse),tt=title?title(it,i):'#'+fa(i+1),src=thumb?thumb(it):'';
   const bd=h('div',{style:{display:isOpen?'flex':'none',flexDirection:'column',gap:'12px'}},isOpen?render(it,i,draw):null);
@@ -1573,8 +1573,8 @@ function listEd(arr,render,mk,{title,addLabel='افزودن',fixed,min=0,thumb,c
     h('span',{style:{flex:'none',minWidth:'30px',height:'30px',borderRadius:'10px',display:'grid',placeItems:'center',background:'linear-gradient(135deg,var(--accent2),var(--accent))',color:'var(--on-accent)',fontWeight:'800',fontSize:'13px'}},fa(i+1)),
     src?h('img',{src,alt:'',style:{width:'48px',height:'48px',borderRadius:'12px',objectFit:'cover',flex:'none'}}):null,
     h('b',{style:{flex:'1',minWidth:'0',lineHeight:'1.5'}},tt),collapse?h('span',{html:ic(isOpen?'up':'down',18),style:{flex:'none',color:'var(--muted)'}}):null):h('b',{},tt);
-  box.append(h('div',{class:'li'+(rich?' li-x':'')},h('div',{class:'li-h'},lab,h('span',{class:'li-a'},h('button',{class:'sb','aria-label':'بالا',html:ic('up',16),onclick:mv(-1)}),h('button',{class:'sb','aria-label':'پایین',html:ic('down',16),onclick:mv(1)}),
-   fixed||arr.length<=min?null:h('button',{class:'sb dg','aria-label':'حذف',html:ic('trash',16),onclick:()=>{arr.splice(i,1);commit();draw()}}))),bd))});
+  box.append(h('div',{class:'li'+(rich?' li-x':'')},h('div',{class:'li-h'},lab,h('span',{class:'li-a'},editAction&&collapse?h('button',{class:'btn sec sm',type:'button',onclick:()=>{OPEN.has(key)?OPEN.delete(key):OPEN.add(key);draw()}},I('edit',14),isOpen?'بستن ویرایش':'ویرایش'):null,h('button',{class:'sb','aria-label':'بالا',html:ic('up',16),onclick:mv(-1)}),h('button',{class:'sb','aria-label':'پایین',html:ic('down',16),onclick:mv(1)}),
+   fixed||arr.length<=min?null:(editAction?h('button',{class:'btn dg sm',type:'button',onclick:e=>{const b=e.currentTarget;if(b.dataset.confirm!=='1'){b.dataset.confirm='1';b.textContent='تأیید حذف؟';return}arr.splice(i,1);commit();draw()}},I('trash',14),'حذف'):h('button',{class:'sb dg','aria-label':'حذف',html:ic('trash',16),onclick:()=>{arr.splice(i,1);commit();draw()}})))),bd))});
   if(!fixed)box.append(h('button',{class:'btn add',onclick:()=>{const n=mk();arr.push(n);if(n.id)OPEN.add(n.id);commit();draw()}},I('plus',18),addLabel))};draw();return box}
 function dateF(o,k,cb,type='date'){const i=h('input',{class:'in',type,value:o[k]||'',style:{direction:'ltr',textAlign:'right'}});i.addEventListener('change',()=>{o[k]=i.value;commit();cb&&cb()});return i}
 function onoff(o,k,on='فعال',off='غیرفعال',cb){const s=h('select',{class:'in'},h('option',{value:'1'},on),h('option',{value:'0'},off));s.value=o[k]?'1':'0';s.addEventListener('change',()=>{o[k]=s.value==='1';commit();cb&&cb()});return s}
@@ -1627,7 +1627,7 @@ rack(){
   fld('عکس پشت کیف (اختیاری)',imgField(it,'backImage',{max:2200,q:.94,clearable:true,alpha:true})),
   fld('متن دکمه/برچسب (اختیاری)',tx(it,'label'))
  ],()=>({id:uid(),title:'کیف جدید',desc:'',price:0,oldPrice:0,discount:0,image:'',backImage:'',active:true,productId:'',label:''}),
- {title:it=>it.title||'کیف بدون نام',addLabel:'افزودن کیف به رگال',thumb:it=>it.image||'',collapse:true});
+ {title:it=>it.title||'کیف بدون نام',addLabel:'افزودن کیف به رگال',thumb:it=>it.image||'',collapse:true,editAction:true});
  return[
   card('مدیریت مستقل رگال',h('p',{},'کیف‌های این بخش مستقل از گالری محصولات مدیریت می‌شوند. عکس، نوشته و قیمت هر کیف را همین‌جا وارد کنید. برای اتصال دکمه خرید به صفحه محصول، محصول مرتبط را انتخاب کنید؛ در غیر این صورت کیف فقط در رگال و پیش‌نمایش نمایش داده می‌شود.'),
    g2(fld('عنوان رگال',tx(R,'title')),fld('تعداد نمایش (۳ تا ۱۰)',tx(R,'limit',{num:true}))),
