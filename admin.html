@@ -1500,7 +1500,7 @@ function stockF(p){const inp=h('input',{class:'in',type:'text',inputmode:'numeri
  return h('div',{style:{display:'grid',gap:'6px'}},h('div',{class:'row',style:{flexWrap:'wrap'}},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn',type:'button',onclick:save},'ذخیره موجودی')),st)}
 function lifeF(s){const info=h('small',{class:'fh'},stLeft(s)),sel=h('select',{class:'in',onchange:()=>{s.life=+sel.value;s.created=Date.now();commit();info.textContent=stLeft(s)}},[[24,'۲۴ ساعت'],[72,'۳ روز'],[168,'یک هفته'],[720,'یک ماه'],[0,'بدون انقضا']].map(([v,l])=>h('option',{value:String(v)},l)));sel.value=String(+s.life||0);return h('div',{style:{display:'grid',gap:'6px'}},sel,info,h('small',{class:'fh'},'شمارش از لحظه ثبت یا تغییر مدت شروع می‌شود و بعد از اتمام، استوری در سایت دیده نمی‌شود و با انتشار بعدی از سرور پاک می‌شود.'))}
 const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['chat','گفتگوی همگانی','users'],['pm','چت خصوصی با مشتری','lock'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
-const ADM={open:false,pmUnread:0,chatCount:0,badgeTimer:0,drawTabs:null};
+const ADM={open:false,pmUnread:0,pmPeople:0,chatCount:0,badgeTimer:0,drawTabs:null};
 const PM_READ_KEY='sise_admin_pm_last_read';
 function markPmRead(rows){
  const latest=(rows||[]).reduce((n,r)=>!r.from_admin?Math.max(n,+r.id||0):n,0);
@@ -1511,7 +1511,7 @@ async function refreshAdminBadges(){
  if(!ADM.open||!sbSess())return;
  try{
   const [pr,cr]=await Promise.all([
-   sbFetch('/rest/v1/pm?select=id,from_admin&order=id.desc&limit=800',{auth:true}),
+   sbFetch('/rest/v1/pm?select=id,uid,from_admin&order=id.desc&limit=800',{auth:true}),
    sbFetch('/rest/v1/chat_messages?select=id&order=id.desc&limit=200',{auth:true})
   ]);
   const incoming=(pr||[]).filter(x=>!x.from_admin),latest=incoming.reduce((n,x)=>Math.max(n,+x.id||0),0);
@@ -1519,6 +1519,7 @@ async function refreshAdminBadges(){
   if(!seen){seen=latest;try{localStorage.setItem(PM_READ_KEY,String(latest))}catch(e){}}
   if(admTab==='pm'&&latest>seen){seen=latest;try{localStorage.setItem(PM_READ_KEY,String(latest))}catch(e){}}
   ADM.pmUnread=incoming.filter(x=>(+x.id||0)>seen).length;
+  ADM.pmPeople=new Set(incoming.map(x=>x.uid).filter(Boolean)).size;
   ADM.chatCount=(cr||[]).length;
   if(ADM.drawTabs)ADM.drawTabs();
  }catch(e){}
@@ -1537,7 +1538,7 @@ function openAdminLogin(){if(ADM.open)return;let c;const ss=sbSess();
 let admTab='dash';
 function openAdmin(){const body=h('div',{class:'adm-b'}),tabs=h('div',{class:'tabs',role:'tablist'});
  const close=()=>{clearInterval(ADM.badgeTimer);ADM.badgeTimer=0;ADM.drawTabs=null;if(syncT){clearTimeout(syncT);syncT=0;sbPush()}root.remove();document.body.classList.remove('lock');ADM.open=false;if(window.ADMIN_PAGE){try{location.href='index.html'}catch(e){}return}try{if(location.hash==='#admin')history.replaceState(null,'',location.pathname+location.search)}catch(e){}refreshStore()};
- const drawTabs=()=>{tabs.innerHTML='';add(tabs,TABS.map(([k,l,i])=>h('button',{class:'tb'+(k===admTab?' on':''),role:'tab','aria-selected':k===admTab,onclick:()=>{admTab=k;draw()}},I(i,16),l,k==='pm'&&ADM.pmUnread?h('span',{style:{display:'inline-block',width:'9px',height:'9px',borderRadius:'50%',background:'#ef4444',marginInlineStart:'7px',boxShadow:'0 0 0 3px #ef444422'},'aria-label':'پیام خوانده‌نشده'}):null,k==='chat'&&ADM.chatCount?h('span',{style:{display:'inline-flex',minWidth:'20px',height:'20px',padding:'0 5px',alignItems:'center',justifyContent:'center',borderRadius:'20px',background:'#b88b45',color:'#111',fontSize:'11px',fontWeight:'800',marginInlineStart:'6px'},'aria-label':'تعداد پیام‌ها'},fa(ADM.chatCount)):null)))};
+ const drawTabs=()=>{tabs.innerHTML='';add(tabs,TABS.map(([k,l,i])=>h('button',{class:'tb'+(k===admTab?' on':''),role:'tab','aria-selected':k===admTab,onclick:()=>{admTab=k;draw()}},I(i,16),l,k==='pm'&&ADM.pmUnread?h('span',{style:{display:'inline-block',width:'9px',height:'9px',borderRadius:'50%',background:'#ef4444',marginInlineStart:'7px',boxShadow:'0 0 0 3px #ef444422'},'aria-label':'پیام خوانده‌نشده'}):null,k==='pm'&&ADM.pmPeople?h('span',{style:{display:'inline-flex',minWidth:'20px',height:'20px',padding:'0 5px',alignItems:'center',justifyContent:'center',borderRadius:'20px',background:'#b88b45',color:'#111',fontSize:'11px',fontWeight:'800',marginInlineStart:'6px'},'aria-label':'تعداد مشتریان پیام‌دهنده'},fa(ADM.pmPeople)):null,k==='chat'&&ADM.chatCount?h('span',{style:{display:'inline-flex',minWidth:'20px',height:'20px',padding:'0 5px',alignItems:'center',justifyContent:'center',borderRadius:'20px',background:'#b88b45',color:'#111',fontSize:'11px',fontWeight:'800',marginInlineStart:'6px'},'aria-label':'تعداد پیام‌ها'},fa(ADM.chatCount)):null)))};
  const draw=()=>{drawTabs();body.innerHTML='';add(body,PANELS[admTab]());root.scrollTo({top:0})};
  const root=h('div',{class:'adm',role:'dialog','aria-label':'پنل مدیریت'},h('div',{class:'adm-top'},h('div',{class:'adm-t'},h('h2',{},'پنل مدیریت'),h('button',{class:'btn sec',onclick:close},I('eye',18),'مشاهده سایت')),h('div',{class:'sync-row'},h('small',{id:'sync-st',class:'sync'},'متصل به سرور'),h('button',{class:'btn sm',onclick:()=>{clearTimeout(syncT);sbPush()}},'انتشار روی سرور')),tabs),body);
  ADM.go=k=>{admTab=k;draw()};ADM.drawTabs=drawTabs;document.body.append(root);document.body.classList.add('lock');ADM.open=true;draw();refreshAdminBadges();clearInterval(ADM.badgeTimer);ADM.badgeTimer=setInterval(refreshAdminBadges,12000)}
