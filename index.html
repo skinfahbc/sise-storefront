@@ -1389,7 +1389,7 @@ function openMenu(){let close;const u=curUser();
   h('div',{class:'lbl'},'ناوبری'),h('div',{class:'mg glass'},[...S.menu.items,...(S.menu.items.some(m=>m.target==='view:chat')?[]:[{id:'chat',label:'گفتگوی همگانی',icon:'comment',color:'#e0794f',target:'view:chat'}])].map(m=>h('button',{class:'mi',onclick:()=>go2(m.target)},h('span',{class:'mc',style:{background:m.color},html:ic(m.icon,22)}),h('b',{},m.label),h('span',{class:'ch',html:ic('chl',16)})))),
   h('div',{class:'lbl'},'تنظیمات'),h('div',{class:'mg glass'},isStandalone()?null:h('button',{class:'mi',onclick:()=>{close();setTimeout(installApp,80)}},h('span',{class:'mc',style:{background:'#2f7d6b'},html:ic('phone',22)}),h('b',{},'نصب برنامه روی گوشی'),h('span',{class:'ch',html:ic('chl',16)})),h('button',{class:'mi',onclick:toggleMode},h('span',{class:'mc',style:{background:'#4b5563'},html:ic('moon',22)}),h('b',{},'حالت شب'),h('span',{class:'tg'+(isDark()?' on':'')}))),
   h('div',{class:'soc',style:{marginTop:'auto'}},S.socials.map(s=>h('a',{href:s.url,target:'_blank',rel:'noopener','aria-label':s.name,html:ic(s.icon,22),style:{width:'46px',height:'46px'}}))),
-  h('button',{class:'tb',style:{alignSelf:'center'},onclick:()=>{close();openAdminLogin()}},I('lock',16),'ورود مدیر'));
+  h('button',{class:'tb',style:{alignSelf:'center'},onclick:()=>{close();location.href='admin.html'}},I('lock',16),'ورود مدیر'));
  close=openModal(dr,'s')}
 function openAuth(){let close;const u=curUser();
  if(u){close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('div',{class:'prof'},avEl(u),h('span',{},h('b',{},uName(u)),h('small',{},u.phone))),
