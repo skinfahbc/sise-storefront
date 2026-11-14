@@ -1178,7 +1178,7 @@ function liveSway(row){
  row.addEventListener('pointerleave',()=>{px=null})}
 
 function saleRail(){
- const R=S.rack||{},hasCustomImages=Array.isArray(R.items)&&R.items.some(x=>x&&x.image),custom=hasCustomImages?R.items.filter(x=>x.active!==false&&x.image).map(x=>({id:x.id,productId:x.productId,title:x.title,desc:x.desc,price:+x.price||0,oldPrice:+x.oldPrice||0,rackImage:x.image,images:[x.image,x.backImage].filter(Boolean),label:x.label,customRack:true})):null;
+ const R=S.rack||{},hasCustomImages=Array.isArray(R.items)&&R.items.some(x=>x&&x.image),custom=hasCustomImages?R.items.filter(x=>x.active!==false&&x.image&&(x.stock==null||x.stock===''||+x.stock>0)).map(x=>({id:x.id,productId:x.productId,title:x.title,desc:x.desc,price:+x.price||0,oldPrice:+x.oldPrice||0,rackImage:x.image,images:[x.image,x.backImage].filter(Boolean),label:x.label,customRack:true})):null;
  const list=(custom||S.products.filter(p=>p.featured!==false&&disc(p)>0&&(p.rackImage||(p.images&&p.images[0]))).sort((a,b)=>disc(b)-disc(a))).slice(0,Math.min(10,Math.max(3,+R.limit||10)));
  if(!list.length)return null;
  let moved=false,down=null,hot=null,lastX=0;
