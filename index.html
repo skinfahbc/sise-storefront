@@ -823,12 +823,13 @@ html{overflow-x:hidden;max-width:100%}
 </style>
 
 <style id="sise-drawer-scroll-fix">
-/* Keep the backdrop stationary and make the complete menu panel the scroll container. */
+/* A dedicated scroll region prevents flex children from collapsing; admin stays reachable. */
 .ov.s{position:fixed!important;inset:0!important;display:block!important;height:100vh!important;height:100dvh!important;overflow:hidden!important;overscroll-behavior:none!important}
-.ov.s>.dr{position:absolute!important;top:0!important;bottom:0!important;inset-inline-start:0!important;inset-inline-end:auto!important;width:min(88vw,400px)!important;height:100vh!important;height:100dvh!important;max-height:100vh!important;max-height:100dvh!important;min-height:0!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;flex:none!important;padding:calc(14px + env(safe-area-inset-top,0px)) 14px max(24px,env(safe-area-inset-bottom,0px))!important}
-.ov.s>.dr>*{flex-shrink:0}
-.ov.s>.dr .soc{margin-top:12px!important}
-.ov.s>.dr .tb{position:relative!important;z-index:3!important;align-self:center!important;flex:none!important;margin:12px auto 8px!important}
+.ov.s>.dr{position:absolute!important;top:0!important;bottom:0!important;inset-inline-start:0!important;width:min(88vw,400px)!important;height:100vh!important;height:100dvh!important;max-height:100vh!important;max-height:100dvh!important;min-height:0!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:0!important;gap:0!important}
+.ov.s>.dr>.dr-scroll{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;gap:16px!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;padding:calc(14px + env(safe-area-inset-top,0px)) 14px 18px!important;box-sizing:border-box!important}
+.ov.s>.dr>.dr-scroll>*{flex-shrink:0}
+.ov.s>.dr>.dr-footer{flex:0 0 auto!important;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px))!important;border-top:1px solid var(--gb)!important;background:var(--sheet)!important;display:flex!important;justify-content:center!important}
+.ov.s>.dr .tb{position:static!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:46px!important;margin:0!important}
 </style>
 </head>
 <body>
@@ -1421,13 +1422,14 @@ function catView(){const q=h('input',{id:'c-q',placeholder:'جستجوی کیف�
 /* ---------- menu / auth / contact ---------- */
 function openMenu(){let close;const u=curUser();
  const go2=t=>{close();setTimeout(()=>runTarget(t),60)};
- const dr=h('div',{class:'dr',role:'dialog','aria-label':'منو'},
+ const scroll=h('div',{class:'dr-scroll'},
   h('div',{class:'dr-ban'},h('img',{src:S.menu.banner,alt:''}),h('button',{class:'dr-x','aria-label':'بستن منو',html:ic('chr',20),onclick:()=>close()}),h('div',{class:'t'},h('b',{},S.menu.title),h('span',{},S.menu.sub))),
   h('button',{class:'prof glass',onclick:()=>{close();openAuth()}},avEl(u),h('span',{style:{flex:1}},h('b',{},u?u.name:'ورود / ثبت‌نام'),h('small',{},u?u.phone:'برای پیگیری و ثبت سفارش')),h('span',{class:'ch',html:ic('chl',18)})),
   h('div',{class:'lbl'},'ناوبری'),h('div',{class:'mg glass'},[...S.menu.items,...(S.menu.items.some(m=>m.target==='view:chat')?[]:[{id:'chat',label:'گفتگوی همگانی',icon:'comment',color:'#e0794f',target:'view:chat'}]),{id:'chat-ai',label:'چت با هوش مصنوعی',icon:'sparkles',color:'#8b70c8',target:'chat-ai'}].map(m=>h('button',{class:'mi',onclick:()=>go2(m.target)},h('span',{class:'mc',style:{background:m.color},html:ic(m.icon,22)}),h('b',{},m.label),h('span',{class:'ch',html:ic('chl',16)})))),
   h('div',{class:'lbl'},'تنظیمات'),h('div',{class:'mg glass'},isStandalone()?null:h('button',{class:'mi',onclick:()=>{close();setTimeout(installApp,80)}},h('span',{class:'mc',style:{background:'#2f7d6b'},html:ic('phone',22)}),h('b',{},'نصب برنامه روی گوشی'),h('span',{class:'ch',html:ic('chl',16)})),h('button',{class:'mi',onclick:toggleMode},h('span',{class:'mc',style:{background:'#4b5563'},html:ic('moon',22)}),h('b',{},'حالت شب'),h('span',{class:'tg'+(isDark()?' on':'')}))),
-  h('div',{class:'soc',style:{marginTop:'auto'}},S.socials.map(s=>h('a',{href:s.url,target:'_blank',rel:'noopener','aria-label':s.name,html:ic(s.icon,22),style:{width:'46px',height:'46px'}}))),
-  h('button',{class:'tb',style:{alignSelf:'center'},onclick:()=>{close();location.href='admin.html'}},I('lock',16),'ورود مدیر'));
+  h('div',{class:'soc'},S.socials.map(s=>h('a',{href:s.url,target:'_blank',rel:'noopener','aria-label':s.name,html:ic(s.icon,22),style:{width:'46px',height:'46px'}}))));
+ const admin=h('button',{class:'tb',onclick:()=>{close();location.href='admin.html'}},I('lock',16),'ورود مدیر');
+ const dr=h('div',{class:'dr',role:'dialog','aria-label':'منو'},scroll,h('div',{class:'dr-footer'},admin));
  close=openModal(dr,'s')}
 function openAuth(){let close;const u=curUser();
  if(u){close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('div',{class:'prof'},avEl(u),h('span',{},h('b',{},uName(u)),h('small',{},u.email||'حساب SISE'))),
