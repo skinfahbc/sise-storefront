@@ -1425,11 +1425,11 @@ function openMenu(){let close;const u=curUser();
  const scroll=h('div',{class:'dr-scroll'},
   h('div',{class:'dr-ban'},h('img',{src:S.menu.banner,alt:''}),h('button',{class:'dr-x','aria-label':'بستن منو',html:ic('chr',20),onclick:()=>close()}),h('div',{class:'t'},h('b',{},S.menu.title),h('span',{},S.menu.sub))),
   h('button',{class:'prof glass',onclick:()=>{close();openAuth()}},avEl(u),h('span',{style:{flex:1}},h('b',{},u?u.name:'ورود / ثبت‌نام'),h('small',{},u?u.phone:'برای پیگیری و ثبت سفارش')),h('span',{class:'ch',html:ic('chl',18)})),
+  h('button',{class:'tb',style:{width:'100%',minHeight:'48px',justifyContent:'center',flexShrink:0},onclick:()=>{close();location.href='admin.html'}},I('lock',16),'ورود مدیر'),
   h('div',{class:'lbl'},'ناوبری'),h('div',{class:'mg glass'},[...S.menu.items,...(S.menu.items.some(m=>m.target==='view:chat')?[]:[{id:'chat',label:'گفتگوی همگانی',icon:'comment',color:'#e0794f',target:'view:chat'}]),{id:'chat-ai',label:'چت با هوش مصنوعی',icon:'sparkles',color:'#8b70c8',target:'chat-ai'}].map(m=>h('button',{class:'mi',onclick:()=>go2(m.target)},h('span',{class:'mc',style:{background:m.color},html:ic(m.icon,22)}),h('b',{},m.label),h('span',{class:'ch',html:ic('chl',16)})))),
   h('div',{class:'lbl'},'تنظیمات'),h('div',{class:'mg glass'},isStandalone()?null:h('button',{class:'mi',onclick:()=>{close();setTimeout(installApp,80)}},h('span',{class:'mc',style:{background:'#2f7d6b'},html:ic('phone',22)}),h('b',{},'نصب برنامه روی گوشی'),h('span',{class:'ch',html:ic('chl',16)})),h('button',{class:'mi',onclick:toggleMode},h('span',{class:'mc',style:{background:'#4b5563'},html:ic('moon',22)}),h('b',{},'حالت شب'),h('span',{class:'tg'+(isDark()?' on':'')}))),
   h('div',{class:'soc'},S.socials.map(s=>h('a',{href:s.url,target:'_blank',rel:'noopener','aria-label':s.name,html:ic(s.icon,22),style:{width:'46px',height:'46px'}}))));
- const admin=h('button',{class:'tb',onclick:()=>{close();location.href='admin.html'}},I('lock',16),'ورود مدیر');
- const dr=h('div',{class:'dr',role:'dialog','aria-label':'منو'},scroll,h('div',{class:'dr-footer'},admin));
+ const dr=h('div',{class:'dr',role:'dialog','aria-label':'منو'},scroll);
  close=openModal(dr,'s')}
 function openAuth(){let close;const u=curUser();
  if(u){close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('div',{class:'prof'},avEl(u),h('span',{},h('b',{},uName(u)),h('small',{},u.email||'حساب SISE'))),
