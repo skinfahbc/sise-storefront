@@ -45,10 +45,11 @@ Deno.serve(async (req: Request) => {
     if (uid.length < 3 || token.length < 16 || !Number.isSafeInteger(messageId) || messageId < 1) return json({ error: "invalid_request" }, 400);
 
     const now = Date.now();
-    const previous = recentCalls.get(uid) || 0;
-    if (now - previous < 2500) return json({ ok: true, skipped: "rate_limited" });
-    recentCalls.set(uid, now);
-    if (recentCalls.size > 2000) for (const [k, v] of recentCalls) if (now - v > 60000) recentCalls.delete(k);
+    const callKey = uid + ":" + messageId;
+    const previous = recentCalls.get(callKey) || 0;
+    if (now - previous < 60000) return json({ ok: true, skipped: "duplicate_call" });
+    recentCalls.set(callKey, now);
+    if (recentCalls.size > 4000) for (const [k, v] of recentCalls) if (now - v > 60000) recentCalls.delete(k);
 
     const headers = restHeaders(supabaseKey);
     const api = supabaseUrl.replace(/\/$/, "") + "/rest/v1/";
