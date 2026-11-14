@@ -1474,8 +1474,8 @@ async function chLoad(first){if(CH.busy)return false;CH.busy=true;let changed=fa
   if(CH.msgs.length>250)CH.msgs=CH.msgs.slice(-200)}
  catch(e){if(CH_V2&&chV2Err(e)){CH_V2=false;CH.busy=false;return chLoad(first)}CH.err=e.message||'خطا'}
  CH.busy=false;return changed}
-function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::');
- return h('div',{class:'chm'+(o.me?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},m.is_admin?admName():m.name),m.is_admin?h('span',{class:'adb'},'ادمین'):null,
+function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::'),ai=!!m.ai_generated;
+ return h('div',{class:'chm'+(o.me?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':'')+(ai?' isai':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},ai?'دستیار هوشمند SISE':(m.is_admin?admName():m.name)),m.is_admin?h('span',{class:'adb'},ai?'هوش مصنوعی':'ادمین'):null,
   rqEl(m,chJump),
   m.image?h('img',{class:'chi',src:m.image,alt:'',loading:'lazy',onclick:()=>openLightbox([m.image],0)}):null,
   m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
@@ -1494,13 +1494,17 @@ function pmView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.
  const near=()=>innerHeight+scrollY>=document.documentElement.scrollHeight-220;
  const draw=stick=>{const keep=stick||near();list.innerHTML='';
   if(err){add(list,h('div',{class:'empty'},pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
-  add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.from_admin?admName():uName(u),is_admin:!!r.from_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},'هنوز پیامی نیست؛ سؤال یا درخواست خود را برای مدیریت بنویسید.'));
+  add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},'هنوز پیامی نیست؛ سؤال یا درخواست خود را برای مدیریت بنویسید.'));
   if(keep)requestAnimationFrame(()=>scrollTo({top:document.documentElement.scrollHeight}))};
  const load=async first=>{try{const r=await sbFetch('/rest/v1/rpc/pm_list',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u)},timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
    const tmp={id:'t'+uid(),uid:u.id,text:t,image:url,from_admin:false,created_at:new Date().toISOString()};PM.rows=PM.rows.concat([tmp]);inp.value='';pimg='';drawPv();err='';draw(true);
-   try{await sbFetch('/rest/v1/rpc/pm_send',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u),p_name:uName(u),p_text:t,p_image:url},timeout:10000});buzz(12)}
+   try{
+    const pmId=await sbFetch('/rest/v1/rpc/pm_send',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u),p_name:uName(u),p_text:t,p_image:url},timeout:10000});
+    buzz(12);
+    fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key},body:JSON.stringify({uid:u.id,token:chTok(u),message_id:Number(pmId)})}).catch(()=>{});
+   }
    catch(e){PM.rows=PM.rows.filter(x=>x!==tmp);draw();toast(pmSetup(e)?'این بخش هنوز راه‌اندازی نشده است':'ارسال نشد: '+e.message)}}
   finally{sending=false;sig='';load(false)}};
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
