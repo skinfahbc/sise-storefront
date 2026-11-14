@@ -1070,7 +1070,7 @@ function srQuick(list,start){
  document.addEventListener('keydown',kd);document.body.append(ov);paint(true)}
 function saleRail(){
  const R=S.rack||{},list=S.products.filter(p=>p.featured!==false&&disc(p)>0&&p.images&&p.images[0]).sort((a,b)=>disc(b)-disc(a)).slice(0,Math.min(10,Math.max(3,+R.limit||10)));
- if(list.length<3)return null;
+ if(!list.length)return null;
  let moved=false,down=null,hot=null,lastX=0;
  const row=h('div',{class:'sr-row',role:'list'},h('i',{class:'sr-rail'}));
  row.style.setProperty('--n',list.length);
