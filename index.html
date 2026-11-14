@@ -1475,7 +1475,7 @@ async function chLoad(first){if(CH.busy)return false;CH.busy=true;let changed=fa
  catch(e){if(CH_V2&&chV2Err(e)){CH_V2=false;CH.busy=false;return chLoad(first)}CH.err=e.message||'خطا'}
  CH.busy=false;return changed}
 function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::'),ai=!!m.ai_generated;
- return h('div',{class:'chm'+(o.me?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':'')+(ai?' isai':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},ai?'دستیار هوشمند SISE':(m.is_admin?admName():m.name)),m.is_admin?h('span',{class:'adb'},ai?'هوش مصنوعی':'ادمین'):null,m.needs_admin?h('span',{class:'nb'},'ارجاع به مدیر'):null,
+ return h('div',{class:'chm'+(o.me?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':'')+(ai?' isai':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},ai?'دستیار هوشمند SISE':(m.is_admin?admName():m.name)),m.is_admin?h('span',{class:'adb'},ai?'هوش مصنوعی':'ادمین'):null,ai&&m.needs_admin?h('span',{class:'nb'},'نیازمند بررسی مدیر'):null,
   rqEl(m,chJump),
   m.image?h('img',{class:'chi',src:m.image,alt:'',loading:'lazy',onclick:()=>openLightbox([m.image],0)}):null,
   m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
