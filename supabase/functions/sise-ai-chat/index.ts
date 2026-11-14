@@ -74,7 +74,13 @@ Deno.serve(async (req: Request) => {
       stock: p.stock, colors: Array.isArray(p.colors) ? p.colors.map((c: any) => c.name).filter(Boolean) : [],
       category: p.cat, badge: p.badge,
     })) : [];
-    const catalog = JSON.stringify({ store: site.store || {}, shipping: site.ship || {}, about: site.about || {}, products });
+    const pick = (source: any, fields: string[]) => Object.fromEntries(fields.filter((k) => source?.[k] != null).map((k) => [k, source[k]]));
+    const catalog = JSON.stringify({
+      store: pick(site.store, ["name", "tagline", "currency", "phone", "address"]),
+      shipping: pick(site.ship, ["courierText", "methods", "phone"]),
+      about: pick(site.about, ["title", "text", "introTitle", "introText"]),
+      products,
+    });
 
     const history = rows.slice().reverse().map((r: any) => ({
       role: r.from_admin ? "assistant" : "user",
@@ -94,7 +100,7 @@ ${catalog}`;
     const aiRes = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: { Authorization: "Bearer " + openAiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "gpt-5.5", instructions, input: conversation, text: { format: { type: "json_object" } }, max_output_tokens: 450, store: false }),
+      body: JSON.stringify({ model: "gpt-6-astra", instructions, input: conversation, text: { format: { type: "json_object" } }, max_output_tokens: 450, store: false }),
     });
     if (!aiRes.ok) {
       await fetch(api + "pm?id=eq." + messageId + "&uid=eq." + encodeURIComponent(uid), { method: "PATCH", headers: { ...headers, Prefer: "return=minimal" }, body: JSON.stringify({ needs_admin: true }) });
