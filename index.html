@@ -1430,7 +1430,9 @@ function openMenu(){let close;const u=curUser();
   h('div',{class:'lbl'},'تنظیمات'),h('div',{class:'mg glass'},isStandalone()?null:h('button',{class:'mi',onclick:()=>{close();setTimeout(installApp,80)}},h('span',{class:'mc',style:{background:'#2f7d6b'},html:ic('phone',22)}),h('b',{},'نصب برنامه روی گوشی'),h('span',{class:'ch',html:ic('chl',16)})),h('button',{class:'mi',onclick:toggleMode},h('span',{class:'mc',style:{background:'#4b5563'},html:ic('moon',22)}),h('b',{},'حالت شب'),h('span',{class:'tg'+(isDark()?' on':'')}))),
   h('div',{class:'soc'},S.socials.map(s=>h('a',{href:s.url,target:'_blank',rel:'noopener','aria-label':s.name,html:ic(s.icon,22),style:{width:'46px',height:'46px'}}))));
  const dr=h('div',{class:'dr',role:'dialog','aria-label':'منو'},scroll);
- close=openModal(dr,'s')}
+ close=openModal(dr,'s');
+ // Close the drawer for every actionable item, including lower/settings/social controls.
+ dr.addEventListener('click',e=>{const a=e.target.closest('button,a');if(a&&dr.contains(a))close()},true)}
 function openAuth(){let close;const u=curUser();
  if(u){close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('div',{class:'prof'},avEl(u),h('span',{},h('b',{},uName(u)),h('small',{},u.email||'حساب SISE'))),
   h('div',{style:{display:'grid',gap:'10px',marginTop:'14px'}},h('button',{class:'pbtn',onclick:()=>{close();openProfile()}},I('user',20),'ویرایش پروفایل'),h('button',{class:'pbtn ghost',onclick:()=>{close();go('track')}},I('truck',20),'سفارش‌های من'),h('button',{class:'pbtn ghost',onclick:async()=>{await custSignOut();close();toast('از حساب خارج شدید')}},I('logout',20),'خروج از حساب'))),'b');return}
