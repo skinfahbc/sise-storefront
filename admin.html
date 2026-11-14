@@ -1505,6 +1505,7 @@ const PM_READ_KEY='sise_admin_pm_last_read';
 function markPmRead(rows){
  const latest=(rows||[]).reduce((n,r)=>!r.from_admin?Math.max(n,+r.id||0):n,0);
  if(latest){try{localStorage.setItem(PM_READ_KEY,String(latest))}catch(e){}}
+ ADM.pmPeople=new Set((rows||[]).filter(r=>!r.from_admin).map(r=>r.uid).filter(Boolean)).size;
  ADM.pmUnread=0;if(ADM.drawTabs)ADM.drawTabs();
 }
 async function refreshAdminBadges(){
