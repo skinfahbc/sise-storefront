@@ -1432,7 +1432,7 @@ function vidThumb(src,max=400){if(!src)return Promise.resolve('');if(VT[src])ret
   v.addEventListener('loadeddata',()=>{try{v.currentTime=Math.min(ts[0],(v.duration||1)/2)}catch(e){fin('')}});
   v.addEventListener('seeked',step);v.addEventListener('error',()=>fin(best?best.d:''));setTimeout(()=>fin(best?best.d:''),12000);v.src=src;v.load()})}
 function smallAvatar(src,px=56){if(!src)return Promise.resolve('');return new Promise(res=>{const im=new Image();im.onload=()=>{try{const s=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=px;c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,px,px);res(c.toDataURL('image/jpeg',.7))}catch(e){res('')}};im.onerror=()=>res('');im.src=src})}
-const cmAvatar=(m,cls)=>{if(m.is_admin){const a=((S.store&&S.store.adminAvatar)||'')||m.avatar||'',nn=((S.store&&S.store.adminName)||'').trim()||'Sisè';return h('span',{class:'av'+(cls?' '+cls:'')},a?h('img',{src:a,alt:''}):nn[0])}const u=!m.avatar&&(S.users||[]).find(x=>x.avatar&&uName(x)===m.name),src=m.avatar||(u&&u.avatar)||'';return h('span',{class:'av'+(cls?' '+cls:'')},src?h('img',{src,alt:''}):(m.name||'؟')[0])};
+const cmAvatar=(m,cls)=>{if(m.is_admin){const a=((S.store&&S.store.adminAvatar)||'')||m.avatar||'',nn=((S.store&&S.store.adminName)||'').trim()||'sisé';return h('span',{class:'av'+(cls?' '+cls:'')},a?h('img',{src:a,alt:''}):nn[0])}const u=!m.avatar&&(S.users||[]).find(x=>x.avatar&&uName(x)===m.name),src=m.avatar||(u&&u.avatar)||'';return h('span',{class:'av'+(cls?' '+cls:'')},src?h('img',{src,alt:''}):(m.name||'؟')[0])};
 /* ---------- story comments (shared, stored in Supabase) ---------- */
 const CM={all:null,t:0};
 let CM_V2=true;const CM_OLD='id,story_id,name,text,avatar,created_at',CM_NEW=CM_OLD+',uid,is_admin,edited,reply_to,rname,rtext';
@@ -1481,7 +1481,7 @@ function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::');
   m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
   h('small',{},ago(Date.parse(m.created_at)||Date.now()),m.edited?h('span',{class:'ed'},'· ویرایش‌شده'):null),o.acts||null))}
 /* ---------- private chat with the store manager (Supabase table pm + rpc pm_send / pm_list) ---------- */
-const admName=()=>((S.store&&S.store.adminName)||'').trim()||'Sisè';
+const admName=()=>((S.store&&S.store.adminName)||'').trim()||'sisé';
 const admAv=()=>(S.store&&S.store.adminAvatar)||'';
 const PM={rows:[],timer:0};
 const pmSetup=e=>/pm_send|pm_list|schema cache|relation|does not exist|404|Could not find/i.test((e&&e.message)||String(e||''));

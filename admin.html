@@ -1173,7 +1173,7 @@ function vidThumb(src,max=400){if(!src)return Promise.resolve('');if(VT[src])ret
   v.addEventListener('loadeddata',()=>{try{v.currentTime=Math.min(ts[0],(v.duration||1)/2)}catch(e){fin('')}});
   v.addEventListener('seeked',step);v.addEventListener('error',()=>fin(best?best.d:''));setTimeout(()=>fin(best?best.d:''),12000);v.src=src;v.load()})}
 function smallAvatar(src,px=56){if(!src)return Promise.resolve('');return new Promise(res=>{const im=new Image();im.onload=()=>{try{const s=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=px;c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,px,px);res(c.toDataURL('image/jpeg',.7))}catch(e){res('')}};im.onerror=()=>res('');im.src=src})}
-const cmAvatar=(m,cls)=>{if(m.is_admin){const a=((S.store&&S.store.adminAvatar)||'')||m.avatar||'',nn=((S.store&&S.store.adminName)||'').trim()||'Sisè';return h('span',{class:'av'+(cls?' '+cls:'')},a?h('img',{src:a,alt:''}):nn[0])}const u=!m.avatar&&(S.users||[]).find(x=>x.avatar&&uName(x)===m.name),src=m.avatar||(u&&u.avatar)||'';return h('span',{class:'av'+(cls?' '+cls:'')},src?h('img',{src,alt:''}):(m.name||'؟')[0])};
+const cmAvatar=(m,cls)=>{if(m.is_admin){const a=((S.store&&S.store.adminAvatar)||'')||m.avatar||'',nn=((S.store&&S.store.adminName)||'').trim()||'sisé';return h('span',{class:'av'+(cls?' '+cls:'')},a?h('img',{src:a,alt:''}):nn[0])}const u=!m.avatar&&(S.users||[]).find(x=>x.avatar&&uName(x)===m.name),src=m.avatar||(u&&u.avatar)||'';return h('span',{class:'av'+(cls?' '+cls:'')},src?h('img',{src,alt:''}):(m.name||'؟')[0])};
 /* ---------- story comments (shared, stored in Supabase) ---------- */
 const CM={all:null,t:0};
 let CM_V2=true;const CM_OLD='id,story_id,name,text,avatar,created_at',CM_NEW=CM_OLD+',uid,is_admin,edited,reply_to,rname,rtext';
@@ -1222,7 +1222,7 @@ function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::');
   m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
   h('small',{},ago(Date.parse(m.created_at)||Date.now()),m.edited?h('span',{class:'ed'},'· ویرایش‌شده'):null),o.acts||null))}
 /* ---------- private chat with the store manager (Supabase table pm + rpc pm_send / pm_list) ---------- */
-const admName=()=>((S.store&&S.store.adminName)||'').trim()||'Sisè';
+const admName=()=>((S.store&&S.store.adminName)||'').trim()||'sisé';
 const admAv=()=>(S.store&&S.store.adminAvatar)||'';
 const PM={rows:[],timer:0};
 const pmSetup=e=>/pm_send|pm_list|schema cache|relation|does not exist|404|Could not find/i.test((e&&e.message)||String(e||''));
@@ -1696,7 +1696,7 @@ chat(){let rows=[],err='',pimg='',editId=null;const box=h('div',{class:'lst'});
    await sbFetch('/rest/v1/chat_messages',{method:'POST',auth:true,headers:{Prefer:'return=minimal'},body:Object.assign({uid:'admin',name:admName(),avatar:(lg&&/^https?:/.test(lg)&&lg.length<400)?lg:null,text:t,image:url,is_admin:true},CH_V2&&rep?{reply_to:rep.id,rname:rep.name,rtext:rqSnip(rep)}:{})});
    inp.value='';pimg='';drawPv();rep=null;drawRp();toast('پیام ارسال شد');load()}catch(e){toast('ارسال نشد: '+e.message)}};
  box.append(h('div',{class:'empty'},'در حال بارگیری…'));load();
- return[card('پروفایل مدیر در گفتگو',h('p',{},'این نام و عکس کنار پیام‌های «ادمین» در گفتگوی همگانی، نظرات استوری و چت خصوصی نمایش داده می‌شود (برای پیام‌های قدیمی هم). برچسب «ادمین» همان‌جا می‌ماند. بعد از تغییر، «انتشار روی سرور» را بزنید.'),g2(fld('نام نمایشی مدیر',tx(S.store,'adminName',{ph:'Sisè'})),fld('عکس پروفایل مدیر',imgField(S.store,'adminAvatar',{max:240,alpha:false,clearable:true})))),card('ارسال پیام به‌عنوان ادمین',h('p',{},'پیام شما با برچسب «ادمین» و ظاهر متفاوت در گفتگوی همگانی نمایش داده می‌شود.'),rp,inp,pv,h('div',{class:'row'},h('span',{class:'btn sec up'},I('image',18),'افزودن عکس',file),h('button',{class:'btn',onclick:post},I('comment',18),'ارسال'))),
+ return[card('پروفایل مدیر در گفتگو',h('p',{},'این نام و عکس کنار پیام‌های مدیر در گفتگوی همگانی، نظرات استوری و چت خصوصی نمایش داده می‌شود؛ حتی برای پیام‌های قبلی. برچسب «ادمین» هم حفظ می‌شود. تغییرات پس از انتخاب عکس یا ویرایش نام، به‌صورت خودکار روی سرور ذخیره می‌شوند.'),g2(fld('نام نمایشی مدیر',tx(S.store,'adminName',{ph:'sisé'})),fld('عکس پروفایل مدیر',imgField(S.store,'adminAvatar',{max:240,alpha:false,clearable:true})))),card('ارسال پیام به‌عنوان ادمین',h('p',{},'پیام شما با برچسب «ادمین» و ظاهر متفاوت در گفتگوی همگانی نمایش داده می‌شود.'),rp,inp,pv,h('div',{class:'row'},h('span',{class:'btn sec up'},I('image',18),'افزودن عکس',file),h('button',{class:'btn',onclick:post},I('comment',18),'ارسال'))),
   h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('chat')},'بروزرسانی'),card('پیام‌های گفتگوی همگانی',box)]},
 pm(){let rows=[],err='',open=null,pimg='',loaded=false;const box=h('div',{class:'lst'});
  const load=()=>sbFetch('/rest/v1/pm?select=*&order=id.desc&limit=800',{auth:true}).then(r=>{rows=r||[];err='';loaded=true;draw()}).catch(e=>{err=e.message||'خطا';loaded=true;draw()});
@@ -1719,7 +1719,8 @@ pm(){let rows=[],err='',open=null,pimg='',loaded=false;const box=h('div',{class:
   const m=new Map();rows.forEach(r=>{if(!m.has(r.uid))m.set(r.uid,r)});
   add(box,m.size?[...m.entries()].map(([k,last])=>h('button',{class:'pm-th',type:'button',onclick:()=>{open=k;draw();setTimeout(()=>inp.scrollIntoView({block:'center'}),50)}},h('span',{class:'av'},cname(k)[0]),h('span',{},h('b',{},cname(k)),h('small',{},(last.from_admin?'شما: ':'')+(last.text||'📷 عکس'))),!last.from_admin?h('span',{class:'nb'},'پاسخ داده نشده'):null)):h('div',{class:'empty'},'هنوز مشتری پیامی نفرستاده است.'))};
  draw();load();
- return[card('چت خصوصی با مشتری‌ها',h('p',{},'مشتری‌ها از بخش «چت خصوصی با مدیریت» در صفحه گفتگو پیام می‌فرستند. فقط شما و همان مشتری آن را می‌بینید.'),box,h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('pm')},'بروزرسانی')),
+ return[card('پروفایل مدیر در چت خصوصی',h('p',{},'نام و عکس این پروفایل کنار تمام پیام‌های مدیر در چت خصوصی نمایش داده می‌شود. تغییرات به‌صورت خودکار روی سرور ذخیره می‌شوند و در گفتگوی عمومی و نظرات استوری هم یکسان نمایش داده می‌شوند.'),g2(fld('نام نمایشی مدیر',tx(S.store,'adminName',{ph:'sisé'})),fld('عکس پروفایل مدیر',imgField(S.store,'adminAvatar',{max:240,alpha:false,clearable:true})))),
+  card('چت خصوصی با مشتری‌ها',h('p',{},'مشتری‌ها از بخش «چت خصوصی با مدیریت» در صفحه گفتگو پیام می‌فرستند. فقط شما و همان مشتری آن را می‌بینید.'),box,h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('pm')},'بروزرسانی')),
   card('پاسخ',h('p',{},'اول یک گفتگو را از لیست بالا باز کنید، بعد پاسخ بنویسید.'),inp,pv,h('div',{class:'row'},h('span',{class:'btn sec up'},I('image',18),'افزودن عکس',file),h('button',{class:'btn',onclick:()=>{if(!open)return toast('اول یک گفتگو را باز کنید');post()}},I('comment',18),'ارسال پاسخ')))]},
 comments(){let rows=[],v2=true,noCol=false,editId=null,repId=null;const box=h('div',{class:'lst'}),enc=encodeURIComponent;
  const q=cols=>sbFetch('/rest/v1/story_comments?select='+cols+'&order=created_at.asc&limit=600',{auth:true});
