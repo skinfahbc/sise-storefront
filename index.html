@@ -152,9 +152,9 @@ svg{display:block}
 .copy{text-align:center;font-size:12px;color:var(--faint)}
 
 /* bottom nav with liquid notch */
-.nv{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,540px);z-index:20;padding:0 max(14px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-right,0px));pointer-events:none}
-.nv-in{position:relative;height:70px;pointer-events:auto;--nr:0px;--nx:50px;transition:--nr .32s cubic-bezier(.34,1.5,.64,1)}
-.nv-bar{position:absolute;inset:0;border-radius:30px;display:flex;align-items:flex-end;
+.nv{position:fixed!important;inset-inline:0;bottom:0!important;left:0;width:100%;max-width:none;transform:none;margin:0;z-index:100;padding:0 max(14px,env(safe-area-inset-left,0px)) env(safe-area-inset-bottom,0px) max(14px,env(safe-area-inset-right,0px));pointer-events:none}
+.nv-in{position:relative;width:min(100%,540px);height:70px;margin:0 auto;pointer-events:auto;--nr:0px;--nx:50px;transition:--nr .32s cubic-bezier(.34,1.5,.64,1)}
+.nv-bar{position:absolute;inset:0;border-radius:24px 24px 0 0;display:flex;align-items:flex-end;
   -webkit-mask-image:radial-gradient(circle at var(--nx) 4px,transparent calc(var(--nr) - .5px),#000 var(--nr));mask-image:radial-gradient(circle at var(--nx) 4px,transparent calc(var(--nr) - .5px),#000 var(--nr))}
 .nv-b{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);font-size:11.5px;position:relative;transition:color .3s,opacity .25s,transform .35s}
 .nv-b.on{color:var(--accent2);font-weight:700;transform:translateY(9px)}
@@ -1494,7 +1494,7 @@ function pmView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.
  const near=()=>innerHeight+scrollY>=document.documentElement.scrollHeight-220;
  const draw=stick=>{const keep=stick||near();list.innerHTML='';
   if(err){add(list,h('div',{class:'empty'},pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
-  add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},'هنوز پیامی نیست؛ سؤال یا درخواست خود را برای مدیریت بنویسید.'));
+  add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},'هنوز پیامی نیست؛ سلام کنید یا هر سؤالی درباره SISE دارید از دستیار هوشمند بپرسید.'));
   if(keep)requestAnimationFrame(()=>scrollTo({top:document.documentElement.scrollHeight}))};
  const load=async first=>{try{const r=await sbFetch('/rest/v1/rpc/pm_list',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u)},timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
