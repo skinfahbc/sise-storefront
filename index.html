@@ -1025,7 +1025,7 @@ async function custActivate(authUser){
  if(!authUser?.id)throw new Error('حساب ورود معتبر نیست');const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده');
  const pmUid=await custFetch('/rest/v1/rpc/pm_register_account',{method:'POST',body:{},token});
  const full=(authUser.user_metadata?.full_name||'').trim();let u=S.users.find(x=>x.id===authUser.id);
- if(!u){const parts=full.split(/\\s+/);u={id:authUser.id,first:parts.shift()||'مشتری',last:parts.join(' '),name:full||authUser.email,phone:'',email:authUser.email,created:Date.now(),pmUid};S.users.push(u)}
+ if(!u){const parts=full.split(/\s+/);u={id:authUser.id,first:parts.shift()||'مشتری',last:parts.join(' '),name:full||authUser.email,phone:'',email:authUser.email,created:Date.now(),pmUid};S.users.push(u)}
  else{u.email=authUser.email;u.pmUid=pmUid;if(full&&!u.name)u.name=full}
  V.user=u.id;saveV();persist();renderHeader();return u;
 }
@@ -1427,7 +1427,7 @@ function openAuth(){let close;const u=curUser();
  const name=h('input',{class:'in',placeholder:'نام و نام خانوادگی',autocomplete:'name'}),email=h('input',{class:'in',type:'email',placeholder:'آدرس جیمیل',autocomplete:'email',value:'abolfazlhbc3@gmail.com',style:{direction:'ltr',textAlign:'left'}}),pass=h('input',{class:'in',type:'password',placeholder:'رمز عبور (حداقل ۸ کاراکتر)',autocomplete:'current-password',style:{direction:'ltr',textAlign:'left'}}),tabs=h('div',{class:'row'}),form=h('form',{style:{display:'grid',gap:'12px'}}),hint=h('small',{class:'fh'},'با ایمیل و رمز عبور وارد شوید؛ برای ورود در دستگاه دیگر از همین اطلاعات استفاده کنید.');
  const draw=()=>{tabs.innerHTML='';add(tabs,[['in','ورود'],['up','ثبت‌نام']].map(([k,t])=>h('button',{class:'tb'+(mode===k?' on':''),type:'button',style:{flex:1,justifyContent:'center'},onclick:()=>{mode=k;pass.autocomplete=mode==='in'?'current-password':'new-password';draw()}},t)));form.innerHTML='';add(form,[mode==='up'?name:null,email,pass,hint,h('button',{class:'pbtn',type:'submit',disabled:busy},mode==='in'?'ورود به حساب':'ساخت حساب'),mode==='in'?h('button',{class:'tb',type:'button',onclick:async()=>{if(!email.value.trim())return toast('ابتدا ایمیل را وارد کنید');try{await custFetch('/auth/v1/recover',{method:'POST',body:{email:email.value.trim().toLowerCase()}});toast('لینک بازیابی رمز به ایمیلتان ارسال شد')}catch(e){toast('ارسال لینک انجام نشد: '+e.message)}}},'فراموشی رمز عبور؟'):null])};
  form.onsubmit=async e=>{e.preventDefault();if(busy)return;const em=email.value.trim().toLowerCase(),pw=pass.value;
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(em))return toast('ایمیل معتبر وارد کنید');if(pw.length<8)return toast('رمز عبور باید حداقل ۸ کاراکتر باشد');if(mode==='up'&&!name.value.trim())return toast('نام و نام خانوادگی را وارد کنید');
+  if(!/^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(em))return toast('ایمیل معتبر وارد کنید');if(pw.length<8)return toast('رمز عبور باید حداقل ۸ کاراکتر باشد');if(mode==='up'&&!name.value.trim())return toast('نام و نام خانوادگی را وارد کنید');
   busy=true;draw();try{if(mode==='in'){await custSignIn(em,pw);close();toast('ورود موفق؛ خوش آمدید 🌷')}
    else{const ok=await custSignUp(em,pw,name.value.trim());if(ok){close();toast('حساب ساخته شد؛ خوش آمدید 🌷')}else{mode='in';draw();toast('لینک تأیید به ایمیلتان ارسال شد؛ پس از تأیید با همین ایمیل و رمز وارد شوید')}}}
   catch(err){toast('ورود انجام نشد: '+err.message)}finally{busy=false;draw()}};
