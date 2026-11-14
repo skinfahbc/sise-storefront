@@ -823,11 +823,10 @@ html{overflow-x:hidden;max-width:100%}
 </style>
 
 <style id="sise-drawer-scroll-fix">
-/* Keep the side menu inside the visible mobile viewport and make its own content scrollable. */
-.ov.s{height:100%;height:100dvh;min-height:0;overflow:hidden;align-items:stretch;overscroll-behavior:contain}
-.ov.s>.dr{height:100%;max-height:100%;min-height:0;flex:0 1 min(88vw,400px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;scrollbar-gutter:stable}
-.ov.s>.dr .tb{position:sticky;bottom:0;z-index:3;align-self:center;background:var(--sheet);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 -8px 18px rgba(0,0,0,.08)}
-@supports not (height:100dvh){.ov.s{height:100vh}.ov.s>.dr{height:100vh}}
+/* Pin the drawer to the actual viewport; scroll the drawer itself on mobile browsers. */
+.ov.s{position:fixed;inset:0;display:block;height:100vh;height:100dvh;overflow:hidden;overscroll-behavior:none}
+.ov.s>.dr{position:absolute;inset-block:0;inset-inline-start:0;width:min(88vw,400px);height:auto;max-height:none;min-height:0;box-sizing:border-box;display:flex;flex-direction:column;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;flex:none;padding-bottom:max(22px,env(safe-area-inset-bottom,0px))}
+.ov.s>.dr .tb{position:relative;z-index:3;align-self:center;flex:none;margin-top:12px}
 </style>
 </head>
 <body>
