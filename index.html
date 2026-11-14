@@ -1100,7 +1100,7 @@ function renderHeader(){const hd=$('#hd'),u=curUser();hd.innerHTML='';
    h('button',{class:'ib','aria-label':u?'حساب کاربری':'ورود یا ثبت‌نام',onclick:openAuth,html:u?(u.avatar?`<img class="hd-av" src="${u.avatar}" alt="">`:`<b style="color:var(--accent2)">${uInit(u)}</b>`):ic('user')})),
   h('a',{class:'logo',href:'#',onclick:e=>{e.preventDefault();go('home')}},S.store.logo?lgw():[I('bag',26),S.store.name])))}
 function buildNav(){const nv=$('#nv');nv.innerHTML='';const inn=h('div',{class:'nv-in'}),bar=h('div',{class:'nv-bar glass'});
- S.nav.forEach(n=>bar.append(h('button',{class:'nv-b','data-v':n.view,'aria-label':n.label,onclick:()=>go(n.view)},I(n.icon,22),h('span',{},n.label),n.view==='cart'?h('em',{class:'cnt',hidden:true}):null)));
+ S.nav.forEach(n=>bar.append(h('button',{class:'nv-b','data-v':n.view,'aria-label':n.label,onclick:()=>{const drawer=document.querySelector('.ov.s');if(drawer){const modal=stack.find(x=>x.ov===drawer);if(modal)modal.close();else drawer.remove()}go(n.view)}},I(n.icon,22),h('span',{},n.label),n.view==='cart'?h('em',{class:'cnt',hidden:true}):null)));
  inn.append(bar,h('div',{class:'nv-bub'}));nv.append(inn);cartBadge()}
 function setNav(animate){const nv=$('#nv'),inn=$('.nv-in',nv),bub=$('.nv-bub',nv);if(!inn)return;const btns=[...nv.querySelectorAll('.nv-b')],act=btns.find(b=>b.dataset.v===cur),item=S.nav.find(n=>n.view===cur);
  const apply=()=>{btns.forEach(b=>b.classList.toggle('on',b===act));if(act){const x=act.offsetLeft+act.offsetWidth/2;inn.style.setProperty('--nx',x+'px');bub.style.left=x+'px';bub.innerHTML=ic(item.icon,26);inn.style.setProperty('--nr','37px')}else inn.style.setProperty('--nr','0px')};
