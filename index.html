@@ -516,6 +516,7 @@ select.in option{color:#222}
 .ch-login{width:100%;justify-content:center}
 
 /* private chat tabs */
+ .sise-ai-banner{position:relative;display:flex;align-items:center;gap:12px;padding:14px 42px 14px 14px;margin:8px 0 18px;border:1px solid var(--gb);border-radius:20px}.sise-ai-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--field);color:var(--accent)}.sise-ai-copy{display:grid;gap:3px;flex:1;min-width:0}.sise-ai-copy small{font-size:12px;color:var(--muted)}.sise-ai-close{position:absolute;top:8px;right:8px;border:0;background:transparent;color:var(--muted);padding:5px;cursor:pointer}.sise-ai-banner .btn{white-space:nowrap}
 .ch-tabs{display:flex;gap:6px;padding:4px;border-radius:18px;background:var(--field);border:1px solid var(--gb)}
 .ch-tabs .cht{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-size:13.5px;font-weight:600;padding:10px 6px;border-radius:14px;cursor:pointer}
 .ch-tabs .cht.on{background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on-accent)}
@@ -1049,6 +1050,7 @@ const uInit=u=>uName(u).trim()[0]||'؟';
 const avEl=(u,cls)=>h('span',{class:'av'+(cls?' '+cls:'')},u&&u.avatar?h('img',{src:u.avatar,alt:''}):(u?uInit(u):I('user',24)));
 function openUrl(u){const a=h('a',{href:u,target:'_blank',rel:'noopener'});document.body.append(a);a.click();a.remove()}
 function runTarget(t){if(!t)return;
+ if(t==='chat-ai'){CH.tab='ai';return go('chat')}if(t==='view:chat'){CH.tab='pub';return go('chat')}
  if(t.startsWith('page:'))return openPage(t.slice(5));if(t==='call'||t==='contact')return callSupport();if(t.startsWith('view:'))return go(t.slice(5));if(t==='about'){go('home');setTimeout(()=>{const e=$('#about');e&&e.scrollIntoView({behavior:'smooth',block:'center'})},120);return}
  if(t==='contact')return openContact();if(t.startsWith('url:'))return openUrl(t.slice(4));if(t.startsWith('product:'))return openProduct(t.slice(8));if(t==='login')return openAuth()}
 const ago=ts=>{const m=Math.round((Date.now()-ts)/6e4);return m<1?'همین الان':m<60?fa(m)+' دقیقه پیش':m<1440?fa(Math.round(m/60))+' ساعت پیش':fa(Math.round(m/1440))+' روز پیش'};
@@ -1228,8 +1230,8 @@ function saleRail(){
    if(pend.touch)lp=setTimeout(()=>begin(e),320)})}
  liveSway(row);const stage=h('div',{class:'sr-stage'},h('span',{class:'sr-spot',style:{left:'18%'}}),h('span',{class:'sr-spot',style:{left:'50%'}}),h('span',{class:'sr-spot',style:{left:'82%'}}),row,toteEl());
  return h('section',{class:'srl srs'},secHead(R.title||'تخفیف‌خورده‌ها',h('button',{onclick:()=>go('categories')},'مشاهده همه')),stage,h('p',{class:'sr-hint'},R.hint||'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید'))}
-function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;return[
- hn,!hn&&sh.stories&&storiesSec(false),
+function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;let aiClosed=false;try{aiClosed=localStorage.getItem('sise_ai_banner_closed')==='1'}catch(e){}const aiBanner=aiClosed?null:h('section',{class:'sise-ai-banner glass'},h('button',{class:'sise-ai-close','aria-label':'بستن اعلان',onclick:()=>{try{localStorage.setItem('sise_ai_banner_closed','1')}catch(e){}const el=$('.sise-ai-banner');if(el)el.remove()}},ic('close',18)),h('span',{class:'sise-ai-icon',html:ic('sparkles',25)}),h('div',{class:'sise-ai-copy'},h('b',{},'چت با هوش مصنوعی SISE'),h('small',{},'سؤال‌هات درباره کیف‌ها، قیمت و خدمات رو بپرس')),h('button',{class:'btn',onclick:()=>{CH.tab='ai';go('chat')}},'شروع گفتگو')));return[
+ aiBanner,hn,!hn&&sh.stories&&storiesSec(false),
  sh.intro&&h('section',{class:'intro glass'},h('span',{class:'star',html:ic('star',34)}),h('span',{class:'k'},A.kicker),h('h3',{},A.introTitle),h('p',{},A.introText)),
  sh.products&&saleRail(),
  sh.products&&h('section',{},secHead('جدیدترین محصولات',h('button',{onclick:()=>go('categories')},'مشاهده همه')),(()=>{const sec=h('div',{});const newest=[...S.products].sort((a,b)=>(+b.createdAt||+b.created_at||0)-(+a.createdAt||+a.created_at||0));sec.append(pagedGrid(newest,()=>sec.parentElement));return sec})()),
@@ -1386,7 +1388,7 @@ function openMenu(){let close;const u=curUser();
  const dr=h('div',{class:'dr',role:'dialog','aria-label':'منو'},
   h('div',{class:'dr-ban'},h('img',{src:S.menu.banner,alt:''}),h('button',{class:'dr-x','aria-label':'بستن منو',html:ic('chr',20),onclick:()=>close()}),h('div',{class:'t'},h('b',{},S.menu.title),h('span',{},S.menu.sub))),
   h('button',{class:'prof glass',onclick:()=>{close();openAuth()}},avEl(u),h('span',{style:{flex:1}},h('b',{},u?u.name:'ورود / ثبت‌نام'),h('small',{},u?u.phone:'برای پیگیری و ثبت سفارش')),h('span',{class:'ch',html:ic('chl',18)})),
-  h('div',{class:'lbl'},'ناوبری'),h('div',{class:'mg glass'},[...S.menu.items,...(S.menu.items.some(m=>m.target==='view:chat')?[]:[{id:'chat',label:'گفتگوی همگانی',icon:'comment',color:'#e0794f',target:'view:chat'}])].map(m=>h('button',{class:'mi',onclick:()=>go2(m.target)},h('span',{class:'mc',style:{background:m.color},html:ic(m.icon,22)}),h('b',{},m.label),h('span',{class:'ch',html:ic('chl',16)})))),
+  h('div',{class:'lbl'},'ناوبری'),h('div',{class:'mg glass'},[...S.menu.items,...(S.menu.items.some(m=>m.target==='view:chat')?[]:[{id:'chat',label:'گفتگوی همگانی',icon:'comment',color:'#e0794f',target:'view:chat'}]),{id:'chat-ai',label:'چت با هوش مصنوعی',icon:'sparkles',color:'#8b70c8',target:'chat-ai'}].map(m=>h('button',{class:'mi',onclick:()=>go2(m.target)},h('span',{class:'mc',style:{background:m.color},html:ic(m.icon,22)}),h('b',{},m.label),h('span',{class:'ch',html:ic('chl',16)})))),
   h('div',{class:'lbl'},'تنظیمات'),h('div',{class:'mg glass'},isStandalone()?null:h('button',{class:'mi',onclick:()=>{close();setTimeout(installApp,80)}},h('span',{class:'mc',style:{background:'#2f7d6b'},html:ic('phone',22)}),h('b',{},'نصب برنامه روی گوشی'),h('span',{class:'ch',html:ic('chl',16)})),h('button',{class:'mi',onclick:toggleMode},h('span',{class:'mc',style:{background:'#4b5563'},html:ic('moon',22)}),h('b',{},'حالت شب'),h('span',{class:'tg'+(isDark()?' on':'')}))),
   h('div',{class:'soc',style:{marginTop:'auto'}},S.socials.map(s=>h('a',{href:s.url,target:'_blank',rel:'noopener','aria-label':s.name,html:ic(s.icon,22),style:{width:'46px',height:'46px'}}))),
   h('button',{class:'tb',style:{alignSelf:'center'},onclick:()=>{close();location.href='admin.html'}},I('lock',16),'ورود مدیر'));
@@ -1485,34 +1487,35 @@ const admName=()=>((S.store&&S.store.adminName)||'').trim()||'sisé';
 const admAv=()=>(S.store&&S.store.adminAvatar)||'';
 const PM={rows:[],timer:0};
 const pmSetup=e=>/pm_send|pm_list|schema cache|relation|does not exist|404|Could not find/i.test((e&&e.message)||String(e||''));
-function chTabs(){const t=(k,l)=>h('button',{type:'button',class:'cht'+(CH.tab===k?' on':''),onclick:()=>{if(CH.tab!==k){CH.tab=k;renderMain()}}},l);return h('div',{class:'ch-tabs'},t('pub','گفتگوی همگانی'),t('pm','چت خصوصی با مدیریت'))}
-function pmView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;const u=curUser(),root=h('div',{class:'ch'}),list=h('div',{class:'ch-list'});
- root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic('lock',22)}),h('div',{},h('b',{},'چت خصوصی با مدیریت'),h('small',{},'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'))),chTabs(),list);
- if(!u){add(list,h('div',{class:'empty'},'برای چت خصوصی با مدیریت ابتدا وارد شوید.'));root.append(h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'ورود یا ثبت‌نام')));return root}
- let pimg='',sending=false,err='',sig='';const inp=h('input',{class:'in',placeholder:'پیام خصوصی به مدیریت…',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
+function chTabs(){const t=(k,l)=>h('button',{type:'button',class:'cht'+(CH.tab===k?' on':''),onclick:()=>{if(CH.tab!==k){CH.tab=k;renderMain()}}},l);return h('div',{class:'ch-tabs'},t('pub','چت عمومی'),t('pm','چت با مدیریت'),t('ai','چت با هوش مصنوعی'))}
+function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;const u=curUser(),root=h('div',{class:'ch'}),list=h('div',{class:'ch-list'});
+ root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic(channel==='ai'?'sparkles':'lock',22)}),h('div',{},h('b',{},channel==='ai'?'چت با هوش مصنوعی':'چت با مدیریت'),h('small',{},channel==='ai'?'پاسخ‌گویی هوشمند درباره محصولات و خدمات SISE':'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'))),list);
+ if(!u){add(list,h('div',{class:'empty'},channel==='ai'?'برای استفاده از دستیار هوشمند ابتدا وارد شوید.':'برای چت خصوصی با مدیریت ابتدا وارد شوید.'));root.append(chTabs(),h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'ورود یا ثبت‌نام')));return root}
+ let pimg='',sending=false,err='',sig='';const inp=h('input',{class:'in',placeholder:channel==='ai'?'پیام خود را برای هوش مصنوعی بنویسید…':'پیام خود را بنویسید',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
  const drawPv=()=>{pv.innerHTML='';pv.hidden=!pimg;if(pimg)add(pv,[h('img',{src:pimg,alt:''}),h('span',{},'عکس آماده ارسال است'),h('button',{type:'button',class:'sb dg','aria-label':'حذف عکس',html:ic('close',16),onclick:()=>{pimg='';drawPv()}})])};
  const near=()=>innerHeight+scrollY>=document.documentElement.scrollHeight-220;
  const draw=stick=>{const keep=stick||near();list.innerHTML='';
   if(err){add(list,h('div',{class:'empty'},pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
-  add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},'هنوز پیامی نیست؛ سلام کنید یا هر سؤالی درباره SISE دارید از دستیار هوشمند بپرسید.'));
+  add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},channel==='ai'?'هنوز پیامی نیست؛ هر سؤالی درباره کیف‌ها و خدمات SISE دارید بپرسید.':'هنوز پیامی نیست؛ پیام شما مستقیماً برای مدیریت فروشگاه ارسال می‌شود.'));
   if(keep)requestAnimationFrame(()=>scrollTo({top:document.documentElement.scrollHeight}))};
- const load=async first=>{try{const r=await sbFetch('/rest/v1/rpc/pm_list',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u)},timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
+ const load=async first=>{try{const r=await sbFetch('/rest/v1/rpc/pm_list',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u),p_channel:channel},timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
    const tmp={id:'t'+uid(),uid:u.id,text:t,image:url,from_admin:false,created_at:new Date().toISOString()};PM.rows=PM.rows.concat([tmp]);inp.value='';pimg='';drawPv();err='';draw(true);
    try{
-    const pmId=await sbFetch('/rest/v1/rpc/pm_send',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u),p_name:uName(u),p_text:t,p_image:url},timeout:10000});
+    const pmId=await sbFetch('/rest/v1/rpc/pm_send',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u),p_name:uName(u),p_text:t,p_image:url,p_channel:channel},timeout:10000});
     buzz(12);
-    fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key},body:JSON.stringify({uid:u.id,token:chTok(u),message_id:Number(pmId)})}).catch(()=>{});
+    if(channel==='ai')fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key},body:JSON.stringify({uid:u.id,token:chTok(u),message_id:Number(pmId),channel:'ai'})}).catch(()=>{});
    }
    catch(e){PM.rows=PM.rows.filter(x=>x!==tmp);draw();toast(pmSetup(e)?'این بخش هنوز راه‌اندازی نشده است':'ارسال نشد: '+e.message)}}
   finally{sending=false;sig='';load(false)}};
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
- root.append(h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},pv,h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>file.click()}),inp,file,h('button',{class:'btn',type:'submit','aria-label':'ارسال'},'ارسال')));
+ root.append(chTabs(),h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},pv,h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>file.click()}),inp,file,h('button',{class:'btn',type:'submit','aria-label':'ارسال'},'ارسال')));
  PM.rows=[];draw(true);load(true);
- PM.timer=setInterval(()=>{if(cur!=='chat'||CH.tab!=='pm'||!root.isConnected){clearInterval(PM.timer);PM.timer=0;return}if(!document.hidden)load(false)},5000);
+ PM.timer=setInterval(()=>{if(cur!=='chat'||CH.tab!==channelToTab(channel)||!root.isConnected){clearInterval(PM.timer);PM.timer=0;return}if(!document.hidden)load(false)},5000);
  return root}
-function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;if(CH.tab==='pm')return pmView();const u=curUser(),me=u?u.id:null,adm=!!sbSess();
+function channelToTab(channel){return channel==='ai'?'ai':'pm'}
+function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;if(CH.tab==='pm')return pmView('management');if(CH.tab==='ai')return pmView('ai');const u=curUser(),me=u?u.id:null,adm=!!sbSess();
  let pimg='',editing=null,sending=false,replying=null;
  const list=h('div',{class:'ch-list'}),inp=h('input',{class:'in',id:'ch-in',placeholder:'پیام خود را بنویسید…',maxlength:'500',autocomplete:'off'}),root=h('div',{class:'ch'});
  const sp=h('div',{class:'ch-sp',hidden:true},STICKERS.map(s=>h('button',{type:'button',onclick:()=>{sp.hidden=true;send('::st::'+s)}},s)));
@@ -1556,7 +1559,7 @@ function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);P
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
  const cp=(u||adm)?h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},eb,rb,pv,sp,h('button',{class:'ch-st',type:'button','aria-label':'استیکر',onclick:()=>{if(!editing)sp.hidden=!sp.hidden}},'😊'),h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>{if(!editing)file.click()}}),inp,file,sbtn):h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'برای گفتگو وارد شوید یا ثبت‌نام کنید'));
  cp.addEventListener('focusin',e=>{if(e.target.matches('input'))setTimeout(()=>e.target.scrollIntoView({block:'nearest'}),300)});
- root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic('comment',22)}),h('div',{},h('b',{},'گفتگوی همگانی'),h('small',{},'با بقیه‌ی مشتری‌ها گفتگو کنید'))),chTabs(),list,cp);
+ root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic('comment',22)}),h('div',{},h('b',{},'گفتگوی همگانی'),h('small',{},'با بقیه‌ی مشتری‌ها گفتگو کنید'))),list,chTabs(),cp);
  draw(true);chLoad(true).then(()=>draw(true));
  CH.timer=setInterval(async()=>{if(cur!=='chat'||!root.isConnected){clearInterval(CH.timer);CH.timer=0;return}if(document.hidden)return;
   const nu=curUser();if((nu?nu.id:null)!==me){renderMain();return}if(await chLoad(false))draw(false)},4000);
