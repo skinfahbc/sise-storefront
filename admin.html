@@ -1560,7 +1560,7 @@ rack(){
   g2(fld('نام کیف',tx(it,'title')),fld('محصول مرتبط (اختیاری)',pick(it,'productId',productOpts))),
   fld('توضیحات و نوشته کیف',tx(it,'desc',{area:true,rows:3})),
   g2(fld('قیمت فروش',tx(it,'price',{num:true})),fld('قیمت قبل از تخفیف',tx(it,'oldPrice',{num:true}))),
-  g2(fld('درصد تخفیف (قیمت قبل از تخفیف خودکار محاسبه می‌شود)',pctF(it)),tog(it,'active','نمایش در رگال')),\n  fld('موجودی رگال (تعداد؛ صفر = برداشتن از رگال)',tx(it,'stock',{num:true})),
+  g2(fld('درصد تخفیف (قیمت قبل از تخفیف خودکار محاسبه می‌شود)',pctF(it)),tog(it,'active','نمایش در رگال')),\n  fld('موجودی رگال (تعداد؛ صفر = برداشتن از رگال)',tx(it,'stock')),
   fld('عکس اصلی کیف · پس‌زمینه شفاف پیشنهاد می‌شود',imgField(it,'image',{max:2200,q:.94,clearable:true,alpha:true})),
   fld('عکس پشت کیف (اختیاری)',imgField(it,'backImage',{max:2200,q:.94,clearable:true,alpha:true})),
   fld('متن دکمه/برچسب (اختیاری)',tx(it,'label'))
