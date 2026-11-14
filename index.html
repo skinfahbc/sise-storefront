@@ -1007,6 +1007,33 @@ async function sbFetch(path,{method='GET',body,auth=false,headers={},raw=false,t
   const tx=await r.text();if(!tx)return null;try{return JSON.parse(tx)}catch(e){return tx}}
  catch(e){if(e.name==='AbortError')throw new Error('پاسخی از سرور نیامد (اینترنت یا فیلتر)');throw e}finally{clearTimeout(t)}}
 async function sbLogin(email,pw){const r=await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password:pw}});sbSave({access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+r.expires_in,email})}
+
+const CUST_KEY='sise_customer_session';
+const custSess=()=>{try{return JSON.parse(localStorage.getItem(CUST_KEY)||'null')}catch(e){return null}};
+const custSave=s=>{try{s?localStorage.setItem(CUST_KEY,JSON.stringify(s)):localStorage.removeItem(CUST_KEY)}catch(e){}};
+async function custFetch(path,{method='GET',body,token,timeout=12000}={}){
+ const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),timeout);
+ try{const headers={apikey:SB.key,'Content-Type':'application/json'};if(token)headers.Authorization='Bearer '+token;
+  const r=await fetch(SB.url+path,{method,headers,body:body==null?undefined:JSON.stringify(body),signal:ctl.signal});
+  const raw=await r.text();let data=null;try{data=raw?JSON.parse(raw):null}catch(e){data=raw}
+  if(!r.ok)throw new Error(data?.msg||data?.message||data?.error_description||data?.error||('خطای سرور '+r.status));return data;
+ }catch(e){if(e.name==='AbortError')throw new Error('پاسخی از سرور دریافت نشد');throw e}finally{clearTimeout(tm)}
+}
+async function custToken(){let s=custSess();if(!s)return null;if(s.exp>Date.now()/1000+60)return s.access;
+ try{const r=await custFetch('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:s.refresh}});s={access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+r.expires_in,email:r.user?.email||s.email};custSave(s);return s.access}catch(e){custSave(null);return null}}
+async function custActivate(authUser){
+ if(!authUser?.id)throw new Error('حساب ورود معتبر نیست');const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده');
+ const pmUid=await custFetch('/rest/v1/rpc/pm_register_account',{method:'POST',token});
+ const full=(authUser.user_metadata?.full_name||'').trim();let u=S.users.find(x=>x.id===authUser.id);
+ if(!u){const parts=full.split(/\\s+/);u={id:authUser.id,first:parts.shift()||'مشتری',last:parts.join(' '),name:full||authUser.email,phone:'',email:authUser.email,created:Date.now(),pmUid};S.users.push(u)}
+ else{u.email=authUser.email;u.pmUid=pmUid;if(full&&!u.name)u.name=full}
+ V.user=u.id;saveV();persist();renderHeader();return u;
+}
+async function custRestore(){const token=await custToken();if(!token)return false;try{const user=await custFetch('/auth/v1/user',{token});await custActivate(user);return true}catch(e){custSave(null);V.user=null;saveV();return false}}
+async function custSignIn(email,password){const r=await custFetch('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password}});custSave({access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+r.expires_in,email:r.user?.email||email});return custActivate(r.user)}
+async function custSignUp(email,password,fullName){const r=await custFetch('/auth/v1/signup',{method:'POST',body:{email,password,data:{full_name:fullName}}});if(!r.access_token||!r.user)return false;custSave({access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+r.expires_in,email:r.user.email||email});await custActivate(r.user);return true}
+async function custSignOut(){custSave(null);V.user=null;saveV();renderHeader()}
+
 /* public content: visitors read, admin writes */
 async function sbPull(timeout){const r=await sbFetch('/rest/v1/site?id=eq.main&select=data,updated_at',{timeout:timeout||6000});return r&&r[0]||null}
 function applyRemote(row){if(!row||!row.data||!row.data.products||row.updated_at===S._ts)return false;
@@ -1394,14 +1421,17 @@ function openMenu(){let close;const u=curUser();
   h('button',{class:'tb',style:{alignSelf:'center'},onclick:()=>{close();location.href='admin.html'}},I('lock',16),'ورود مدیر'));
  close=openModal(dr,'s')}
 function openAuth(){let close;const u=curUser();
- if(u){close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('div',{class:'prof'},avEl(u),h('span',{},h('b',{},uName(u)),h('small',{},u.phone))),
-  h('div',{style:{display:'grid',gap:'10px',marginTop:'14px'}},h('button',{class:'pbtn',onclick:()=>{close();openProfile()}},I('user',20),'ویرایش پروفایل'),h('button',{class:'pbtn ghost',onclick:()=>{close();go('track')}},I('truck',20),'سفارش‌های من'),h('button',{class:'pbtn ghost',onclick:()=>{V.user=null;saveV();close();renderHeader();toast('از حساب خارج شدید')}},I('logout',20),'خروج از حساب'))),'b');return}
- let mode='in';const name=h('input',{class:'in',id:'a-name',placeholder:'نام و نام خانوادگی'}),phone=h('input',{class:'in',id:'a-phone',type:'tel',inputmode:'tel',placeholder:'شماره موبایل'}),tabs=h('div',{class:'row'}),form=h('form',{style:{display:'grid',gap:'12px'}});
- const draw=()=>{tabs.innerHTML='';add(tabs,[['in','ورود'],['up','ثبت‌نام']].map(([k,t])=>h('button',{class:'tb'+(mode===k?' on':''),type:'button',style:{flex:1,justifyContent:'center'},onclick:()=>{mode=k;draw()}},t)));form.innerHTML='';add(form,[mode==='up'?name:null,phone,h('button',{class:'pbtn',type:'submit'},mode==='in'?'ورود':'ساخت حساب')])};
- form.onsubmit=e=>{e.preventDefault();const ph=normNum(phone.value);if(!/^09\d{9}$/.test(ph))return toast('شماره موبایل معتبر نیست');let x=S.users.find(y=>y.phone===ph);
-  if(mode==='in'){if(!x)return toast('حسابی با این شماره نیست؛ ثبت‌نام کنید')}else{if(!name.value.trim())return toast('نام را وارد کنید');if(!x){const nm=name.value.trim().split(/\s+/);x={id:uid(),first:nm[0],last:nm.slice(1).join(' '),name:name.value.trim(),phone:ph,created:Date.now()};S.users.push(x);persist()}}
-  V.user=x.id;saveV();close();renderHeader();toast('خوش آمدید '+uName(x))};
- draw();close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('h3',{},'ورود یا ثبت‌نام'),tabs,h('div',{style:{height:'12px'}}),form),'c')}
+ if(u){close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('div',{class:'prof'},avEl(u),h('span',{},h('b',{},uName(u)),h('small',{},u.email||'حساب SISE'))),
+  h('div',{style:{display:'grid',gap:'10px',marginTop:'14px'}},h('button',{class:'pbtn',onclick:()=>{close();openProfile()}},I('user',20),'ویرایش پروفایل'),h('button',{class:'pbtn ghost',onclick:()=>{close();go('track')}},I('truck',20),'سفارش‌های من'),h('button',{class:'pbtn ghost',onclick:async()=>{await custSignOut();close();toast('از حساب خارج شدید')}},I('logout',20),'خروج از حساب'))),'b');return}
+ let mode='in',busy=false;
+ const name=h('input',{class:'in',placeholder:'نام و نام خانوادگی',autocomplete:'name'}),email=h('input',{class:'in',type:'email',placeholder:'آدرس جیمیل',autocomplete:'email',value:'abolfazlhbc3@gmail.com',style:{direction:'ltr',textAlign:'left'}}),pass=h('input',{class:'in',type:'password',placeholder:'رمز عبور (حداقل ۸ کاراکتر)',autocomplete:'current-password',style:{direction:'ltr',textAlign:'left'}}),tabs=h('div',{class:'row'}),form=h('form',{style:{display:'grid',gap:'12px'}}),hint=h('small',{class:'fh'},'با ایمیل و رمز عبور وارد شوید؛ برای ورود در دستگاه دیگر از همین اطلاعات استفاده کنید.');
+ const draw=()=>{tabs.innerHTML='';add(tabs,[['in','ورود'],['up','ثبت‌نام']].map(([k,t])=>h('button',{class:'tb'+(mode===k?' on':''),type:'button',style:{flex:1,justifyContent:'center'},onclick:()=>{mode=k;pass.autocomplete=mode==='in'?'current-password':'new-password';draw()}},t)));form.innerHTML='';add(form,[mode==='up'?name:null,email,pass,hint,h('button',{class:'pbtn',type:'submit',disabled:busy},mode==='in'?'ورود به حساب':'ساخت حساب'),mode==='in'?h('button',{class:'tb',type:'button',onclick:async()=>{if(!email.value.trim())return toast('ابتدا ایمیل را وارد کنید');try{await custFetch('/auth/v1/recover',{method:'POST',body:{email:email.value.trim().toLowerCase()}});toast('لینک بازیابی رمز به ایمیلتان ارسال شد')}catch(e){toast('ارسال لینک انجام نشد: '+e.message)}}},'فراموشی رمز عبور؟'):null])};
+ form.onsubmit=async e=>{e.preventDefault();if(busy)return;const em=email.value.trim().toLowerCase(),pw=pass.value;
+  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(em))return toast('ایمیل معتبر وارد کنید');if(pw.length<8)return toast('رمز عبور باید حداقل ۸ کاراکتر باشد');if(mode==='up'&&!name.value.trim())return toast('نام و نام خانوادگی را وارد کنید');
+  busy=true;draw();try{if(mode==='in'){await custSignIn(em,pw);close();toast('ورود موفق؛ خوش آمدید 🌷')}
+   else{const ok=await custSignUp(em,pw,name.value.trim());if(ok){close();toast('حساب ساخته شد؛ خوش آمدید 🌷')}else{mode='in';draw();toast('لینک تأیید به ایمیلتان ارسال شد؛ پس از تأیید با همین ایمیل و رمز وارد شوید')}}}
+  catch(err){toast('ورود انجام نشد: '+err.message)}finally{busy=false;draw()}};
+ draw();close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('h3',{},'ورود با جیمیل'),h('p',{class:'fh'},'حساب دائمی SISE بسازید تا با پاک شدن حافظه یا تعویض گوشی، دوباره وارد شوید.'),tabs,h('div',{style:{height:'12px'}}),form),'c')}
 function openProfile(){const u=curUser();if(!u)return openAuth();let av=u.avatar||'',close;
  const pv=h('span',{class:'av big'}),draw=()=>{pv.innerHTML='';pv.append(av?h('img',{src:av,alt:''}):uInit(u))};draw();
  const file=h('input',{type:'file',accept:'image/*','aria-label':'تغییر عکس پروفایل'});file.onchange=async()=>{const f=file.files[0];if(!f)return;try{av=await readFile(f,{max:360});draw()}catch(e){toast(e.message||'بارگذاری نشد')}file.value=''};
@@ -1498,14 +1528,14 @@ function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearIn
   if(err){add(list,h('div',{class:'empty'},pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
   add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},channel==='ai'?'هنوز پیامی نیست؛ هر سؤالی درباره کیف‌ها و خدمات SISE دارید بپرسید.':'هنوز پیامی نیست؛ پیام شما مستقیماً برای مدیریت فروشگاه ارسال می‌شود.'));
   if(keep)requestAnimationFrame(()=>scrollTo({top:document.documentElement.scrollHeight}))};
- const load=async first=>{try{const r=await sbFetch('/rest/v1/rpc/pm_list',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u),p_channel:channel},timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
+ const load=async first=>{try{const r=await sbFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
    const tmp={id:'t'+uid(),uid:u.id,text:t,image:url,from_admin:false,created_at:new Date().toISOString()};PM.rows=PM.rows.concat([tmp]);inp.value='';pimg='';drawPv();err='';draw(true);
    try{
-    const pmId=await sbFetch('/rest/v1/rpc/pm_send',{method:'POST',body:{p_uid:u.id,p_tok:chTok(u),p_name:uName(u),p_text:t,p_image:url,p_channel:channel},timeout:10000});
+    const pmId=await sbFetch('/rest/v1/rpc/pm_send_auth',{method:'POST',body:{p_name:uName(u),p_text:t,p_image:url,p_channel:channel},timeout:10000});
     buzz(12);
-    if(channel==='ai')fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key},body:JSON.stringify({uid:u.id,token:chTok(u),message_id:Number(pmId),channel:'ai'})}).catch(()=>{});
+    if(channel==='ai'){const access=await custToken();fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key,Authorization:'Bearer '+access},body:JSON.stringify({message_id:Number(pmId),channel:'ai'})}).catch(()=>{});}
    }
    catch(e){PM.rows=PM.rows.filter(x=>x!==tmp);draw();toast(pmSetup(e)?'این بخش هنوز راه‌اندازی نشده است':'ارسال نشد: '+e.message)}}
   finally{sending=false;sig='';load(false)}};
@@ -1643,7 +1673,7 @@ function openSearch(){let close;const inp=h('input',{id:'s-q',placeholder:'جس�
  close=openModal(h('div',{class:'sh',style:{minHeight:'70vh'}},h('div',{class:'grab'}),h('div',{class:'search glass'},I('search',20),inp),h('div',{style:{height:'14px'}}),res),'b');setTimeout(()=>inp.focus(),150)}
 /* ---------- boot ---------- */
 let rT=0;function refreshStore(){clearTimeout(rT);rT=setTimeout(()=>{applyTheme();applyFav();renderHeader();buildNav();renderMain();setNav(false);drawBanner()},120)}
-async function boot(){await loadState();const rp=sbPull(HAD_CACHE?4000:6000).then(r=>{if(applyRemote(r)&&HAD_CACHE)refreshStore()}).catch(()=>{});if(!HAD_CACHE)await rp;retryOrders();applySplashSettings();applyTheme();renderHeader();buildNav();renderMain();drawBanner();loadStock(true);requestAnimationFrame(()=>setNav(false));document.fonts&&document.fonts.ready.then(()=>setNav(false));
+async function boot(){await loadState();await custRestore();const rp=sbPull(HAD_CACHE?4000:6000).then(r=>{if(applyRemote(r)&&HAD_CACHE)refreshStore()}).catch(()=>{});if(!HAD_CACHE)await rp;retryOrders();applySplashSettings();applyTheme();renderHeader();buildNav();renderMain();drawBanner();loadStock(true);requestAnimationFrame(()=>setNav(false));document.fonts&&document.fonts.ready.then(()=>setNav(false));
  let hs='';try{hs=location.hash}catch(e){}if(hs==='#admin'||window.OPEN_ADMIN)openAdminLogin();hideSplash()}
 function applySplashSettings(){const st=S.store||{},sp=document.getElementById('splash');if(!sp)return;sp.style.setProperty('--splash-bg',st.loadingBg||'#efe2d2');sp.style.setProperty('--splash-mid',st.loadingBg||'#f6eee5');sp.style.setProperty('--splash-deep',st.loadingBg||'#e7d5c1');sp.style.setProperty('--splash-accent',st.loadingAccent||'#68442e');sp.style.setProperty('--splash-text',S.theme&&S.theme.accent2||'#f4dcae');const title=document.getElementById('sp-name'),sub=document.getElementById('sp-text'),mark=document.getElementById('sp-mark');if(title)title.textContent=st.loadingTitle||st.name||'SISE';if(sub)sub.textContent=st.loadingText||'DISCOVER YOUR STYLE';if(mark){const logo=st.loadingLogo||st.logo;if(logo){mark.innerHTML='<img class="sp-logo" alt=""><i class="sp-ring"></i><i class="sp-ring r2"></i>';mark.querySelector('img').src=logo}else{mark.innerHTML='<svg viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="sp-bag" d="M16 23h32l3.5 31h-39z"/><path class="sp-h" d="M24 23v-5a8 8 0 0116 0v5"/><circle class="sp-k" cx="32" cy="37" r="2.6"/></svg><i class="sp-ring"></i><i class="sp-ring r2"></i>'}}}
 function hideSplash(){const sp=document.getElementById('splash');if(!sp)return;if(S.store&&S.store.loadingEnabled===false){sp.remove();return}const ms=Math.max(0,Math.min(10000,+S.store.loadingDuration||0));const w=Math.max(0,ms-performance.now());setTimeout(()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),700)},w)}
