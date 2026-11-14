@@ -1512,7 +1512,7 @@ async function refreshAdminBadges(){
  if(!ADM.open||!sbSess())return;
  try{
   const [pr,cr]=await Promise.all([
-   sbFetch('/rest/v1/pm?select=id,uid,from_admin&order=id.desc&limit=800',{auth:true}),
+   sbFetch('/rest/v1/pm?select=id,uid,from_admin&channel=eq.management&order=id.desc&limit=800',{auth:true}),
    sbFetch('/rest/v1/chat_messages?select=id&order=id.desc&limit=200',{auth:true})
   ]);
   const incoming=(pr||[]).filter(x=>!x.from_admin),latest=incoming.reduce((n,x)=>Math.max(n,+x.id||0),0);
@@ -1725,7 +1725,7 @@ chat(){let rows=[],err='',pimg='',editId=null;const box=h('div',{class:'lst'});
  return[card('پروفایل مدیر در گفتگو',h('p',{},'این نام و عکس کنار پیام‌های مدیر در گفتگوی همگانی، نظرات استوری و چت خصوصی نمایش داده می‌شود؛ حتی برای پیام‌های قبلی. برچسب «ادمین» هم حفظ می‌شود. تغییرات پس از انتخاب عکس یا ویرایش نام، به‌صورت خودکار روی سرور ذخیره می‌شوند.'),g2(fld('نام نمایشی مدیر',tx(S.store,'adminName',{ph:'sisé'})),fld('عکس پروفایل مدیر',imgField(S.store,'adminAvatar',{max:240,alpha:false,clearable:true})))),card('ارسال پیام به‌عنوان ادمین',h('p',{},'پیام شما با برچسب «ادمین» و ظاهر متفاوت در گفتگوی همگانی نمایش داده می‌شود.'),rp,inp,pv,h('div',{class:'row'},h('span',{class:'btn sec up'},I('image',18),'افزودن عکس',file),h('button',{class:'btn',onclick:post},I('comment',18),'ارسال'))),
   h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('chat')},'بروزرسانی'),card('پیام‌های گفتگوی همگانی',box)]},
 pm(){let rows=[],err='',open=null,pimg='',loaded=false;const box=h('div',{class:'lst'});
- const load=()=>sbFetch('/rest/v1/pm?select=*&order=id.desc&limit=800',{auth:true}).then(r=>{rows=r||[];err='';loaded=true;markPmRead(rows);draw()}).catch(e=>{err=e.message||'خطا';loaded=true;draw()});
+ const load=()=>sbFetch('/rest/v1/pm?select=*&channel=eq.management&order=id.desc&limit=800',{auth:true}).then(r=>{rows=r||[];err='';loaded=true;markPmRead(rows);draw()}).catch(e=>{err=e.message||'خطا';loaded=true;draw()});
  const inp=h('textarea',{class:'in',rows:2,maxlength:'500',placeholder:'پاسخ خصوصی به مشتری…'}),file=h('input',{type:'file',accept:'image/*','aria-label':'انتخاب عکس'}),pv=h('div',{class:'ch-pv',hidden:true});
  const drawPv=()=>{pv.innerHTML='';pv.hidden=!pimg;if(pimg)add(pv,[h('img',{src:pimg,alt:''}),h('span',{},'عکس آماده ارسال است'),h('button',{type:'button',class:'sb dg','aria-label':'حذف عکس',html:ic('close',16),onclick:()=>{pimg='';drawPv()}})])};
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
@@ -1735,7 +1735,7 @@ pm(){let rows=[],err='',open=null,pimg='',loaded=false;const box=h('div',{class:
    await sbFetch('/rest/v1/pm',{method:'POST',auth:true,headers:{Prefer:'return=minimal'},body:{uid:open,name:admName(),text:t||null,image:url,from_admin:true}});
    inp.value='';pimg='';drawPv();toast('پاسخ ارسال شد');load()}catch(e){toast('ارسال نشد: '+e.message)}};
  const delThread=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='برای حذف دوباره بزنید';return}
-  sbFetch('/rest/v1/pm?uid=eq.'+encodeURIComponent(open),{method:'DELETE',auth:true,headers:{Prefer:'return=minimal'}}).then(()=>{rows=rows.filter(x=>x.uid!==open);open=null;draw();toast('گفتگو حذف شد')}).catch(e=>toast('حذف نشد: '+e.message))};
+  sbFetch('/rest/v1/pm?uid=eq.'+encodeURIComponent(open)+'&channel=eq.management,{method:'DELETE',auth:true,headers:{Prefer:'return=minimal'}}).then(()=>{rows=rows.filter(x=>x.uid!==open);open=null;draw();toast('گفتگو حذف شد')}).catch(e=>toast('حذف نشد: '+e.message))};
  const draw=()=>{box.innerHTML='';
   if(!loaded){box.append(h('div',{class:'empty'},'در حال بارگیری…'));return}
   if(err){box.append(h('div',{class:'li'},h('p',{style:{margin:0}},pmSetup({message:err})?'جدول چت خصوصی هنوز ساخته نشده است. فایل pm_setup.sql را یک بار در Supabase (بخش SQL Editor) اجرا کنید.':'بارگیری ممکن نشد ('+err+')')));return}
