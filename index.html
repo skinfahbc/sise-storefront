@@ -1023,7 +1023,7 @@ async function custToken(){let s=custSess();if(!s)return null;if(s.exp>Date.now(
  try{const r=await custFetch('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:s.refresh}});s={access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+r.expires_in,email:r.user?.email||s.email};custSave(s);return s.access}catch(e){custSave(null);return null}}
 async function custActivate(authUser){
  if(!authUser?.id)throw new Error('حساب ورود معتبر نیست');const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده');
- const pmUid=await custFetch('/rest/v1/rpc/pm_register_account',{method:'POST',token});
+ const pmUid=await custFetch('/rest/v1/rpc/pm_register_account',{method:'POST',body:{},token});
  const full=(authUser.user_metadata?.full_name||'').trim();let u=S.users.find(x=>x.id===authUser.id);
  if(!u){const parts=full.split(/\\s+/);u={id:authUser.id,first:parts.shift()||'مشتری',last:parts.join(' '),name:full||authUser.email,phone:'',email:authUser.email,created:Date.now(),pmUid};S.users.push(u)}
  else{u.email=authUser.email;u.pmUid=pmUid;if(full&&!u.name)u.name=full}
