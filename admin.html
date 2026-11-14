@@ -1735,7 +1735,7 @@ pm(){let rows=[],err='',open=null,pimg='',loaded=false;const box=h('div',{class:
    await sbFetch('/rest/v1/pm',{method:'POST',auth:true,headers:{Prefer:'return=minimal'},body:{uid:open,name:admName(),text:t||null,image:url,from_admin:true}});
    inp.value='';pimg='';drawPv();toast('پاسخ ارسال شد');load()}catch(e){toast('ارسال نشد: '+e.message)}};
  const delThread=b=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='برای حذف دوباره بزنید';return}
-  sbFetch('/rest/v1/pm?uid=eq.'+encodeURIComponent(open)+'&channel=eq.management,{method:'DELETE',auth:true,headers:{Prefer:'return=minimal'}}).then(()=>{rows=rows.filter(x=>x.uid!==open);open=null;draw();toast('گفتگو حذف شد')}).catch(e=>toast('حذف نشد: '+e.message))};
+  sbFetch('/rest/v1/pm?uid=eq.'+encodeURIComponent(open)+'&channel=eq.management',{method:'DELETE',auth:true,headers:{Prefer:'return=minimal'}}).then(()=>{rows=rows.filter(x=>x.uid!==open);open=null;draw();toast('گفتگو حذف شد')}).catch(e=>toast('حذف نشد: '+e.message))};
  const draw=()=>{box.innerHTML='';
   if(!loaded){box.append(h('div',{class:'empty'},'در حال بارگیری…'));return}
   if(err){box.append(h('div',{class:'li'},h('p',{style:{margin:0}},pmSetup({message:err})?'جدول چت خصوصی هنوز ساخته نشده است. فایل pm_setup.sql را یک بار در Supabase (بخش SQL Editor) اجرا کنید.':'بارگیری ممکن نشد ('+err+')')));return}
