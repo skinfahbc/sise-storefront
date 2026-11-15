@@ -86,7 +86,7 @@ for (const p of data.products) {
 const sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   '  <url><loc>https://sisestore.ir/</loc></url>\n' +
-  urls.map(url => "  <url><loc>" + url + "</loc></url>").join("\n") +
+  urls.map(url => "  <url><loc>" + encodeURI(url) + "</loc></url>").join("\n") +
   '\n</urlset>\n';
 await writeFile("sitemap.xml", sitemap, "utf8");
 console.log("Generated " + urls.length + " product pages and sitemap.xml.");
