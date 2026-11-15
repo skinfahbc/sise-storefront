@@ -1,0 +1,60 @@
+name: Sync product SEO pages
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: product-seo-sync
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the default branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Regenerate product pages and sitemap from Supabase
+        env:
+          SUPABASE_URL: https://vwprdviufqukdvcroynt.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: sb_publishable_bw_w5gHwbMaejALHhrmgFQ_kcknv4Z7
+        run: node scripts/generate-product-seo.mjs
+
+      - name: Validate generated sitemap
+        shell: bash
+        run: |
+          test -s sitemap.xml
+          grep -q 'sitemaps.org/schemas/sitemap/0.9' sitemap.xml
+          product_urls="$(grep -c '<loc>https://sisestore.ir/products/' sitemap.xml || true)"
+          if [ "$product_urls" -lt 1 ]; then
+            echo "No product URLs were generated; refusing to publish."
+            exit 1
+          fi
+          echo "Validated $product_urls product URLs."
+
+      - name: Commit and push changes when catalogue has changed
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add products sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No SEO changes detected."
+            exit 0
+          fi
+          git commit -m "chore(seo): sync product pages and sitemap"
+          git push origin HEAD:main
