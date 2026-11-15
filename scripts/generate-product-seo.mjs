@@ -15,6 +15,9 @@ const data = rows[0] && rows[0].data;
 if (!Array.isArray(data && data.products) || !Array.isArray(data.categories)) {
   throw new Error("The public site row does not contain products and categories.");
 }
+if (data.products.length === 0) {
+  throw new Error("The public catalogue returned zero products; refusing to delete existing SEO pages.");
+}
 const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, c => ({
   "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
 }[c]));
