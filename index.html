@@ -516,6 +516,27 @@ select.in option{color:#222}
 .ch-cp .in{border-radius:20px}.ch-cp .btn{flex:none;padding:12px 18px}
 .ch-login{width:100%;justify-content:center}
 
+/* fixed chat page: only the message list scrolls */
+body.chat-lock{overflow:hidden;overscroll-behavior:none}
+.app.chatp{height:var(--vvh,100dvh);box-sizing:border-box;padding-bottom:calc(100px + env(safe-area-inset-bottom,0px));gap:10px;overflow:hidden}
+.app.chatp .ch{flex:1 1 auto;min-height:0;gap:10px}
+.app.chatp .ch-list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:2px 2px 6px;scrollbar-width:thin}
+.app.chatp .ch-hd,.app.chatp .ch-tabs,.app.chatp .ch-cp{flex:none}
+.app.chatp .ch-cp{position:relative;bottom:auto}
+@media (max-height:560px){.app.chatp .ch-hd{display:none}}
+/* home: floating AI chat button with a label that slides out */
+.ai-fab{position:fixed;z-index:50;inset-inline-start:14px;bottom:calc(98px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:0;border:0;padding:0;background:none;cursor:pointer;font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;animation:aiIn .5s .6s both cubic-bezier(.3,1.4,.5,1)}
+.ai-fab .ai-ic{position:relative;z-index:2;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on-accent);box-shadow:0 10px 26px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5)}
+.ai-fab .ai-ic::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:aiPulse 2.8s 1.6s infinite}
+.ai-fab .ai-tx{position:relative;z-index:1;margin-inline-start:-22px;padding:0 18px 0 30px;height:42px;display:flex;align-items:center;white-space:nowrap;font-size:13.5px;font-weight:700;border-radius:99px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on-accent);border:1px solid rgba(255,255,255,.35);box-shadow:0 8px 22px rgba(0,0,0,.25);max-width:0;opacity:0;overflow:hidden;transition:max-width .55s cubic-bezier(.3,.9,.3,1),opacity .35s,padding .45s}
+.ai-fab .ai-tx em{font-style:normal;margin-inline-start:6px;font-size:15px;letter-spacing:.2px}
+.ai-fab.open .ai-tx{max-width:230px;opacity:1}
+[dir=rtl] .ai-fab .ai-tx{padding:0 30px 0 18px}
+body.lock .ai-fab{display:none}
+@keyframes aiIn{from{opacity:0;transform:translateY(16px) scale(.8)}}
+@keyframes aiPulse{0%{opacity:.7;transform:scale(.92)}70%,100%{opacity:0;transform:scale(1.35)}}
+@media (min-width:700px){.ai-fab{inset-inline-start:max(24px,calc(50vw - 600px))}}
+
 /* private chat tabs */
 .sise-ai-popup{position:fixed;inset:0;z-index:9999;display:flex;justify-content:flex-end;align-items:stretch;padding:0;background:rgba(12,15,22,.48);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);animation:siseAiFade .22s ease}.sise-ai-dialog{position:relative;width:min(390px,88vw);height:100%;min-height:100%;padding:76px 24px 28px;text-align:center;border:1px solid var(--gb);border-right:0;border-radius:24px 0 0 24px;background:var(--card,var(--bg));box-shadow:-18px 0 60px rgba(0,0,0,.22);animation:siseAiSlide .32s cubic-bezier(.2,.8,.2,1)}.sise-ai-close{position:absolute;top:16px;right:16px;width:38px;height:38px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--field);color:var(--muted);cursor:pointer}.sise-ai-icon{width:66px;height:66px;margin:4px auto 16px;display:grid;place-items:center;border-radius:21px;background:var(--field);color:var(--accent)}.sise-ai-copy{display:grid;gap:8px;margin-bottom:22px}.sise-ai-copy b{font-size:20px}.sise-ai-copy small{font-size:13px;line-height:1.9;color:var(--muted)}.sise-ai-dialog .btn{width:100%;justify-content:center;padding:13px 20px}@keyframes siseAiFade{from{opacity:0}to{opacity:1}}@keyframes siseAiSlide{from{opacity:.7;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
 .ch-tabs{display:flex;gap:6px;padding:4px;border-radius:18px;background:var(--field);border:1px solid var(--gb)}
@@ -863,7 +884,7 @@ function h(tag,props,...kids){const el=document.createElement(tag);for(const k i
   if(k==='class')el.className=v;else if(k==='style'&&typeof v==='object')Object.assign(el.style,v);else if(k==='html')el.innerHTML=v;
   else if(k.startsWith('on'))el.addEventListener(k.slice(2),v);else if(PROPS.has(k))el[k]=v;else el.setAttribute(k,v===true?'':v)}
   add(el,kids);return el}
-const ICONS={
+const ICONS={sparkles:'M12 3l1.9 5.4L19.3 10l-5.4 1.9L12 17.3l-1.9-5.4L4.7 10l5.4-1.6zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8zM5 14l.6 1.6L7.2 16l-1.6.6L5 18.2l-.6-1.6L2.8 16l1.6-.4z',
  home:'M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6',grid:'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z',
  bag:'M6 8h12l1 12H5L6 8zM9 8V6a3 3 0 016 0v2',truck:'M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19.2a1.4 1.4 0 100-.01M17 19.2a1.4 1.4 0 100-.01',
  card:'M3 6h18v12H3zM3 10h18M6 15h4',user:'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 4-6 8-6s8 2 8 6',
@@ -1126,7 +1147,7 @@ function go(v){const was=cur;cur=v;if(v!=='categories'){catFilter=null;catQ=''}r
 /* ---------- views ---------- */
 let _ps=0;addEventListener('resize',()=>{const p=innerWidth>=900?10:8;if(_ps&&p!==_ps&&(cur==='home'||cur==='categories'))renderMain();_ps=p});_ps=innerWidth>=900?10:8;
 setInterval(()=>{try{if(purgeSt(S)){refreshStories();}}catch(e){}},60000);
-function renderMain(){applyFav();const app=$('#app');app.innerHTML='';const v={home:homeView,categories:catView,cart:cartView,track:trackView,pay:payView,chat:chatView}[cur]||homeView;add(app,[v()]);app.classList.toggle('home',!!$('.hero',app));updateHd();revealInit()}
+function renderMain(){applyFav();const app=$('#app');app.innerHTML='';const v={home:homeView,categories:catView,cart:cartView,track:trackView,pay:payView,chat:chatView}[cur]||homeView;add(app,[v()]);app.classList.toggle('home',!!$('.hero',app));syncChatLock();syncAiFab();updateHd();revealInit()}
 function secHead(t,extra){return h('div',{class:'sec-h'},h('h3',{},t),extra)}
 function srCut(orig){let src=orig,svg=false;if(src.startsWith('data:image/svg+xml')){try{const t=decodeURIComponent(src.slice(src.indexOf(',')+1)).replace(/<rect width="\d+" height="\d+" fill="url\(#[gr][^"]*\)"\/>/g,'').replace(/<ellipse[^>]*filter=[^>]*\/>/,'');src='data:image/svg+xml;utf8,'+encodeURIComponent(t);svg=true}catch(e){}}
  return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.onerror=()=>res(orig);im.onload=()=>{try{
@@ -1544,17 +1565,28 @@ const admName=()=>((S.store&&S.store.adminName)||'').trim()||'sisé';
 const admAv=()=>(S.store&&S.store.adminAvatar)||'';
 const PM={rows:[],timer:0};
 const pmSetup=e=>/pm_send|pm_list|schema cache|relation|does not exist|404|Could not find/i.test((e&&e.message)||String(e||''));const pmAuthErr=e=>/authentication_required|account_not_registered|invalid JWT|JWT expired|نشست ورود/i.test((e&&e.message)||String(e||''));
+/* ---------- chat page lock + AI floating button ---------- */
+let AIF={t:0,t2:0};
+function chFit(){const vv=window.visualViewport,set=()=>{const on=document.body.classList.contains('chat-lock');document.documentElement.style.setProperty('--vvh',on&&vv?Math.round(vv.height)+'px':'100dvh');if(on)window.scrollTo(0,0)};if(!window.__chFit){window.__chFit=1;if(vv){vv.addEventListener('resize',set);vv.addEventListener('scroll',()=>{if(document.body.classList.contains('chat-lock'))window.scrollTo(0,0)})}addEventListener('resize',set)}set()}
+function syncChatLock(){const on=cur==='chat',app=$('#app');document.body.classList.toggle('chat-lock',on);if(app)app.classList.toggle('chatp',on);chFit()}
+function syncAiFab(){let f=document.getElementById('aiFab');const show=cur==='home'&&!stack.length&&!(S.store&&S.store.aiFab===false);
+ if(!show){if(f){f.remove();clearTimeout(AIF.t);clearTimeout(AIF.t2)}return}
+ if(f)return;
+ f=h('button',{id:'aiFab',class:'ai-fab',type:'button','aria-label':'چت با هوش مصنوعی',onclick:()=>{CH.tab='ai';go('chat')}},h('span',{class:'ai-ic',html:ic('sparkles',26)}),h('span',{class:'ai-tx'},'چت با هوش مصنوعی',h('em',{},'sisé')));
+ document.body.append(f);
+ const show1=()=>{if(!f.isConnected)return;f.classList.add('open');AIF.t2=setTimeout(()=>{f.classList.remove('open');AIF.t=setTimeout(show1,28000)},7000)};
+ AIF.t=setTimeout(show1,1800)}
 function chTabs(){const t=(k,l)=>h('button',{type:'button',class:'cht'+(CH.tab===k?' on':''),onclick:()=>{if(CH.tab!==k){CH.tab=k;renderMain()}}},l);return h('div',{class:'ch-tabs'},t('pub','چت عمومی'),t('pm','چت با مدیریت'),t('ai','چت با هوش مصنوعی'))}
 function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;const u=curUser(),root=h('div',{class:'ch'}),list=h('div',{class:'ch-list'});
  root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic(channel==='ai'?'sparkles':'lock',22)}),h('div',{},h('b',{},channel==='ai'?'چت با هوش مصنوعی':'چت با مدیریت'),h('small',{},channel==='ai'?'پاسخ‌گویی هوشمند درباره محصولات و خدمات SISE':'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'))),list);
  if(!u){add(list,h('div',{class:'empty'},channel==='ai'?'برای استفاده از دستیار هوشمند ابتدا وارد شوید.':'برای چت خصوصی با مدیریت ابتدا وارد شوید.'));root.append(chTabs(),h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'ورود یا ثبت‌نام')));return root}
  let pimg='',sending=false,err='',sig='';const inp=h('input',{class:'in',placeholder:channel==='ai'?'پیام خود را برای هوش مصنوعی بنویسید…':'پیام خود را بنویسید',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
  const drawPv=()=>{pv.innerHTML='';pv.hidden=!pimg;if(pimg)add(pv,[h('img',{src:pimg,alt:''}),h('span',{},'عکس آماده ارسال است'),h('button',{type:'button',class:'sb dg','aria-label':'حذف عکس',html:ic('close',16),onclick:()=>{pimg='';drawPv()}})])};
- const near=()=>innerHeight+scrollY>=document.documentElement.scrollHeight-220;
+ const near=()=>list.scrollHeight-list.scrollTop-list.clientHeight<220;
  const draw=stick=>{const keep=stick||near();list.innerHTML='';
   if(err){add(list,h('div',{class:'empty'},pmAuthErr({message:err})?'برای ادامه، دوباره با حساب جیمیل وارد شوید.':pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
   add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},channel==='ai'?'هنوز پیامی نیست؛ هر سؤالی درباره کیف‌ها و خدمات SISE دارید بپرسید.':'هنوز پیامی نیست؛ پیام شما مستقیماً برای مدیریت فروشگاه ارسال می‌شود.'));
-  if(keep)requestAnimationFrame(()=>scrollTo({top:document.documentElement.scrollHeight}))};
+  if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
  const load=async first=>{try{const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const r=await custFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},token,timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
@@ -1582,7 +1614,7 @@ function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);P
  const startEdit=m=>{editing=m;replying=null;drawRb();pimg='';drawPv();sp.hidden=true;inp.value=m.text||'';eb.hidden=false;eb.innerHTML='';add(eb,[h('span',{},'در حال ویرایش پیام'),h('button',{type:'button',class:'sb dg','aria-label':'لغو ویرایش',html:ic('close',16),onclick:cancelEdit})]);sbtn.textContent='ذخیره';inp.focus()};
  const drawRb=()=>{rb.innerHTML='';rb.hidden=!replying;if(replying)add(rb,[h('span',{},'پاسخ به '+replying.name+': '+rqSnip(replying)),h('button',{type:'button',class:'sb dg','aria-label':'لغو پاسخ',html:ic('close',16),onclick:()=>{replying=null;drawRb()}})])};
  const startReply=m=>{if(!u&&!adm){openAuth();return}if(editing)cancelEdit();replying=m;drawRb();inp.focus()};
- const nearEnd=()=>innerHeight+scrollY>=document.documentElement.scrollHeight-220;
+ const nearEnd=()=>list.scrollHeight-list.scrollTop-list.clientHeight<220;
  const delMsg=async(m,btn)=>{if(!btn.dataset.s){btn.dataset.s=1;btn.textContent='مطمئنید؟';setTimeout(()=>{btn.dataset.s='';btn.textContent='حذف'},3000);return}
   try{const mine=!!me&&m.uid===me&&!m.is_admin;let ok=true;
    if(mine)ok=await sbFetch('/rest/v1/rpc/chat_delete',{method:'POST',body:{p_id:m.id,p_uid:me,p_tok:chTok(curUser())}});
@@ -1596,7 +1628,7 @@ function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);P
     if(!chTmp(m)&&(mine||(adm&&m.is_admin))){const del=h('button',{type:'button',onclick:()=>delMsg(m,del)},'حذف');if(mine&&!String(m.text||'').startsWith('::st::'))bs.push(h('button',{type:'button',onclick:()=>startEdit(m)},'ویرایش'));bs.push(del)}
     if(bs.length)acts=h('div',{class:'act'},bs);
     return chMsgEl(m,{me:mine,acts})}):h('div',{class:'empty'},'هنوز پیامی نیست؛ اولین نفر باشید 👋'));
-  if(keep)requestAnimationFrame(()=>scrollTo({top:document.documentElement.scrollHeight}))};
+  if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
  const saveEdit=async t=>{const m=editing,uu=curUser();if(!m||!uu)return;if(!t&&!m.image)return toast('متن پیام نمی‌تواند خالی باشد');
   try{const ok=await sbFetch('/rest/v1/rpc/chat_edit',{method:'POST',body:{p_id:m.id,p_uid:uu.id,p_tok:chTok(uu),p_text:t.slice(0,500)}});
    if(ok===false)return toast('اجازه ویرایش این پیام را ندارید');
