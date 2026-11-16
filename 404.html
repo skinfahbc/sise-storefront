@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow">
+  <meta name="theme-color" content="#0e0c0a">
+  <title>صفحه پیدا نشد | SISE</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:dark;--gold:#e0b374;--gold2:#f4dcae;--bg:#0e0c0a;--panel:#1b1712;--text:#f8f0e1;--muted:rgba(248,240,225,.66)}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:'Vazirmatn',system-ui,sans-serif}
+    body{min-height:100vh;display:grid;place-items:center;padding:24px;color:var(--text);background:radial-gradient(ellipse at 50% 18%,rgba(224,179,116,.16),transparent 48%),radial-gradient(ellipse at 10% 90%,rgba(160,96,60,.12),transparent 40%),var(--bg);overflow:hidden}
+    .wrap{width:min(100%,560px);text-align:center;position:relative}
+    .brand{font-family:'Lalezar',sans-serif;font-size:clamp(42px,10vw,62px);letter-spacing:5px;color:var(--gold2);line-height:1;text-shadow:0 5px 28px rgba(224,179,116,.18)}
+    .rule{width:64px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:22px auto 28px}
+    .number{font-size:clamp(100px,26vw,170px);font-weight:800;line-height:.95;letter-spacing:-8px;color:transparent;-webkit-text-stroke:1.5px var(--gold);text-shadow:0 0 55px rgba(224,179,116,.13);direction:ltr}
+    h1{font-size:clamp(21px,5vw,27px);font-weight:700;margin:26px 0 10px}
+    p{font-size:15px;line-height:2;color:var(--muted);margin:0 auto;max-width:390px}
+    .actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
+    a{min-width:170px;text-decoration:none;border-radius:999px;padding:13px 22px;font-size:14px;font-weight:700;transition:transform .2s,background .2s}
+    a:hover{transform:translateY(-2px)}
+    .primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#2a1c08;box-shadow:0 10px 28px rgba(224,179,116,.18)}
+    .secondary{border:1px solid rgba(224,179,116,.38);color:var(--gold2);background:rgba(255,255,255,.025)}
+    .foot{margin-top:58px;font-size:11px;color:rgba(248,240,225,.32);letter-spacing:2px;direction:ltr}
+    @media(max-width:420px){.actions{flex-direction:column;align-items:stretch}a{width:100%}.foot{margin-top:42px}}
+    @media(prefers-reduced-motion:reduce){a{transition:none}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="brand" aria-label="SISE">SISE</div>
+    <div class="rule"></div>
+    <div class="number" aria-label="خطای ۴۰۴">404</div>
+    <h1>این صفحه پیدا نشد!</h1>
+    <p>احتمالاً آدرس را اشتباه وارد کرده‌اید یا این صفحه دیگر در دسترس نیست. نگران نباشید؛ می‌توانید به فروشگاه برگردید.</p>
+    <nav class="actions" aria-label="راهنمایی">
+      <a class="primary" href="/">بازگشت به صفحه اصلی</a>
+      <a class="secondary" href="javascript:history.back()">بازگشت به صفحه قبل</a>
+    </nav>
+    <div class="foot">S I S E &nbsp; · &nbsp; ELEGANCE IN EVERY DETAIL</div>
+  </main>
+</body>
+</html>
