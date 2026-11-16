@@ -1089,8 +1089,9 @@ async function custActivate(authUser){
  const md=authUser.user_metadata||{},full=(md.full_name||'').trim();let u=S.users.find(x=>x.id===authUser.id);
  if(!u){const parts=full.split(/\s+/);u={id:authUser.id,first:md.first||parts.shift()||'مشتری',last:md.last||parts.join(' '),name:full||authUser.email,phone:'',email:authUser.email,created:Date.now(),pmUid};S.users.push(u)}
  else{u.email=authUser.email;u.pmUid=pmUid;if(full)u.name=full}
- for(const k of ['first','last','landline','postal','address','avatar'])if(md[k]!=null)u[k]=md[k];
+ for(const k of ['first','last','landline','postal','address','avatar'])if(md[k]!=null&&md[k]!=='')u[k]=md[k];
  if(!u.phone&&md.profile_phone)u.phone=md.profile_phone;
+ if(u.avatar&&String(u.avatar).startsWith('data:')){try{u.avatar=await chUpload(u.avatar)}catch(e){console.warn('Profile photo sync deferred:',e.message)}}
  if(authUser.phone){let p=normNum(authUser.phone);if(p.startsWith('98')&&p.length===12)p='0'+p.slice(2);u.phone=p}
  const hasLocalProfile=!!(u.first||u.last||u.landline||u.postal||u.address||u.avatar);
  if(hasLocalProfile&&!md.sise_profile_synced_at){
