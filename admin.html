@@ -1830,7 +1830,7 @@ users(){
   if(!msgs.length)return null;
   const incoming=msgs.filter(m=>!m.from_admin),latest=incoming.reduce((n,m)=>Math.max(n,+m.id||0),0);
   const key='sise_admin_user_seen_'+pmUid+'_'+channel;
-  let seen=0;try{const saved=localStorage.getItem(key);seen=saved==null?+(localStorage.getItem('sise_admin_pm_last_read')||latest):+saved}catch(e){seen=latest}
+  let seen=0;try{const saved=localStorage.getItem(key);seen=saved==null?latest:+saved}catch(e){seen=latest}
   const unread=incoming.filter(m=>(+m.id||0)>seen).length;
   const d=h('details',{style:{border:'1px solid var(--gb)',borderRadius:'14px',padding:'10px',marginTop:'8px'}},
    h('summary',{style:{cursor:'pointer',fontWeight:700}},label+' · '+fa(msgs.length)+' پیام',unread?h('span',{class:'nb',style:{marginInlineStart:'8px'}},fa(unread)+' جدید'):null),
