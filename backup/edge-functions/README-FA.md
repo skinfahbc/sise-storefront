@@ -1,0 +1,1 @@
+# Edge Functions فعلی SISE\n\n- sise-ai-chat: نسخه 26\n- sise-ip-diagnostic: نسخه 5\n- sise-otpy-check: نسخه 1\n- sise-otpy-send-test: نسخه 1\n- sise-otpy-verify-test: نسخه 1\n- sise-otpy-auth: نسخه 8\n\nکلیدهای ثابت توابع تست redacted شده‌اند. توابع تست را روی محیط عملیاتی deploy نکنید.\n
