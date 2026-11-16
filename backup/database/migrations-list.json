@@ -1,0 +1,62 @@
+[
+  {
+    "version": "20261111122719",
+    "name": "sise_security_hardening"
+  },
+  {
+    "version": "20261112111637",
+    "name": "sise_secure_checkout"
+  },
+  {
+    "version": "20261112113300",
+    "name": "sise_lockdown_direct_orders"
+  },
+  {
+    "version": "20261112113842",
+    "name": "sise_admin_chat_storage_hardening"
+  },
+  {
+    "version": "20261112114837",
+    "name": "sise_chat_rate_limit"
+  },
+  {
+    "version": "20261113083642",
+    "name": "sise_public_api_grants_hardening"
+  },
+  {
+    "version": "20261114120423",
+    "name": "sise_private_customer_admin_chat"
+  },
+  {
+    "version": "20261114125326",
+    "name": "add_sise_ai_assistant"
+  },
+  {
+    "version": "20261114162349",
+    "name": "separate_ai_and_management_chats"
+  },
+  {
+    "version": "20261114162514",
+    "name": "remove_legacy_chat_rpc_overloads"
+  },
+  {
+    "version": "20261114162602",
+    "name": "reload_postgrest_chat_schema"
+  },
+  {
+    "version": "20261114205854",
+    "name": "customer_email_auth_private_chat"
+  },
+  {
+    "version": "20261116105016",
+    "name": "sise_otpy_rate_limit"
+  },
+  {
+    "version": "20261116105203",
+    "name": "sise_otpy_ip_rate_limit"
+  },
+  {
+    "version": "20261116105327",
+    "name": "remove_old_sise_otp_limit_rpc"
+  }
+]
