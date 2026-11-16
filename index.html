@@ -1080,7 +1080,7 @@ async function custFetch(path,{method='GET',body,token,timeout=12000}={}){
 async function custToken(){let s=custSess();if(!s)return null;if(s.exp>Date.now()/1000+60)return s.access;
  try{const r=await custFetch('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:s.refresh}});s={access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+r.expires_in,email:r.user?.email||s.email};custSave(s);return s.access}catch(e){custSave(null);return null}}
 async function syncCustomerProfile(u,token){
- const data={full_name:uName(u),first:u.first||'',last:u.last||'',landline:u.landline||'',postal:u.postal||'',address:u.address||'',avatar:u.avatar&&!String(u.avatar).startsWith('data:')?u.avatar:'',profile_phone:u.phone||''};
+ const data={full_name:uName(u),first:u.first||'',last:u.last||'',landline:u.landline||'',postal:u.postal||'',address:u.address||'',avatar:u.avatar&&!String(u.avatar).startsWith('data:')?u.avatar:'',profile_phone:u.phone||'',sise_profile_synced_at:new Date().toISOString()};
  return custFetch('/auth/v1/user',{method:'PUT',body:{data},token,timeout:12000});
 }
 async function custActivate(authUser){
