@@ -1807,6 +1807,7 @@ users(){
  const date=v=>v?new Date(v).toLocaleString('fa-IR'):'—';
  const provider=u=>(u.app_metadata?.providers||[]).join('، ')||'نامشخص';
  const draw=()=>{
+  count.textContent='تعداد حساب‌ها: '+fa(rows.length);
   list.innerHTML='';
   const q=needle.trim().toLowerCase();
   const filtered=rows.filter(u=>[u.email,u.phone,u.user_metadata?.full_name,u.user_metadata?.name].join(' ').toLowerCase().includes(q));
