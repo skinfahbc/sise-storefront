@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>تست پیامک SISE</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:24px 16px;background:#100e0b;color:#f8f0e1;font:15px/1.9 Vazirmatn,Tahoma,sans-serif;display:grid;place-items:center}.card{width:min(100%,440px);padding:24px;border:1px solid #6e5940;border-radius:24px;background:#211b14;box-shadow:0 18px 55px #0008}h1{font-size:22px;margin:0 0 4px;color:#e8c38e}.muted{color:#c4b7a5;font-size:13px;margin:0 0 18px}.field{display:block;margin:14px 0 6px;font-size:13px}input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid #65533e;background:#15120f;color:#fff;font:inherit;direction:ltr;text-align:left}button{width:100%;padding:13px;border:0;border-radius:13px;background:#d9ad70;color:#21170b;font:700 15px inherit;cursor:pointer;margin-top:14px}button:disabled{opacity:.55;cursor:wait}.status{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:16px;padding:12px;border-radius:12px;background:#15120f;min-height:48px;font-size:13px}.warn{color:#e8c38e;font-size:12px;margin-top:14px}
+</style>
+</head>
+<body>
+<main class="card">
+<h1>آزمایش پیامک SISE</h1>
+<p class="muted">صفحه آزمایشی ارسال و بررسی کد یک‌بارمصرف OTPy</p>
+<label class="field" for="testKey">کلید تست (فقط در همین صفحه وارد کن)</label>
+<input id="testKey" type="password" autocomplete="off" placeholder="کلید تست">
+<label class="field" for="phone">شماره موبایل</label>
+<input id="phone" value="09123062620" inputmode="numeric" readonly>
+<button id="send">ارسال کد پیامکی</button>
+<label class="field" for="code">کد دریافتی پیامک</label>
+<input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="کد پیامک">
+<button id="verify">تأیید کد</button>
+<div class="status" id="status" role="status" aria-live="polite">برای شروع، کلید تست را وارد کن.</div>
+<p class="warn">این صفحه آزمایشی است؛ هر بار زدن «ارسال کد» یک پیامک واقعی می‌فرستد و از سهمیه کم می‌کند. کلید تست را برای دیگران ارسال نکن.</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const base='https://vwprdviufqukdvcroynt.supabase.co/functions/v1/';
+function show(v){$('status').textContent=typeof v==='string'?v:JSON.stringify(v,null,2)}
+async function call(name,body){
+ const key=$('testKey').value.trim();
+ if(!key)throw new Error('ابتدا کلید تست را وارد کن.');
+ const r=await fetch(base+name,{method:'POST',headers:{'Content-Type':'application/json','x-test-key':key},body:JSON.stringify(body)});
+ let data;try{data=await r.json()}catch{data={error:'پاسخ نامعتبر از سرور'}}
+ if(!r.ok)throw new Error(data.error||('خطای سرور '+r.status));
+ return data;
+}
+async function run(button,fn){button.disabled=true;show('در حال انجام درخواست...');try{show(await fn())}catch(e){show('خطا: '+e.message)}finally{button.disabled=false}}
+$('send').addEventListener('click',()=>run($('send'),async()=>{
+ const result=await call('sise-otpy-send-test',{phone:$('phone').value});
+ if(result.error)throw new Error(result.error);
+ return {...result,note:'اگر ارسال موفق بوده، پیامک را دریافت و کد را در کادر پایین وارد کن.'};
+}));
+$('verify').addEventListener('click',()=>run($('verify'),async()=>{
+ const code=$('code').value.trim();
+ if(!/^\d{4,8}$/.test(code))throw new Error('کد باید فقط ۴ تا ۸ رقم باشد.');
+ const result=await call('sise-otpy-verify-test',{phone:$('phone').value,code});
+ if(result.verified===true)return {...result,message:'کد با موفقیت تأیید شد.'};
+ return {...result,message:'کد تأیید نشد؛ از کد تازه و مربوط به همین شماره استفاده کن.'};
+}));
+</script>
+</body>
+</html>
