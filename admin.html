@@ -1827,10 +1827,37 @@ users(){
     h('div',{style:{fontSize:'12px',color:'var(--muted)'}},'ثبت‌نام: '+date(u.created_at)+' · آخرین ورود: '+date(u.last_sign_in_at)),
     h('div',{style:{fontSize:'13px'}},'سفارش‌های قابل تطبیق: '+fa(matched.length)),
     matched.length?h('details',{},h('summary',{style:{cursor:'pointer',fontWeight:700}},'مشاهده سفارش‌های این مشتری'),h('div',{style:{display:'grid',gap:'8px',marginTop:'8px'}},matched.map(o=>{const d=o.data||o;return h('div',{style:{padding:'9px',borderRadius:'10px',background:'var(--field)',fontSize:'12px'}},h('b',{},'سفارش '+(d.code||o.code||'—')),h('div',{},(d.name||'—')+' · '+(d.phone||'—')),h('div',{},'مبلغ: '+(d.total!=null?money(d.total):'—')+' · وضعیت: '+(d.status||'—')))}))):null,
-    h('small',{class:'fh',style:{direction:'ltr',overflowWrap:'anywhere'}},'شناسه حساب: '+u.id));
+    h('small',{class:'fh',style:{direction:'ltr',overflowWrap:'anywhere'}},'شناسه حساب: '+u.id),
+    h('div',{class:'row',style:{flexWrap:'wrap'}},
+     h('button',{class:'btn sec',onclick:()=>editUser(u)},'ویرایش کاربر'),
+     h('button',{class:'btn dg',onclick:()=>deleteUser(u)},'حذف کاربر')));
   }));
  };
  search.addEventListener('input',()=>{needle=search.value;draw()});
+ const adminCall=async(action,payload={})=>{
+  const token=await sbToken();if(!token)throw new Error('نشست مدیر منقضی شده؛ دوباره وارد پنل شوید.');
+  const r=await fetch(SB.url+'/functions/v1/sise-otpy-auth',{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({action,...payload})});
+  let p={};try{p=await r.json()}catch(e){}
+  if(!r.ok||p.ok===false)throw new Error(p.error||'عملیات انجام نشد');
+  return p;
+ };
+ const editUser=async u=>{
+  const oldName=u.user_metadata?.full_name||u.user_metadata?.name||u.user_metadata?.display_name||'';
+  const name=prompt('نام نمایشی کاربر:',oldName);if(name===null)return;
+  const email=prompt('ایمیل کاربر (برای بدون تغییر، همان مقدار را نگه دارید):',u.email||'');if(email===null)return;
+  const phone=prompt('موبایل کاربر (برای بدون تغییر، همان مقدار را نگه دارید):',u.phone||'');if(phone===null)return;
+  if(email.trim()&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email.trim()))return toast('فرمت ایمیل معتبر نیست');
+  if(phone.trim()&&!/^(?:09\\d{9}|\\+989\\d{9}|00989\\d{9})$/.test(phone.trim().replace(/[\\s()-]/g,'')))return toast('شماره موبایل معتبر نیست');
+  try{await adminCall('update_user',{user_id:u.id,name:name.trim(),email:email.trim(),phone:phone.trim()});toast('اطلاعات کاربر ذخیره شد');await load()}
+  catch(e){toast('ویرایش انجام نشد: '+e.message)}
+ };
+ const deleteUser=async u=>{
+  const label=u.email||u.phone||u.id;
+  if(!confirm('حساب ورود این کاربر حذف شود؟\\n'+label+'\\nاین کار برگشت‌پذیر نیست. سفارش‌های ثبت‌شده حذف نمی‌شوند.'))return;
+  if(!confirm('برای تأیید نهایی حذف حساب، دوباره تأیید کنید.'))return;
+  try{await adminCall('delete_user',{user_id:u.id});toast('حساب کاربر حذف شد؛ سفارش‌ها باقی ماندند.');await load()}
+  catch(e){toast('حذف انجام نشد: '+e.message)}
+ };
  const load=async()=>{
   if(loading)return;loading=true;error='';draw();
   try{
@@ -1847,7 +1874,7 @@ users(){
  };
  const summary=h('div',{class:'row',style:{justifyContent:'space-between',alignItems:'center'}},count,h('button',{class:'btn sec',onclick:load,disabled:loading},'بروزرسانی'));
  load();
- return[card('مدیریت کاربران و مشتریان',h('p',{class:'fh'},'فهرست حساب‌های واقعی Supabase؛ اطلاعات ورود، موبایل و سفارش‌های قابل تطبیق. فقط حساب مدیر مجاز می‌تواند این اطلاعات را ببیند. رمز عبور و کدهای یک‌بارمصرف نمایش داده نمی‌شوند.'),summary,search,list)];
+ return[card('مدیریت کاربران و مشتریان',summary,search,list)];
 },
 orders(){const l=S.orders;return[h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:async()=>{try{await loadAdminOrders();document.querySelector('.tb.on').click();toast('بروزرسانی شد')}catch(e){toast(e.message)}}},'بروزرسانی سفارش‌ها از سرور'),card('سفارش‌ها',l.length?h('div',{class:'lst'},l.map(o=>h('div',{class:'li'},h('div',{class:'li-h'},h('b',{style:{direction:'ltr'}},o.code),h('span',{class:'pill'},stName(o.status))),
   h('div',{style:{color:'var(--muted)',fontSize:'13px'}},`${o.name} · ${o.phone}`),h('div',{style:{fontSize:'13px'}},o.address),o.note?h('small',{class:'fh'},'توضیح: '+o.note):null,
