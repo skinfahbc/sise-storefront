@@ -1079,12 +1079,23 @@ async function custFetch(path,{method='GET',body,token,timeout=12000}={}){
 }
 async function custToken(){let s=custSess();if(!s)return null;if(s.exp>Date.now()/1000+60)return s.access;
  try{const r=await custFetch('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:s.refresh}});s={access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+r.expires_in,email:r.user?.email||s.email};custSave(s);return s.access}catch(e){custSave(null);return null}}
+async function syncCustomerProfile(u,token){
+ const data={full_name:uName(u),first:u.first||'',last:u.last||'',landline:u.landline||'',postal:u.postal||'',address:u.address||'',avatar:u.avatar&&!String(u.avatar).startsWith('data:')?u.avatar:'',profile_phone:u.phone||''};
+ return custFetch('/auth/v1/user',{method:'PUT',body:{data},token,timeout:12000});
+}
 async function custActivate(authUser){
  if(!authUser?.id)throw new Error('حساب ورود معتبر نیست');const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده');
  const pmUid=await custFetch('/rest/v1/rpc/pm_register_account',{method:'POST',body:{},token});
- const full=(authUser.user_metadata?.full_name||'').trim();let u=S.users.find(x=>x.id===authUser.id);
- if(!u){const parts=full.split(/\s+/);u={id:authUser.id,first:parts.shift()||'مشتری',last:parts.join(' '),name:full||authUser.email,phone:'',email:authUser.email,created:Date.now(),pmUid};S.users.push(u)}
- else{u.email=authUser.email;u.pmUid=pmUid;if(full&&!u.name)u.name=full}if(authUser.phone){let p=normNum(authUser.phone);if(p.startsWith('98')&&p.length===12)p='0'+p.slice(2);u.phone=p}
+ const md=authUser.user_metadata||{},full=(md.full_name||'').trim();let u=S.users.find(x=>x.id===authUser.id);
+ if(!u){const parts=full.split(/\s+/);u={id:authUser.id,first:md.first||parts.shift()||'مشتری',last:md.last||parts.join(' '),name:full||authUser.email,phone:'',email:authUser.email,created:Date.now(),pmUid};S.users.push(u)}
+ else{u.email=authUser.email;u.pmUid=pmUid;if(full)u.name=full}
+ for(const k of ['first','last','landline','postal','address','avatar'])if(md[k]!=null)u[k]=md[k];
+ if(!u.phone&&md.profile_phone)u.phone=md.profile_phone;
+ if(authUser.phone){let p=normNum(authUser.phone);if(p.startsWith('98')&&p.length===12)p='0'+p.slice(2);u.phone=p}
+ const hasLocalProfile=!!(u.first||u.last||u.landline||u.postal||u.address||u.avatar);
+ if(hasLocalProfile&&!md.sise_profile_synced_at){
+  try{await syncCustomerProfile(u,token);u.siseProfileSynced=true}catch(e){console.warn('Customer profile sync deferred:',e.message)}
+ }
  V.user=u.id;saveV();persist();renderHeader();return u;
 }
 async function custRestore(){const token=await custToken();if(!token)return false;try{const user=await custFetch('/auth/v1/user',{token});await custActivate(user);return true}catch(e){custSave(null);V.user=null;saveV();return false}}
@@ -1552,12 +1563,19 @@ function openProfile(){const u=curUser();if(!u)return openAuth();let av=u.avatar
   mob=F('p-mob','تلفن همراه',u.phone,{type:'tel',inputmode:'tel',style:{direction:'ltr',textAlign:'right'}}),tel=F('p-tel','تلفن ثابت (با کد شهر)',u.landline,{type:'tel',inputmode:'tel',style:{direction:'ltr',textAlign:'right'}}),
   post=F('p-post','کد پستی ۱۰ رقمی',u.postal,{type:'tel',inputmode:'numeric',maxlength:'10',style:{direction:'ltr',textAlign:'right'}}),addr=h('textarea',{class:'in',id:'p-addr',rows:3,placeholder:'آدرس کامل'},u.address||'');
  const L=(t,n)=>h('label',{class:'pf'},h('span',{},t),n);
- const save=()=>{const m=normNum(mob.value),pc=normNum(post.value),ln=normNum(tel.value);
+ const save=async()=>{const m=normNum(mob.value),pc=normNum(post.value),ln=normNum(tel.value);
   if(!first.value.trim())return toast('نام را وارد کنید');if(!/^09\d{9}$/.test(m))return toast('شماره موبایل معتبر نیست');
   if(S.users.some(x=>x.id!==u.id&&x.phone===m))return toast('این شماره قبلاً ثبت شده است');
   if(pc&&pc.length!==10)return toast('کد پستی باید ۱۰ رقم باشد');if(ln&&ln.length<8)return toast('تلفن ثابت معتبر نیست');
-  Object.assign(u,{first:first.value.trim(),last:last.value.trim(),phone:m,landline:ln,postal:pc,address:addr.value.trim(),avatar:av});u.name=uName(u);
-  persist();renderHeader();close();toast('پروفایل ذخیره شد')};
+  const token=await custToken();if(!token)return toast('نشست ورود منقضی شده؛ دوباره وارد شوید');
+  try{
+   let avatar=av;if(avatar&&avatar.startsWith('data:'))avatar=await chUpload(avatar);
+   const profile={first:first.value.trim(),last:last.value.trim(),phone:m,landline:ln,postal:pc,address:addr.value.trim(),avatar};
+   const updated={...u,...profile};updated.name=uName(updated);
+   await syncCustomerProfile(updated,token);
+   Object.assign(u,profile,{name:updated.name});persist();renderHeader();close();toast('پروفایل در حساب شما ذخیره شد');
+  }catch(e){toast('ذخیره پروفایل روی سرور ناموفق بود: '+e.message)}
+ };
  close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('h3',{},'ویرایش پروفایل'),
   h('div',{class:'pf-av'},pv,h('span',{class:'btn sec up'},I('image',18),'تغییر عکس',file),av?h('button',{class:'btn sec',type:'button',onclick:()=>{av='';draw()}},'حذف'):null),
   h('div',{class:'pf-g'},L('نام',first),L('نام خانوادگی',last),L('تلفن همراه',mob),L('تلفن ثابت',tel),L('کد پستی',post)),L('آدرس',addr),
