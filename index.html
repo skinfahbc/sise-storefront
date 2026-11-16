@@ -875,6 +875,9 @@ html{overflow-x:hidden;max-width:100%}
 .ov.s>.dr>.dr-scroll>*{flex-shrink:0}
 .ov.s>.dr>.dr-footer{flex:0 0 auto!important;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px))!important;border-top:1px solid var(--gb)!important;background:var(--sheet)!important;display:flex!important;justify-content:center!important}
 .ov.s>.dr .tb{position:static!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:46px!important;margin:0!important}
+
+/* Keep the fixed bottom navigation out of modal, story, gallery and drawer layers. */
+body.lock #nv{display:none!important;pointer-events:none!important}
 </style>
 </head>
 <body>
