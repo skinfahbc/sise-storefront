@@ -1084,7 +1084,7 @@ async function custActivate(authUser){
  const pmUid=await custFetch('/rest/v1/rpc/pm_register_account',{method:'POST',body:{},token});
  const full=(authUser.user_metadata?.full_name||'').trim();let u=S.users.find(x=>x.id===authUser.id);
  if(!u){const parts=full.split(/\s+/);u={id:authUser.id,first:parts.shift()||'مشتری',last:parts.join(' '),name:full||authUser.email,phone:'',email:authUser.email,created:Date.now(),pmUid};S.users.push(u)}
- else{u.email=authUser.email;u.pmUid=pmUid;if(full&&!u.name)u.name=full}
+ else{u.email=authUser.email;u.pmUid=pmUid;if(full&&!u.name)u.name=full}if(authUser.phone){let p=normNum(authUser.phone);if(p.startsWith('98')&&p.length===12)p='0'+p.slice(2);u.phone=p}
  V.user=u.id;saveV();persist();renderHeader();return u;
 }
 async function custRestore(){const token=await custToken();if(!token)return false;try{const user=await custFetch('/auth/v1/user',{token});await custActivate(user);return true}catch(e){custSave(null);V.user=null;saveV();return false}}
@@ -1495,12 +1495,42 @@ function openMenu(){let close;const u=curUser();
  close=openModal(dr,'s');
  // Close the drawer for every actionable item, including lower/settings/social controls.
  dr.addEventListener('click',e=>{const a=e.target.closest('button,a');if(a&&dr.contains(a))close()},true)}
+function openOtpFlow(linking=false){
+ let close,timer=null,seconds=0,sent=false,busy=false;
+ const phone=h('input',{class:'in',type:'tel',inputmode:'tel',placeholder:'شماره موبایل 09xxxxxxxxx',autocomplete:'tel',style:{direction:'ltr',textAlign:'left'}}),
+  code=h('input',{class:'in',type:'tel',inputmode:'numeric',placeholder:'کد تأیید پیامک‌شده',autocomplete:'one-time-code',style:{direction:'ltr',textAlign:'left'},hidden:true}),
+  status=h('small',{class:'fh'},linking?'شماره پس از تأیید به همین حساب فعلی متصل می‌شود.':'با تأیید شماره، مستقیماً وارد حساب SISE می‌شوید.'),
+  send=h('button',{class:'pbtn',type:'button'},'ارسال کد تأیید'),
+  resend=h('button',{class:'tb',type:'button',hidden:true},'ارسال دوباره کد'),
+  verify=h('button',{class:'pbtn',type:'button',hidden:true},'تأیید کد و ادامه');
+ const stop=()=>{if(timer){clearInterval(timer);timer=null}};
+ const drawTimer=()=>{if(sent&&seconds>0){resend.hidden=true;status.textContent='کد ارسال شد؛ ارسال دوباره تا '+seconds+' ثانیه دیگر فعال می‌شود.'}else if(sent){resend.hidden=false;status.textContent='اگر کد را دریافت نکردید، می‌توانید دوباره درخواست کنید.'}};
+ const startTimer=()=>{stop();seconds=60;drawTimer();timer=setInterval(()=>{seconds=Math.max(0,seconds-1);drawTimer();if(seconds===0)stop()},1000)};
+ const call=async(action)=>{const headers={apikey:SB.key,'Content-Type':'application/json'};if(action==='verify'&&linking){const s=custSess();if(!s?.access)throw new Error('نشست حساب فعلی پیدا نشد؛ دوباره با گوگل وارد شوید.');headers.Authorization='Bearer '+s.access}
+  const r=await fetch(SB.url+'/functions/v1/sise-otpy-auth',{method:'POST',headers,body:JSON.stringify({action,phone:phone.value.trim(),code:code.value.trim()})});
+  let data={};try{data=await r.json()}catch(e){}if(!r.ok)throw new Error(data.error||'درخواست انجام نشد');return data};
+ const doSend=async()=>{if(busy)return;const p=normNum(phone.value);if(!/^09\\d{9}$/.test(p))return toast('شماره موبایل معتبر وارد کنید');busy=true;send.disabled=true;resend.disabled=true;
+  try{await call('send');sent=true;code.hidden=false;verify.hidden=false;send.hidden=true;startTimer();toast('کد تأیید ارسال شد')}
+  catch(e){toast(e.message||'ارسال کد انجام نشد')}finally{busy=false;send.disabled=false;resend.disabled=false}};
+ send.onclick=doSend;resend.onclick=doSend;
+ verify.onclick=async()=>{if(busy)return;if(!/^\\d{4,8}$/.test(normNum(code.value)))return toast('کد تأیید را درست وارد کنید');busy=true;verify.disabled=true;
+  try{const r=await call('verify');if(r.linked){await custRestore();const u=curUser();if(u){u.phone=normNum(phone.value);persist()}stop();close();toast('شماره با موفقیت به حساب فعلی شما متصل شد')}else{
+    custSave({access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+(Number(r.expires_in)||3600),email:r.user?.email||''});
+    await custActivate(r.user);stop();close();toast('ورود با شماره موبایل موفق بود 🌷')
+   }}
+  catch(e){toast(e.message||'تأیید کد انجام نشد')}finally{busy=false;verify.disabled=false}};
+ const panel=h('div',{class:'sh'},h('div',{class:'grab'}),h('h3',{},linking?'اتصال شماره به حساب فعلی':'ورود با شماره موبایل'),
+  h('p',{class:'fh'},linking?'برای حفظ سفارش‌ها و اطلاعات، شماره به حساب Google فعلی شما متصل می‌شود.':'کد یک‌بارمصرف برای شماره شما ارسال می‌شود؛ رمز عبور لازم نیست.'),
+  phone,code,status,send,resend,verify,
+  h('button',{class:'tb',type:'button',onclick:()=>{stop();close()}},'بازگشت'));
+ close=openModal(panel,'c');
+}
 function openAuth(){let close;const u=curUser();
  if(u){close=openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('div',{class:'prof'},avEl(u),h('span',{},h('b',{},uName(u)),h('small',{},u.email||'حساب SISE'))),
-  h('div',{style:{display:'grid',gap:'10px',marginTop:'14px'}},h('button',{class:'pbtn',onclick:()=>{close();openProfile()}},I('user',20),'ویرایش پروفایل'),h('button',{class:'pbtn ghost',onclick:()=>{close();go('track')}},I('truck',20),'سفارش‌های من'),h('button',{class:'pbtn ghost',onclick:async()=>{await custSignOut();close();toast('از حساب خارج شدید')}},I('logout',20),'خروج از حساب'))),'t');return}
+  h('div',{style:{display:'grid',gap:'10px',marginTop:'14px'}},h('button',{class:'pbtn',onclick:()=>{close();openProfile()}},I('user',20),'ویرایش پروفایل'),h('button',{class:'pbtn ghost',onclick:()=>{close();openOtpFlow(true)}},I('phone',20),'اتصال / تأیید شماره موبایل'),h('button',{class:'pbtn ghost',onclick:()=>{close();go('track')}},I('truck',20),'سفارش‌های من'),h('button',{class:'pbtn ghost',onclick:async()=>{await custSignOut();close();toast('از حساب خارج شدید')}},I('logout',20),'خروج از حساب'))),'t');return}
  let mode='in',busy=false;
  const name=h('input',{class:'in',placeholder:'نام و نام خانوادگی',autocomplete:'name'}),email=h('input',{class:'in',type:'email',placeholder:'آدرس جیمیل',autocomplete:'email',style:{direction:'ltr',textAlign:'left'}}),pass=h('input',{class:'in',type:'password',placeholder:'رمز عبور (حداقل ۸ کاراکتر)',autocomplete:'current-password',style:{direction:'ltr',textAlign:'left'}}),tabs=h('div',{class:'row'}),form=h('form',{style:{display:'grid',gap:'12px'}}),hint=h('small',{class:'fh'},'با ایمیل و رمز عبور وارد شوید؛ برای ورود در دستگاه دیگر از همین اطلاعات استفاده کنید.');
- const draw=()=>{tabs.innerHTML='';add(tabs,[['in','ورود'],['up','ثبت‌نام']].map(([k,t])=>h('button',{class:'tb'+(mode===k?' on':''),type:'button',style:{flex:1,justifyContent:'center'},onclick:()=>{mode=k;pass.autocomplete=mode==='in'?'current-password':'new-password';draw()}},t)));form.innerHTML='';add(form,[h('button',{class:'pbtn ghost',type:'button',onclick:custGoogleSignIn},'ادامه با حساب Google'),mode==='up'?name:null,email,pass,hint,h('button',{class:'pbtn',type:'submit',disabled:busy},mode==='in'?'ورود به حساب':'ساخت حساب'),mode==='in'?h('button',{class:'tb',type:'button',onclick:async()=>{if(!email.value.trim())return toast('ابتدا ایمیل را وارد کنید');try{await custFetch('/auth/v1/recover?redirect_to='+encodeURIComponent(location.origin+'/' ),{method:'POST',body:{email:email.value.trim().toLowerCase()}});toast('لینک بازیابی رمز به ایمیلتان ارسال شد')}catch(e){toast('ارسال لینک انجام نشد: '+e.message)}}},'فراموشی رمز عبور؟'):null])};
+ const draw=()=>{tabs.innerHTML='';add(tabs,[['in','ورود'],['up','ثبت‌نام']].map(([k,t])=>h('button',{class:'tb'+(mode===k?' on':''),type:'button',style:{flex:1,justifyContent:'center'},onclick:()=>{mode=k;pass.autocomplete=mode==='in'?'current-password':'new-password';draw()}},t)));form.innerHTML='';add(form,[h('button',{class:'pbtn ghost',type:'button',onclick:custGoogleSignIn},'ادامه با حساب Google'),h('button',{class:'pbtn ghost',type:'button',onclick:()=>{close();openOtpFlow(false)}},'ورود مستقیم با شماره موبایل'),mode==='up'?name:null,email,pass,hint,h('button',{class:'pbtn',type:'submit',disabled:busy},mode==='in'?'ورود به حساب':'ساخت حساب'),mode==='in'?h('button',{class:'tb',type:'button',onclick:async()=>{if(!email.value.trim())return toast('ابتدا ایمیل را وارد کنید');try{await custFetch('/auth/v1/recover?redirect_to='+encodeURIComponent(location.origin+'/' ),{method:'POST',body:{email:email.value.trim().toLowerCase()}});toast('لینک بازیابی رمز به ایمیلتان ارسال شد')}catch(e){toast('ارسال لینک انجام نشد: '+e.message)}}},'فراموشی رمز عبور؟'):null])};
  form.onsubmit=async e=>{e.preventDefault();if(busy)return;const em=email.value.trim().toLowerCase(),pw=pass.value;
   if(!/^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(em))return toast('ایمیل معتبر وارد کنید');if(pw.length<8)return toast('رمز عبور باید حداقل ۸ کاراکتر باشد');if(mode==='up'&&!name.value.trim())return toast('نام و نام خانوادگی را وارد کنید');
   busy=true;draw();try{if(mode==='in'){await custSignIn(em,pw);close();toast('ورود موفق؛ خوش آمدید 🌷')}
