@@ -1852,8 +1852,10 @@ users(){
    const matched=orders.filter(o=>{const d=o.data||o;return (phone!=='ثبت نشده'&&digits(d.phone)===digits(phone))||(u.email&&String(d.email||'').toLowerCase()===u.email.toLowerCase())});
    matched.sort((a,b)=>Date.parse(b.created_at||b.data?.created_at||0)-Date.parse(a.created_at||a.data?.created_at||0));
    const last=matched[0]?.data||matched[0]||{};
-   const address=md.address||last.address||'ثبت نشده';
-   const postal=md.postal||last.postal||'ثبت نشده';
+   const orderAddress=String(last.address||'');
+   const postalInAddress=orderAddress.match(/کد\s*پستی\s*[:：]?\s*([0-9۰-۹٠-٩]{10})/);
+   const address=md.address||orderAddress.replace(/\n?\s*کد\s*پستی\s*[:：]?\s*[0-9۰-۹٠-٩]{10}/,'').trim()||'ثبت نشده';
+   const postal=md.postal||last.postal||(postalInAddress&&postalInAddress[1])||'ثبت نشده';
    const landline=md.landline||'ثبت نشده';
    const pmUid=pmAccounts.find(x=>x.auth_user_id===u.id)?.pm_uid||'';
    const management=pmUid?thread(u,pmUid,'management','پیام خصوصی با مدیر'):null;
