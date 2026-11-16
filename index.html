@@ -1509,7 +1509,7 @@ function openOtpFlow(linking=false){
  const call=async(action)=>{const headers={apikey:SB.key,'Content-Type':'application/json'};if(action==='verify'&&linking){const token=await custToken();if(!token)throw new Error('نشست حساب فعلی پیدا نشد؛ دوباره با گوگل وارد شوید.');headers.Authorization='Bearer '+token}
   const r=await fetch(SB.url+'/functions/v1/sise-otpy-auth',{method:'POST',headers,body:JSON.stringify({action,phone:phone.value.trim(),code:code.value.trim()})});
   let data={};try{data=await r.json()}catch(e){}if(!r.ok)throw new Error(data.error||'درخواست انجام نشد');return data};
- const doSend=async()=>{if(busy)return;const p=normNum(phone.value);if(!/^09\\d{9}$/.test(p))return toast('شماره موبایل معتبر وارد کنید');busy=true;send.disabled=true;resend.disabled=true;
+ const doSend=async()=>{if(busy)return;const p=normNum(phone.value);if(!/^09\d{9}$/.test(p))return toast('شماره موبایل معتبر وارد کنید');phone.value=p;busy=true;send.disabled=true;resend.disabled=true;
   try{await call('send');sent=true;code.hidden=false;verify.hidden=false;send.hidden=true;startTimer();toast('کد تأیید ارسال شد')}
   catch(e){toast(e.message||'ارسال کد انجام نشد')}finally{busy=false;send.disabled=false;resend.disabled=false}};
  send.onclick=doSend;resend.onclick=doSend;
