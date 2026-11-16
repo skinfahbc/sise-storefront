@@ -1531,7 +1531,7 @@ function stockF(p){const inp=h('input',{class:'in',type:'text',inputmode:'numeri
  sbFetch('/rest/v1/stock?pid=eq.'+encodeURIComponent(p.id)+'&select=qty',{auth:true}).then(r=>{if(r&&r[0]){inp.value=r[0].qty;st.textContent='موجودی فعلی روی سرور'}else{inp.value=+p.stock||0;st.textContent='هنوز در انبار ثبت نشده؛ با «ذخیره موجودی» ثبت می‌شود'}}).catch(e=>{inp.value=+p.stock||0;st.textContent='خطا: '+e.message});
  return h('div',{style:{display:'grid',gap:'6px'}},h('div',{class:'row',style:{flexWrap:'wrap'}},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn',type:'button',onclick:save},'ذخیره موجودی')),st)}
 function lifeF(s){const info=h('small',{class:'fh'},stLeft(s)),sel=h('select',{class:'in',onchange:()=>{s.life=+sel.value;s.created=Date.now();commit();info.textContent=stLeft(s)}},[[24,'۲۴ ساعت'],[72,'۳ روز'],[168,'یک هفته'],[720,'یک ماه'],[0,'بدون انقضا']].map(([v,l])=>h('option',{value:String(v)},l)));sel.value=String(+s.life||0);return h('div',{style:{display:'grid',gap:'6px'}},sel,info,h('small',{class:'fh'},'شمارش از لحظه ثبت یا تغییر مدت شروع می‌شود و بعد از اتمام، استوری در سایت دیده نمی‌شود و با انتشار بعدی از سرور پاک می‌شود.'))}
-const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['chat','گفتگوی همگانی','users'],['pm','چت خصوصی با مشتری','lock'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
+const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['users','کاربران','users'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['chat','گفتگوی همگانی','users'],['pm','چت خصوصی با مشتری','lock'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
 const ADM={open:false,pmUnread:0,pmPeople:0,chatCount:0,badgeTimer:0,drawTabs:null};
 const PM_READ_KEY='sise_admin_pm_last_read';
 function markPmRead(rows){
@@ -1800,6 +1800,55 @@ comments(){let rows=[],v2=true,noCol=false,editId=null,repId=null;const box=h('d
  const load=()=>q(CM_NEW).then(r=>{v2=true;CM_V2=true;return r}).catch(e=>{if(!cmV2Err(e))throw e;v2=false;CM_V2=false;return q(CM_OLD).catch(()=>{noCol=true;return q('id,story_id,name,text,created_at')})}).then(r=>{rows=r||[];draw()}).catch(e=>{box.innerHTML='';box.append(h('small',{class:'fh'},'بارگیری نشد: '+e.message+''))});
  box.append(h('div',{class:'empty'},'در حال بارگیری…'));load();
  return[h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('comments')},'بروزرسانی'),card('نظرات استوری‌ها',box)]},
+users(){
+ let rows=[],orders=[],loading=false,error='',needle='';
+ const list=h('div',{class:'lst'}),search=h('input',{class:'in',placeholder:'جست‌وجوی نام، ایمیل یا موبایل',style:{marginBottom:'10px'}});
+ const digits=v=>String(v||'').replace(/\\D/g,'').replace(/^98/,'0');
+ const date=v=>v?new Date(v).toLocaleString('fa-IR'):'—';
+ const provider=u=>(u.app_metadata?.providers||[]).join('، ')||'نامشخص';
+ const draw=()=>{
+  list.innerHTML='';
+  const q=needle.trim().toLowerCase();
+  const filtered=rows.filter(u=>[u.email,u.phone,u.user_metadata?.full_name,u.user_metadata?.name].join(' ').toLowerCase().includes(q));
+  if(error){add(list,h('div',{class:'empty'},'بارگیری کاربران ناموفق بود: '+error));return}
+  if(loading&&!rows.length){add(list,h('div',{class:'empty'},'در حال دریافت فهرست کاربران…'));return}
+  if(!filtered.length){add(list,h('div',{class:'empty'},'کاربری با این مشخصات پیدا نشد.'));return}
+  add(list,filtered.map(u=>{
+   const name=u.user_metadata?.full_name||u.user_metadata?.name||u.user_metadata?.display_name||'بدون نام ثبت‌شده';
+   const phone=u.phone||'ثبت نشده';
+   const matched=orders.filter(o=>{
+    const d=o.data||o;
+    return (u.phone&&digits(d.phone)===digits(u.phone))||(u.email&&String(d.email||'').toLowerCase()===u.email.toLowerCase());
+   });
+   return h('div',{class:'li',style:{display:'grid',gap:'9px'}},
+    h('div',{class:'li-h'},h('b',{},name),h('span',{class:'pill'},provider(u))),
+    h('div',{style:{fontSize:'13px',direction:'ltr',textAlign:'left',overflowWrap:'anywhere'}},u.email||'بدون ایمیل'),
+    h('div',{style:{fontSize:'13px'}},'موبایل: '+phone+(u.phone_confirmed_at?' · تأییدشده':' · تأییدنشده')),
+    h('div',{style:{fontSize:'12px',color:'var(--muted)'}},'ثبت‌نام: '+date(u.created_at)+' · آخرین ورود: '+date(u.last_sign_in_at)),
+    h('div',{style:{fontSize:'13px'}},'سفارش‌های قابل تطبیق: '+fa(matched.length)),
+    matched.length?h('details',{},h('summary',{style:{cursor:'pointer',fontWeight:700}},'مشاهده سفارش‌های این مشتری'),h('div',{style:{display:'grid',gap:'8px',marginTop:'8px'}},matched.map(o=>{const d=o.data||o;return h('div',{style:{padding:'9px',borderRadius:'10px',background:'var(--field)',fontSize:'12px'}},h('b',{},'سفارش '+(d.code||o.code||'—')),h('div',{},(d.name||'—')+' · '+(d.phone||'—')),h('div',{},'مبلغ: '+(d.total!=null?money(d.total):'—')+' · وضعیت: '+(d.status||'—')))}))):null,
+    h('small',{class:'fh',style:{direction:'ltr',overflowWrap:'anywhere'}},'شناسه حساب: '+u.id));
+  }));
+ };
+ search.addEventListener('input',()=>{needle=search.value;draw()});
+ const load=async()=>{
+  if(loading)return;loading=true;error='';draw();
+  try{
+   const token=await sbToken();if(!token)throw new Error('نشست مدیر منقضی شده؛ دوباره وارد پنل شوید.');
+   const [ur,or]=await Promise.all([
+    fetch(SB.url+'/functions/v1/sise-otpy-auth',{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({action:'list_users'})}),
+    sbFetch('/rest/v1/orders?select=code,data,created_at&order=created_at.desc&limit=2000',{auth:true})
+   ]);
+   let payload={};try{payload=await ur.json()}catch(e){}
+   if(!ur.ok)throw new Error(payload.error||'دریافت کاربران از سرور ناموفق بود');
+   rows=payload.users||[];orders=or||[];
+  }catch(e){error=e.message||'خطای نامشخص'}
+  finally{loading=false;draw()}
+ };
+ const summary=()=>h('div',{class:'row',style:{justifyContent:'space-between',alignItems:'center'}},h('b',{},'تعداد حساب‌ها: '+fa(rows.length)),h('button',{class:'btn sec',onclick:load,disabled:loading},'بروزرسانی'));
+ load();
+ return[card('مدیریت کاربران و مشتریان',h('p',{class:'fh'},'فهرست حساب‌های واقعی Supabase؛ اطلاعات ورود، موبایل و سفارش‌های قابل تطبیق. فقط حساب مدیر مجاز می‌تواند این اطلاعات را ببیند. رمز عبور و کدهای یک‌بارمصرف نمایش داده نمی‌شوند.'),summary(),search,list)];
+},
 orders(){const l=S.orders;return[h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:async()=>{try{await loadAdminOrders();document.querySelector('.tb.on').click();toast('بروزرسانی شد')}catch(e){toast(e.message)}}},'بروزرسانی سفارش‌ها از سرور'),card('سفارش‌ها',l.length?h('div',{class:'lst'},l.map(o=>h('div',{class:'li'},h('div',{class:'li-h'},h('b',{style:{direction:'ltr'}},o.code),h('span',{class:'pill'},stName(o.status))),
   h('div',{style:{color:'var(--muted)',fontSize:'13px'}},`${o.name} · ${o.phone}`),h('div',{style:{fontSize:'13px'}},o.address),o.note?h('small',{class:'fh'},'توضیح: '+o.note):null,
   h('div',{},o.items.map(i=>h('div',{style:{fontSize:'13px'}},`${i.title}${i.color?' ('+i.color+')':''} × ${fa(i.qty)}`))),h('b',{style:{color:'var(--accent2)'}},money(o.total)),o.discount?h('small',{class:'fh'},'کد تخفیف: '+(o.coupon?o.coupon.code+' ('+fa(o.coupon.percent)+'٪)':'')+' · مقدار تخفیف: '+money(o.discount)):null,o.ship?h('small',{class:'fh'},'روش ارسال: '+o.ship.title+' · '+(o.ship.price?money(o.ship.price):(o.ship.courier?'هماهنگی با ادمین':'رایگان'))):null,o.payRef?h('small',{class:'fh'},'شماره پیگیری پرداخت: '+o.payRef):null,
