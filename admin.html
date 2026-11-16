@@ -1846,8 +1846,8 @@ users(){
   const name=prompt('نام نمایشی کاربر:',oldName);if(name===null)return;
   const email=prompt('ایمیل کاربر (برای بدون تغییر، همان مقدار را نگه دارید):',u.email||'');if(email===null)return;
   const phone=prompt('موبایل کاربر (برای بدون تغییر، همان مقدار را نگه دارید):',u.phone||'');if(phone===null)return;
-  if(email.trim()&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email.trim()))return toast('فرمت ایمیل معتبر نیست');
-  if(phone.trim()&&!/^(?:09\\d{9}|\\+989\\d{9}|00989\\d{9})$/.test(phone.trim().replace(/[\\s()-]/g,'')))return toast('شماره موبایل معتبر نیست');
+  if(email.trim()&&!/^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(email.trim()))return toast('فرمت ایمیل معتبر نیست');
+  if(phone.trim()&&!/^(?:09\d{9}|\\+989\d{9}|00989\d{9})$/.test(phone.trim().replace(/[\s()-]/g,'')))return toast('شماره موبایل معتبر نیست');
   try{await adminCall('update_user',{user_id:u.id,name:name.trim(),email:email.trim(),phone:phone.trim()});toast('اطلاعات کاربر ذخیره شد');await load()}
   catch(e){toast('ویرایش انجام نشد: '+e.message)}
  };
