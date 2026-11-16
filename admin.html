@@ -1802,7 +1802,7 @@ comments(){let rows=[],v2=true,noCol=false,editId=null,repId=null;const box=h('d
  return[h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('comments')},'بروزرسانی'),card('نظرات استوری‌ها',box)]},
 users(){
  let rows=[],orders=[],loading=false,error='',needle='';
- const list=h('div',{class:'lst'}),search=h('input',{class:'in',placeholder:'جست‌وجوی نام، ایمیل یا موبایل',style:{marginBottom:'10px'}});
+ const list=h('div',{class:'lst'}),count=h('b',{},'تعداد حساب‌ها: ۰'),search=h('input',{class:'in',placeholder:'جست‌وجوی نام، ایمیل یا موبایل',style:{marginBottom:'10px'}});
  const digits=v=>String(v||'').replace(/\\D/g,'').replace(/^98/,'0');
  const date=v=>v?new Date(v).toLocaleString('fa-IR'):'—';
  const provider=u=>(u.app_metadata?.providers||[]).join('، ')||'نامشخص';
@@ -1845,9 +1845,9 @@ users(){
   }catch(e){error=e.message||'خطای نامشخص'}
   finally{loading=false;draw()}
  };
- const summary=()=>h('div',{class:'row',style:{justifyContent:'space-between',alignItems:'center'}},h('b',{},'تعداد حساب‌ها: '+fa(rows.length)),h('button',{class:'btn sec',onclick:load,disabled:loading},'بروزرسانی'));
+ const summary=h('div',{class:'row',style:{justifyContent:'space-between',alignItems:'center'}},count,h('button',{class:'btn sec',onclick:load,disabled:loading},'بروزرسانی'));
  load();
- return[card('مدیریت کاربران و مشتریان',h('p',{class:'fh'},'فهرست حساب‌های واقعی Supabase؛ اطلاعات ورود، موبایل و سفارش‌های قابل تطبیق. فقط حساب مدیر مجاز می‌تواند این اطلاعات را ببیند. رمز عبور و کدهای یک‌بارمصرف نمایش داده نمی‌شوند.'),summary(),search,list)];
+ return[card('مدیریت کاربران و مشتریان',h('p',{class:'fh'},'فهرست حساب‌های واقعی Supabase؛ اطلاعات ورود، موبایل و سفارش‌های قابل تطبیق. فقط حساب مدیر مجاز می‌تواند این اطلاعات را ببیند. رمز عبور و کدهای یک‌بارمصرف نمایش داده نمی‌شوند.'),summary,search,list)];
 },
 orders(){const l=S.orders;return[h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:async()=>{try{await loadAdminOrders();document.querySelector('.tb.on').click();toast('بروزرسانی شد')}catch(e){toast(e.message)}}},'بروزرسانی سفارش‌ها از سرور'),card('سفارش‌ها',l.length?h('div',{class:'lst'},l.map(o=>h('div',{class:'li'},h('div',{class:'li-h'},h('b',{style:{direction:'ltr'}},o.code),h('span',{class:'pill'},stName(o.status))),
   h('div',{style:{color:'var(--muted)',fontSize:'13px'}},`${o.name} · ${o.phone}`),h('div',{style:{fontSize:'13px'}},o.address),o.note?h('small',{class:'fh'},'توضیح: '+o.note):null,
