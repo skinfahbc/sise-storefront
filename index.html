@@ -1513,7 +1513,7 @@ function openOtpFlow(linking=false){
   try{await call('send');sent=true;code.hidden=false;verify.hidden=false;send.hidden=true;startTimer();toast('کد تأیید ارسال شد')}
   catch(e){toast(e.message||'ارسال کد انجام نشد')}finally{busy=false;send.disabled=false;resend.disabled=false}};
  send.onclick=doSend;resend.onclick=doSend;
- verify.onclick=async()=>{if(busy)return;if(!/^\\d{4,8}$/.test(normNum(code.value)))return toast('کد تأیید را درست وارد کنید');busy=true;verify.disabled=true;
+ verify.onclick=async()=>{if(busy)return;if(!/^\d{4,8}$/.test(normNum(code.value)))return toast('کد تأیید را درست وارد کنید');busy=true;verify.disabled=true;
   try{const r=await call('verify');if(r.linked){await custRestore();const u=curUser();if(u){u.phone=normNum(phone.value);persist()}stop();close();toast('شماره با موفقیت به حساب فعلی شما متصل شد')}else{
     custSave({access:r.access_token,refresh:r.refresh_token,exp:Date.now()/1000+(Number(r.expires_in)||3600),email:r.user?.email||''});
     await custActivate(r.user);stop();close();toast('ورود با شماره موبایل موفق بود 🌷')
