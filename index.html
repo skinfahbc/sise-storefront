@@ -1519,10 +1519,17 @@ function openOtpFlow(linking=false){
     await custActivate(r.user);stop();close();toast('ورود با شماره موبایل موفق بود 🌷')
    }}
   catch(e){toast(e.message||'تأیید کد انجام نشد')}finally{busy=false;verify.disabled=false}};
- const panel=h('div',{class:'sh'},h('div',{class:'grab'}),h('h3',{},linking?'اتصال شماره به حساب فعلی':'ورود با شماره موبایل'),
-  h('p',{class:'fh'},linking?'برای حفظ سفارش‌ها و اطلاعات، شماره به حساب Google فعلی شما متصل می‌شود.':'کد یک‌بارمصرف برای شماره شما ارسال می‌شود؛ رمز عبور لازم نیست.'),
-  phone,code,status,send,resend,verify,
-  h('button',{class:'tb',type:'button',onclick:()=>{stop();close()}},'بازگشت'));
+ const panel=h('div',{class:'sh otp-panel',style:{position:'relative',padding:'30px 22px 22px',overflowY:'auto',boxSizing:'border-box'}},
+  h('button',{type:'button','aria-label':'بستن پنجره',title:'بستن',onclick:()=>{stop();close()},style:{position:'absolute',top:'12px',right:'14px',width:'38px',height:'38px',borderRadius:'50%',border:'1px solid var(--gb)',background:'var(--field)',color:'var(--fg)',fontSize:'27px',lineHeight:1,display:'grid',placeItems:'center',cursor:'pointer',zIndex:2}},'×'),
+  h('div',{style:{textAlign:'center',padding:'18px 8px 12px'}},
+   h('div',{style:{width:'54px',height:'54px',margin:'0 auto 12px',borderRadius:'18px',display:'grid',placeItems:'center',background:'linear-gradient(135deg,var(--accent2),var(--accent))',color:'var(--on-accent)',fontSize:'25px',fontWeight:800}},'✦'),
+   h('h3',{style:{margin:'0 0 8px',fontSize:'21px',fontWeight:800}},linking?'اتصال شماره به حساب فعلی':'ورود با شماره موبایل'),
+   h('p',{class:'fh',style:{margin:'0 auto',maxWidth:'340px',fontSize:'12.5px',lineHeight:1.9}},linking?'برای حفظ سفارش‌ها و اطلاعات، شماره به حساب Google فعلی شما متصل می‌شود.':'کد یک‌بارمصرف برای شماره شما ارسال می‌شود؛ رمز عبور لازم نیست.')),
+  h('div',{style:{display:'grid',gap:'12px',marginTop:'12px'}},
+   phone,code,
+   h('div',{style:{minHeight:'36px',padding:'9px 12px',borderRadius:'13px',background:'var(--field)',border:'1px solid var(--gb)',display:'flex',alignItems:'center',lineHeight:1.8}},status),
+   h('div',{style:{display:'grid',gridTemplateColumns:'1fr',gap:'10px'}},send,resend,verify),
+   h('button',{class:'tb',type:'button',style:{width:'100%',minHeight:'46px',justifyContent:'center',marginTop:'2px'},onclick:()=>{stop();close()}},'بازگشت')));
  close=openModal(panel,'c');
 }
 function openAuth(){let close;const u=curUser();
