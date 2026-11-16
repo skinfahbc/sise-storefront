@@ -1879,6 +1879,20 @@ users(){
      h('button',{class:'btn sec',onclick:()=>editUser(u)},'ویرایش کاربر'),
      h('button',{class:'btn dg',onclick:()=>deleteUser(u)},'حذف کاربر')));
   }));
+  const linkedIds=new Set(pmAccounts.map(x=>x.pm_uid));
+  const legacy=new Map();pmMessages.filter(m=>m.uid&&!linkedIds.has(m.uid)).forEach(m=>{if(!legacy.has(m.uid))legacy.set(m.uid,[]);legacy.get(m.uid).push(m)});
+  if(legacy.size)add(list,h('div',{class:'li',style:{display:'grid',gap:'9px',border:'1px dashed var(--accent)'}},
+   h('b',{},'گفتگوهای قدیمی بدون اتصال به حساب ورود'),
+   h('small',{class:'fh'},'این گفتگوها در دیتابیس هستند اما هنوز به یک حساب مشتری متصل نشده‌اند.'),
+   [...legacy.entries()].map(([uid,msgs])=>{
+    const customer=msgs.find(m=>!m.from_admin&&m.name)?.name||'مشتری قدیمی';
+    const management=thread(null,uid,'management','پیام خصوصی با مدیر');
+    const ai=thread(null,uid,'ai','گفتگو با هوش مصنوعی');
+    return h('div',{style:{padding:'8px',borderTop:'1px solid var(--gb)'}},
+     h('b',{},customer+' · '+fa(msgs.length)+' پیام'),
+     h('small',{class:'fh',style:{display:'block',direction:'ltr',overflowWrap:'anywhere'}},'شناسه گفتگو: '+uid),
+     management,ai);
+   })));
  };
  search.addEventListener('input',()=>{needle=search.value;draw()});
  const adminCall=async(action,payload={})=>{
