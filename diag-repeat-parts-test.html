@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISE | تست تکرار دریافت فایل</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:20px;background:#101318;color:#f4f5f7;font:15px/1.9 system-ui,sans-serif}main{max-width:760px;margin:auto}.panel{background:#1b2029;border:1px solid #343c49;border-radius:16px;padding:18px;margin:14px 0}h1{font-size:21px;margin:0 0 8px}.muted{color:#aab3c2}.status{font-weight:700;color:#f6d27a}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0c0f14;border-radius:10px;padding:14px;direction:ltr;text-align:left;font:13px/1.6 ui-monospace,monospace}button{border:0;border-radius:10px;background:#e5bd70;color:#171717;padding:11px 18px;font-weight:700;font-size:15px}
+</style></head><body><main><h1>تست تکرار دریافت فایل‌های SISE</h1>
+<p class="muted">چند قسمت ناموفق و چند قسمت موفق قبلی، یکی‌یکی دوباره دریافت می‌شوند. برای هر درخواست وضعیت HTTP، زمان دریافت پاسخ و زمان کامل شدن متن ثبت می‌شود. کد فروشگاه اجرا نمی‌شود.</p>
+<section class="panel"><div id="status" class="status">آماده‌سازی…</div><pre id="report">در حال شروع…</pre><button id="retry">اجرای دوباره تست</button></section>
+</main><script>
+(function(){
+const files=[1,2,5,9,11,13,15];
+const status=document.getElementById('status'),report=document.getElementById('report'),button=document.getElementById('retry');
+let busy=false;
+const ms=n=>Math.round(n)+' ms';
+async function run(){
+ if(busy)return;busy=true;button.disabled=true;
+ const lines=[],started=performance.now();
+ function log(s){lines.push(s);report.textContent=lines.join('\\n')}
+ status.textContent='در حال بررسی ۷ فایل…';report.textContent='';
+ log('شروع: '+new Date().toISOString());
+ for(let i=0;i<files.length;i++){
+  const part=files[i],file='diag-main-part-'+String(part).padStart(2,'0')+'.js';
+  const controller=new AbortController(),t0=performance.now();let headerTime='—';
+  const timeout=setTimeout(()=>controller.abort(),15000);
+  try{
+   const response=await fetch('./'+file+'?retryprobe='+Date.now()+'-'+i,{cache:'no-store',signal:controller.signal});
+   headerTime=ms(performance.now()-t0);
+   const len=response.headers.get('content-length')||'ندارد';
+   const type=response.headers.get('content-type')||'ندارد';
+   const body=await response.text();
+   log('قسمت '+part+': HTTP '+response.status+' | headers '+headerTime+' | body '+new TextEncoder().encode(body).length+' bytes | total '+ms(performance.now()-t0)+' | Content-Length '+len+' | Type '+type);
+  }catch(e){
+   log('قسمت '+part+': FAIL '+e.name+': '+e.message+' | headers '+headerTime+' | total '+ms(performance.now()-t0));
+  }finally{clearTimeout(timeout)}
+  status.textContent='پیشرفت: '+(i+1)+' از ۷ فایل';
+ }
+ log('کل زمان: '+ms(performance.now()-started));
+ status.textContent='تست تمام شد؛ نتیجه را کامل ارسال کن';
+ button.disabled=false;busy=false;
+}
+button.addEventListener('click',run);run();
+})();
+</script></body></html>
