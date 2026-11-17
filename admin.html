@@ -989,7 +989,13 @@ function setNav(animate){const nv=$('#nv'),inn=$('.nv-in',nv),bub=$('.nv-bub',nv
  if(!animate){apply();return}nv.classList.add('sw');inn.style.setProperty('--nr','0px');setTimeout(()=>{nv.classList.remove('sw');apply()},180)}
 addEventListener('resize',()=>setNav(false));
 function cartBadge(){const n=V.cart.reduce((a,c)=>a+c.qty,0);document.querySelectorAll('.nv-b .cnt').forEach(e=>{e.hidden=!n;e.textContent=fa(n)})}
-function go(v){const was=cur;cur=v;if(v!=='categories'){catFilter=null;catQ=''}renderMain();setNav(was!==v);window.scrollTo({top:0})}
+function go(v){const was=cur;if(was!==v){try{history.pushState({...(history.state||{}),siseView:v},'',location.href)}catch(e){}}cur=v;if(v!=='categories'){catFilter=null;catQ=''}renderMain();setNav(was!==v);window.scrollTo({top:0})}
+function siseBackInit(){try{history.replaceState({...(history.state||{}),siseRoot:true,siseView:'home'},'',location.href)}catch(e){}}
+addEventListener('popstate',e=>{try{if(ADM&&ADM.open){const st=e.state||{};if(st.siseAdminTab){admTab=st.siseAdminTab;ADM.go(admTab);return}admTab='dash';if(ADM.go)ADM.go('dash');history.pushState({siseAdminRoot:true,siseAdminTab:'dash'},'',location.href);return}
+ const st=e.state||{},v=st.siseView||'home';if(cur!==v){cur=v;catFilter=null;catQ='';renderMain();setNav(false);window.scrollTo({top:0})}
+ if(!st.siseRoot)history.pushState({siseRoot:true,siseView:'home'},'',location.href)
+ }catch(err){try{history.pushState({siseRoot:true,siseView:'home'},'',location.href)}catch(x){}}});
+
 
 /* ---------- views ---------- */
 let _ps=0;addEventListener('resize',()=>{const p=innerWidth>=900?10:8;if(_ps&&p!==_ps&&(cur==='home'||cur==='categories'))renderMain();_ps=p});_ps=innerWidth>=900?10:8;
@@ -1409,7 +1415,7 @@ function openSearch(){let close;const inp=h('input',{id:'s-q',placeholder:'جس�
  close=openModal(h('div',{class:'sh',style:{minHeight:'70vh'}},h('div',{class:'grab'}),h('div',{class:'search glass'},I('search',20),inp),h('div',{style:{height:'14px'}}),res),'b');setTimeout(()=>inp.focus(),150)}
 /* ---------- boot ---------- */
 let rT=0;function refreshStore(){clearTimeout(rT);rT=setTimeout(()=>{applyTheme();applyFav();renderHeader();buildNav();renderMain();setNav(false);drawBanner()},120)}
-async function boot(){await loadState();const rp=sbPull(HAD_CACHE?4000:6000).then(r=>{if(applyRemote(r)&&HAD_CACHE)refreshStore()}).catch(()=>{});if(!HAD_CACHE)await rp;retryOrders();applySplashSettings();applyTheme();renderHeader();buildNav();renderMain();drawBanner();loadStock(true);requestAnimationFrame(()=>setNav(false));document.fonts&&document.fonts.ready.then(()=>setNav(false));
+async function boot(){siseBackInit();await loadState();const rp=sbPull(HAD_CACHE?4000:6000).then(r=>{if(applyRemote(r)&&HAD_CACHE)refreshStore()}).catch(()=>{});if(!HAD_CACHE)await rp;retryOrders();applySplashSettings();applyTheme();renderHeader();buildNav();renderMain();drawBanner();loadStock(true);requestAnimationFrame(()=>setNav(false));document.fonts&&document.fonts.ready.then(()=>setNav(false));
  let hs='';try{hs=location.hash}catch(e){}if(hs==='#admin'||window.OPEN_ADMIN)openAdminLogin();hideSplash()}
 function applySplashSettings(){const st=S.store||{},sp=document.getElementById('splash');if(!sp)return;sp.style.setProperty('--splash-bg',st.loadingBg||'#efe2d2');sp.style.setProperty('--splash-mid',st.loadingBg||'#f6eee5');sp.style.setProperty('--splash-deep',st.loadingBg||'#e7d5c1');sp.style.setProperty('--splash-accent',st.loadingAccent||'#68442e');sp.style.setProperty('--splash-text',S.theme&&S.theme.accent2||'#f4dcae');const title=document.getElementById('sp-name'),sub=document.getElementById('sp-text'),mark=document.getElementById('sp-mark');if(title)title.textContent=st.loadingTitle||st.name||'SISE';if(sub)sub.textContent=st.loadingText||'DISCOVER YOUR STYLE';if(mark){const logo=st.loadingLogo||st.logo;if(logo){mark.innerHTML='<img class="sp-logo" alt=""><i class="sp-ring"></i><i class="sp-ring r2"></i>';mark.querySelector('img').src=logo}else{mark.innerHTML='<svg viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="sp-bag" d="M16 23h32l3.5 31h-39z"/><path class="sp-h" d="M24 23v-5a8 8 0 0116 0v5"/><circle class="sp-k" cx="32" cy="37" r="2.6"/></svg><i class="sp-ring"></i><i class="sp-ring r2"></i>'}}}
 function hideSplash(){const sp=document.getElementById('splash');if(!sp)return;if(S.store&&S.store.loadingEnabled===false){sp.remove();return}const ms=Math.max(0,Math.min(10000,+S.store.loadingDuration||0));const w=Math.max(0,ms-performance.now());setTimeout(()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),700)},w)}
@@ -1586,7 +1592,7 @@ function openAdmin(){const body=h('div',{class:'adm-b'}),tabs=h('div',{class:'ta
   )))};
  const draw=()=>{drawTabs();body.innerHTML='';add(body,PANELS[admTab]());root.scrollTo({top:0})};
  const root=h('div',{class:'adm',role:'dialog','aria-label':'پنل مدیریت'},h('div',{class:'adm-top'},h('div',{class:'adm-t'},h('h2',{},'پنل مدیریت'),h('button',{class:'btn sec',onclick:close},I('eye',18),'مشاهده سایت')),h('div',{class:'sync-row'},h('small',{id:'sync-st',class:'sync'},'متصل به سرور'),h('button',{class:'btn sm',onclick:()=>{clearTimeout(syncT);sbPush()}},'انتشار روی سرور')),tabs),body);
- ADM.go=k=>{admTab=k;draw()};ADM.drawTabs=drawTabs;document.body.append(root);document.body.classList.add('lock');ADM.open=true;draw();refreshAdminBadges();clearInterval(ADM.badgeTimer);ADM.badgeTimer=setInterval(refreshAdminBadges,12000)}
+ ADM.go=k=>{if(admTab!==k){try{history.pushState({...(history.state||{}),siseAdminTab:k},'',location.href)}catch(e){}}admTab=k;draw()};try{history.pushState({siseAdminRoot:true,siseAdminTab:'dash'},'',location.href)}catch(e){}ADM.drawTabs=drawTabs;document.body.append(root);document.body.classList.add('lock');ADM.open=true;draw();refreshAdminBadges();clearInterval(ADM.badgeTimer);ADM.badgeTimer=setInterval(refreshAdminBadges,12000)}
 
 const PANELS={
 rack(){
