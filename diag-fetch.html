@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISE fetch diagnostic</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#10131a;color:#f3f4f6;padding:20px;line-height:1.8}
+main{max-width:720px;margin:auto}h2{font-size:20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#202633;padding:14px;border-radius:10px}
+small{color:#aab3c2}
+</style>
+</head>
+<body>
+<main>
+<h2>آزمایش دریافت و تجزیه فایل اصلی SISE</h2>
+<p id="status">آماده‌سازی آزمایش…</p>
+<pre id="out">در حال شروع…</pre>
+<small>این صفحه فقط فایل را دریافت و از نظر نحوی بررسی می‌کند؛ کد اصلی را اجرا نمی‌کند.</small>
+</main>
+<script>
+(function(){
+  const out=document.getElementById('out');
+  const status=document.getElementById('status');
+  const started=performance.now();
+  let finished=false;
+  function show(s){out.textContent=s;}
+  function add(s){out.textContent += "\n"+s;}
+  const timer=setTimeout(function(){
+    if(!finished){finished=true;status.textContent="پایان مهلت آزمایش";add("TIMEOUT after "+Math.round(performance.now()-started)+" ms");}
+  },25000);
+  status.textContent="درخواست فایل ارسال شد…";
+  show("مرحله 1: شروع fetch");
+  fetch("./diag-split-main.js?fetchdiag=1",{cache:"no-store"})
+    .then(function(response){
+      if(finished) return null;
+      add("مرحله 2: پاسخ دریافت شد");
+      add("HTTP status: "+response.status);
+      add("Content-Type: "+(response.headers.get("content-type")||"نامشخص"));
+      add("Content-Length: "+(response.headers.get("content-length")||"نامشخص"));
+      if(!response.ok) throw new Error("HTTP "+response.status);
+      status.textContent="هدرها دریافت شد؛ در حال خواندن بدنه…";
+      return response.text();
+    })
+    .then(function(source){
+      if(finished||source===null) return;
+      add("مرحله 3: متن کامل دریافت شد");
+      add("طول متن: "+source.length+" کاراکتر");
+      status.textContent="فایل دریافت شد؛ در حال بررسی نحو جاوااسکریپت…";
+      try{
+        new Function(source);
+        add("مرحله 4: بررسی نحوی موفق بود");
+        status.textContent="آزمایش کامل شد";
+      }catch(e){
+        add("مرحله 4: خطای تجزیه/نحو");
+        add(String(e && (e.stack||e.message)||e));
+        status.textContent="کد از نظر نحوی خطا دارد";
+      }
+      add("زمان کل: "+Math.round(performance.now()-started)+" ms");
+      finished=true;clearTimeout(timer);
+    })
+    .catch(function(error){
+      if(finished) return;
+      finished=true;clearTimeout(timer);
+      add("خطا در دریافت: "+String(error && (error.stack||error.message)||error));
+      add("زمان تا خطا: "+Math.round(performance.now()-started)+" ms");
+      status.textContent="آزمایش با خطا متوقف شد";
+    });
+})();
+</script>
+</body>
+</html>
