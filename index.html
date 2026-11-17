@@ -915,7 +915,11 @@ body.lock #nv{display:none!important;pointer-events:none!important}
       message = 'Unknown error';
     }
     message = message.slice(0, 280);
-    var details = 'SISE boot diagnostic\nمرحله: ' + phase + '\nمنبع: ' + String(source || 'unknown') + '\nخطا: ' + message;
+    var flags = 'main=' + (window.__siseMainScriptEntered ? 'yes' : 'no') +
+      ' | boot=' + (window.__siseMainScriptReachedBoot ? 'yes' : 'no') +
+      ' | tag-end=' + (window.__siseMainScriptTagFinished ? 'yes' : 'no') +
+      ' | readyState=' + document.readyState;
+    var details = 'SISE boot diagnostic\nمرحله: ' + phase + '\nمنبع: ' + String(source || 'unknown') + '\nخطا: ' + message + '\nنشانه‌ها: ' + flags;
     try { console.error('[SISE boot diagnostic]', details, error); } catch (_) {}
     try {
       var splash = document.getElementById('splash');
@@ -933,7 +937,7 @@ body.lock #nv{display:none!important;pointer-events:none!important}
       stage.textContent = 'مرحله: ' + phase;
       stage.style.cssText = 'margin:8px 0;font-size:14px';
       var detail = document.createElement('pre');
-      detail.textContent = 'منبع: ' + String(source || 'unknown') + '\nخطا: ' + message;
+      detail.textContent = 'منبع: ' + String(source || 'unknown') + '\nخطا: ' + message + '\nنشانه‌ها: ' + flags;
       detail.style.cssText = 'direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f3ef;padding:12px;border-radius:10px;font:12px/1.6 monospace;max-height:32vh;overflow:auto';
       var note = document.createElement('p');
       note.textContent = 'لطفاً از این پیام عکس بگیر و برای بررسی بفرست.';
@@ -977,6 +981,15 @@ body.lock #nv{display:none!important;pointer-events:none!important}
   }, true);
   window.addEventListener('unhandledrejection', function (event) {
     report(event && event.reason, 'unhandled-promise');
+  });
+  window.addEventListener('securitypolicyviolation', function (event) {
+    if (!event) return;
+    var directive = String(event.effectiveDirective || event.violatedDirective || '');
+    if (directive.indexOf('script-src') === 0) {
+      var blocked = String(event.blockedURI || 'inline');
+      var where = String(event.sourceFile || location.href) + ':' + (event.lineNumber || 0);
+      report('CSP blocked ' + blocked, 'securitypolicyviolation: ' + directive + ' @ ' + where);
+    }
   });
   setTimeout(function () {
     if (!ready && !failed) report(new Error('Startup exceeded 15 seconds'), 'watchdog-15s');
