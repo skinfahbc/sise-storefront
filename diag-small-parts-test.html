@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISE | تست دریافت فایل‌های کوچک</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:20px;background:#101318;color:#f4f5f7;font:15px/1.9 system-ui,sans-serif}main{max-width:760px;margin:auto}.panel{background:#1b2029;border:1px solid #343c49;border-radius:16px;padding:18px;margin:14px 0}h1{font-size:21px;margin:0 0 8px}.muted{color:#aab3c2}.status{font-weight:700;color:#f6d27a}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0c0f14;border-radius:10px;padding:14px;direction:ltr;text-align:left;font:13px/1.6 ui-monospace,monospace}button{border:0;border-radius:10px;background:#e5bd70;color:#171717;padding:11px 18px;font-weight:700;font-size:15px}
+</style></head><body><main><h1>تست دریافت فایل‌های کوچک SISE</h1>
+<p class="muted">فایل اصلی به ۱۵ قسمت مستقل تقسیم شده است. این صفحه همه قسمت‌ها را جداگانه دریافت می‌کند، سپس فقط متن را کنار هم می‌گذارد و از نظر نحوی بررسی می‌کند؛ کد فروشگاه اجرا نمی‌شود.</p>
+<section class="panel"><div id="status" class="status">آماده‌سازی…</div><pre id="report">در حال شروع…</pre><button id="retry">اجرای دوباره تست</button></section>
+</main><script>
+(function(){
+const files=["diag-main-part-01.js","diag-main-part-02.js","diag-main-part-03.js","diag-main-part-04.js","diag-main-part-05.js","diag-main-part-06.js","diag-main-part-07.js","diag-main-part-08.js","diag-main-part-09.js","diag-main-part-10.js","diag-main-part-11.js","diag-main-part-12.js","diag-main-part-13.js","diag-main-part-14.js","diag-main-part-15.js"];
+const status=document.getElementById('status'),report=document.getElementById('report'),button=document.getElementById('retry');
+const lines=[];const started=performance.now();const results=new Array(files.length);
+const ms=n=>Math.round(n)+' ms';
+function show(){report.textContent=lines.join('\\n')}
+function log(s){lines.push(s);show()}
+async function runOne(file,index){
+ const controller=new AbortController(),t0=performance.now();
+ const timeout=setTimeout(()=>controller.abort(),15000);
+ try{
+  const response=await fetch('./'+file+'?parttest='+Date.now()+'-'+index,{cache:'no-store',signal:controller.signal});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const text=await response.text();
+  clearTimeout(timeout);
+  results[index]=text;
+  log('قسمت '+(index+1)+': OK | '+new TextEncoder().encode(text).length+' bytes | '+ms(performance.now()-t0));
+ }catch(e){
+  clearTimeout(timeout);
+  results[index]=null;
+  log('قسمت '+(index+1)+': FAIL | '+e.name+': '+e.message+' | '+ms(performance.now()-t0));
+ }
+}
+async function run(){
+ button.disabled=true;lines.length=0;results.fill(null);report.textContent='';
+ status.textContent='در حال دریافت هم‌زمان ۱۵ قسمت…';log('شروع: '+new Date().toISOString());
+ await Promise.all(files.map(runOne));
+ const failed=results.map((v,i)=>v===null?i+1:null).filter(Boolean);
+ if(failed.length){status.textContent='دریافت ناموفق؛ قسمت‌های مشکل‌دار: '+failed.join(', ');log('کل زمان: '+ms(performance.now()-started));button.disabled=false;return}
+ const combined=results.join('');
+ log('\\nهمه قسمت‌ها دریافت شدند.');
+ log('مجموع نویسه‌ها: '+combined.length.toLocaleString('en-US'));
+ log('مجموع بایت UTF-8: '+new TextEncoder().encode(combined).length.toLocaleString('en-US'));
+ try{new Function(combined);log('Syntax check: PASS (فقط parse؛ بدون اجرا)');status.textContent='موفق: همه قسمت‌ها دریافت و کد قابل تجزیه است'}
+ catch(e){log('Syntax check: FAIL | '+e.name+': '+e.message);status.textContent='دریافت کامل شد، اما خطای نحوی وجود دارد'}
+ log('کل زمان: '+ms(performance.now()-started));button.disabled=false;
+}
+button.addEventListener('click',run);run();
+})();
+</script></body></html>
