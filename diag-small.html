@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISE - تست دریافت صفحه</title>
+<script>
+window.__siseSmallHead = true;
+window.addEventListener('DOMContentLoaded', function () {
+  var el = document.getElementById('dom');
+  if (el) el.textContent = 'DOMContentLoaded: OK';
+});
+window.addEventListener('load', function () {
+  var el = document.getElementById('load');
+  if (el) el.textContent = 'window.load: OK';
+  var nav = performance.getEntriesByType('navigation')[0];
+  var info = document.getElementById('info');
+  if (info && nav) info.textContent = 'readyState=' + document.readyState +
+    ' | transferSize=' + nav.transferSize +
+    ' | encodedBodySize=' + nav.encodedBodySize +
+    ' | decodedBodySize=' + nav.decodedBodySize +
+    ' | responseEnd=' + Math.round(nav.responseEnd) + 'ms';
+});
+</script>
+</head>
+<body style="font-family:Tahoma,Arial,sans-serif;padding:24px;line-height:2;background:#f5f0e9;color:#241b16">
+<h2>تست دریافت صفحه SISE</h2>
+<p>اگر این پیام را می‌بینی، فایل کوچک HTML دریافت شده است.</p>
+<p id="dom">در انتظار پایان پردازش صفحه...</p>
+<p id="load">در انتظار رویداد load...</p>
+<p id="end">اسکریپت انتهای صفحه اجرا شد.</p>
+<pre id="info" style="white-space:pre-wrap;direction:ltr;text-align:left"></pre>
+<script>
+document.getElementById('end').textContent = 'اسکریپت انتهای صفحه: OK';
+</script>
+</body>
+</html>
