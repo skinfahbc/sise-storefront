@@ -1119,7 +1119,10 @@ function custOAuthCallback(){
 
 /* public content: visitors read, admin writes */
 async function sbPull(timeout){const r=await sbFetch('/rest/v1/site?id=eq.main&select=data,updated_at',{timeout:timeout||6000});return r&&r[0]||null}
-function applyRemote(row){if(!row||!row.data||!row.data.products||row.updated_at===S._ts)return false;
+function applyRemote(row){if(!row||!row.data||!row.data.products)return false;
+ const localStore=S.store||{},remoteStore=row.data.store||{};
+ const assetsChanged=(remoteStore.logo&&remoteStore.logo!==localStore.logo)||(remoteStore.loadingLogo&&remoteStore.loadingLogo!==localStore.loadingLogo);
+ if(row.updated_at===S._ts&&!assetsChanged)return false;
  const keep={admin:S.admin,users:S.users,orders:S.orders,mv:S.mv,v:S.v};S=Object.assign({},row.data,keep,{_ts:row.updated_at});fixup(S);persist();return true}
 /* orders */
 const sbOrderPost=o=>sbFetch('/rest/v1/orders',{method:'POST',headers:{Prefer:'return=minimal'},body:{code:o.code,data:o},timeout:10000});
@@ -1821,9 +1824,11 @@ function openSearch(){let close;const inp=h('input',{id:'s-q',placeholder:'جس�
  inp.addEventListener('input',draw);draw();
  close=openModal(h('div',{class:'sh',style:{minHeight:'70vh'}},h('div',{class:'grab'}),h('div',{class:'search glass'},I('search',20),inp),h('div',{style:{height:'14px'}}),res),'b');setTimeout(()=>inp.focus(),150)}
 /* ---------- boot ---------- */
-let rT=0;function refreshStore(){clearTimeout(rT);rT=setTimeout(()=>{applyTheme();applyFav();renderHeader();buildNav();renderMain();setNav(false);drawBanner()},120)}
-async function boot(){siseBackInit();await loadState();custOAuthCallback();await custRestore();const rp=sbPull(HAD_CACHE?4000:6000).then(r=>{if(applyRemote(r)&&HAD_CACHE)refreshStore()}).catch(()=>{});if(!HAD_CACHE)await rp;retryOrders();applySplashSettings();applyTheme();renderHeader();buildNav();renderMain();drawBanner();loadStock(true);requestAnimationFrame(()=>setNav(false));document.fonts&&document.fonts.ready.then(()=>setNav(false));
- let hs='';try{hs=location.hash}catch(e){}if(hs==='#admin'||window.OPEN_ADMIN)openAdminLogin();const seoProductId=new URLSearchParams(location.search).get('product');if(seoProductId)setTimeout(()=>openProduct(seoProductId),350);hideSplash()}
+let rT=0;function refreshStore(){clearTimeout(rT);rT=setTimeout(()=>{applySplashSettings();applyTheme();applyFav();renderHeader();buildNav();renderMain();setNav(false);drawBanner()},120)}
+async function boot(){siseBackInit();await loadState();custOAuthCallback();applySplashSettings();applyTheme();renderHeader();buildNav();renderMain();drawBanner();loadStock(true);requestAnimationFrame(()=>setNav(false));document.fonts&&document.fonts.ready.then(()=>setNav(false));
+ let hs='';try{hs=location.hash}catch(e){}if(hs==='#admin'||window.OPEN_ADMIN)openAdminLogin();const seoProductId=new URLSearchParams(location.search).get('product');if(seoProductId)setTimeout(()=>openProduct(seoProductId),350);hideSplash();
+ // Remote data and customer-session recovery must never block the first storefront render.
+ sbPull(HAD_CACHE?4000:6000).then(r=>{if(applyRemote(r))refreshStore()}).catch(e=>console.warn('Remote store sync deferred:',e.message)).finally(()=>{custRestore().catch(e=>console.warn('Customer session restore deferred:',e.message));retryOrders()})}
 function applySplashSettings(){const st=S.store||{},sp=document.getElementById('splash');if(!sp)return;sp.style.setProperty('--splash-bg',st.loadingBg||'#efe2d2');sp.style.setProperty('--splash-mid',st.loadingBg||'#f6eee5');sp.style.setProperty('--splash-deep',st.loadingBg||'#e7d5c1');sp.style.setProperty('--splash-accent',st.loadingAccent||'#68442e');sp.style.setProperty('--splash-text',S.theme&&S.theme.accent2||'#f4dcae');const title=document.getElementById('sp-name'),sub=document.getElementById('sp-text'),mark=document.getElementById('sp-mark');if(title)title.textContent=st.loadingTitle||st.name||'SISE';if(sub)sub.textContent=st.loadingText||'DISCOVER YOUR STYLE';if(mark){const logo=st.loadingLogo||st.logo;if(logo){mark.innerHTML='<img class="sp-logo" alt=""><i class="sp-ring"></i><i class="sp-ring r2"></i>';mark.querySelector('img').src=logo}else{mark.innerHTML='<svg viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="sp-bag" d="M16 23h32l3.5 31h-39z"/><path class="sp-h" d="M24 23v-5a8 8 0 0116 0v5"/><circle class="sp-k" cx="32" cy="37" r="2.6"/></svg><i class="sp-ring"></i><i class="sp-ring r2"></i>'}}}
 function hideSplash(){const sp=document.getElementById('splash');if(!sp)return;if(S.store&&S.store.loadingEnabled===false){sp.remove();return}const ms=Math.max(0,Math.min(10000,+S.store.loadingDuration||0));const w=Math.max(0,ms-performance.now());setTimeout(()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),700)},w)}
 /* ---------- stock ---------- */
