@@ -1182,10 +1182,10 @@ addEventListener('resize',()=>setNav(false));
 function cartBadge(){toteSync();const n=V.cart.reduce((a,c)=>a+c.qty,0);document.querySelectorAll('.nv-b .cnt').forEach(e=>{e.hidden=!n;e.textContent=fa(n)})}
 function go(v){const was=cur;if(was!==v){try{history.pushState({...(history.state||{}),siseView:v},'',location.href)}catch(e){}}cur=v;if(v!=='categories'){catFilter=null;catQ=''}renderMain();setNav(was!==v);window.scrollTo({top:0})}
 let sisePopHandling=false;
-function siseBackInit(){try{history.replaceState({...(history.state||{}),siseRoot:true,siseView:'home'},'',location.href)}catch(e){}}
+function siseBackInit(){try{const root={...(history.state||{}),siseRoot:true,siseView:'home'};history.replaceState(root,'',location.href);history.pushState(root,'',location.href)}catch(e){}}
 addEventListener('popstate',e=>{try{if(stack&&stack.length){stack[stack.length-1].close();history.pushState({...(history.state||{}),siseView:cur},'',location.href);return}const lb=document.querySelector('.lb');if(lb){const x=lb.querySelector('button[aria-label="بستن"]');if(x)x.click();history.pushState({...(history.state||{}),siseView:cur},'',location.href);return}if(ADM&&ADM.open){const st=e.state||{};if(st.siseAdminTab){sisePopHandling=true;ADM.go(st.siseAdminTab);sisePopHandling=false;return}admTab='dash';sisePopHandling=true;if(ADM.go)ADM.go('dash');sisePopHandling=false;history.pushState({siseAdminRoot:true,siseAdminTab:'dash'},'',location.href);return}
  const st=e.state||{},v=st.siseView||'home';if(cur!==v){cur=v;catFilter=null;catQ='';renderMain();setNav(false);window.scrollTo({top:0})}
- if(!st.siseRoot)history.pushState({siseRoot:true,siseView:'home'},'',location.href)
+ if(!st.siseRoot||v==='home')history.pushState({siseRoot:true,siseView:'home'},'',location.href)
  }catch(err){try{history.pushState({siseRoot:true,siseView:'home'},'',location.href)}catch(x){}}});
 
 
