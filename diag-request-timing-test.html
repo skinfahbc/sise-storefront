@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISE | بررسی زمان‌بندی درخواست‌ها</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:20px;background:#101318;color:#f4f5f7;font:15px/1.9 system-ui,sans-serif}main{max-width:780px;margin:auto}.panel{background:#1b2029;border:1px solid #343c49;border-radius:16px;padding:18px;margin:14px 0}h1{font-size:21px;margin:0 0 8px}.muted{color:#aab3c2}.status{font-weight:700;color:#f6d27a}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0c0f14;border-radius:10px;padding:14px;direction:ltr;text-align:left;font:13px/1.6 ui-monospace,monospace}button{border:0;border-radius:10px;background:#e5bd70;color:#171717;padding:11px 18px;font-weight:700;font-size:15px}
+</style></head><body><main><h1>تست زمان‌بندی درخواست‌های SISE</h1>
+<p class="muted">این تست چند درخواست کوچک به همان سرور می‌فرستد و زمان انتظار مرورگر، اتصال، رسیدن اولین پاسخ و دریافت کامل را جداگانه ثبت می‌کند. هیچ کد فروشگاهی اجرا نمی‌شود.</p>
+<section class="panel"><div id="status" class="status">آماده‌سازی…</div><pre id="report">در حال شروع…</pre><button id="retry">اجرای دوباره تست</button></section>
+</main><script>
+(function(){
+const tests=[
+ {label:'صفحه HTML کوچک - اول',path:'diag-small.html'},
+ {label:'فایل JS قسمت ۱',path:'diag-main-part-01.js'},
+ {label:'فایل JS قسمت ۱۱',path:'diag-main-part-11.js'},
+ {label:'صفحه HTML کوچک - دوم',path:'diag-small.html'},
+ {label:'فایل JS قسمت ۱ - تکرار',path:'diag-main-part-01.js'}
+];
+const status=document.getElementById('status'),report=document.getElementById('report'),button=document.getElementById('retry');
+let busy=false;
+const ms=n=>Number.isFinite(n)?Math.round(n)+' ms':'n/a';
+async function run(){
+ if(busy)return;busy=true;button.disabled=true;
+ const lines=[],started=performance.now();
+ function log(s){lines.push(s);report.textContent=lines.join('\\n')}
+ status.textContent='در حال اندازه‌گیری…';report.textContent='';
+ log('شروع: '+new Date().toISOString());
+ log('مرورگر: '+navigator.userAgent);
+ for(let i=0;i<tests.length;i++){
+  const t=tests[i],url='./'+t.path+'?timingprobe='+Date.now()+'-'+i;
+  const controller=new AbortController(),t0=performance.now();let timer=setTimeout(()=>controller.abort(),20000);
+  try{
+   const res=await fetch(url,{cache:'no-store',signal:controller.signal});
+   const headerAt=performance.now()-t0;
+   const body=await res.arrayBuffer();
+   const total=performance.now()-t0;
+   const entries=performance.getEntriesByName(new URL(url,location.href).href);
+   const e=entries.length?entries[entries.length-1]:null;
+   log(t.label+': HTTP '+res.status+' | headers '+ms(headerAt)+' | bytes '+body.byteLength+' | total '+ms(total));
+   if(e){
+    log('  fetchStart '+ms(e.fetchStart)+' | requestStart '+ms(e.requestStart)+' | pre-request '+ms(e.requestStart-e.fetchStart));
+    log('  DNS '+ms(e.domainLookupEnd-e.domainLookupStart)+' | TCP '+ms(e.connectEnd-e.connectStart)+' | TLS '+ms(e.connectEnd-e.secureConnectionStart));
+    log('  request-to-first-byte '+ms(e.responseStart-e.requestStart)+' | download '+ms(e.responseEnd-e.responseStart)+' | protocol '+(e.nextHopProtocol||'n/a'));
+   }else log('  Resource Timing entry: unavailable');
+  }catch(e){
+   const entries=performance.getEntriesByName(new URL(url,location.href).href);
+   const r=entries.length?entries[entries.length-1]:null;
+   log(t.label+': FAIL '+e.name+': '+e.message+' | total '+ms(performance.now()-t0));
+   if(r)log('  timing partial: fetchStart '+ms(r.fetchStart)+' | requestStart '+ms(r.requestStart)+' | responseStart '+ms(r.responseStart)+' | transferSize '+r.transferSize);
+  }finally{clearTimeout(timer)}
+  status.textContent='پیشرفت: '+(i+1)+' از '+tests.length;
+ }
+ log('کل زمان: '+ms(performance.now()-started));
+ status.textContent='تست تمام شد؛ گزارش کامل را ارسال کن';
+ button.disabled=false;busy=false;
+}
+button.addEventListener('click',run);run();
+})();
+</script></body></html>
