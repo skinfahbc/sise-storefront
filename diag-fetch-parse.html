@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISE | تست دریافت و تجزیه فایل اصلی</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:20px;background:#101318;color:#f4f5f7;font:15px/1.9 system-ui,sans-serif}
+main{max-width:760px;margin:0 auto}.panel{background:#1b2029;border:1px solid #343c49;border-radius:16px;padding:18px;margin:14px 0}
+h1{font-size:21px;margin:0 0 8px}.muted{color:#aab3c2}.status{font-weight:700;color:#f6d27a}.ok{color:#8ee0ae}.bad{color:#ff9b9b}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0c0f14;border-radius:10px;padding:14px;direction:ltr;text-align:left;font:13px/1.6 ui-monospace,monospace}
+button{border:0;border-radius:10px;background:#e5bd70;color:#171717;padding:11px 18px;font-weight:700;font-size:15px}
+</style>
+</head>
+<body>
+<main>
+  <h1>تست دریافت و تجزیه فایل اصلی SISE</h1>
+  <p class="muted">این صفحه فقط فایل جاوااسکریپت را دریافت و از نظر نحوی بررسی می‌کند؛ کد فروشگاه را اجرا نمی‌کند و هیچ سفارشی یا تغییری در اطلاعات سایت انجام نمی‌دهد.</p>
+  <section class="panel">
+    <div id="status" class="status">آماده‌سازی تست…</div>
+    <pre id="report">در حال شروع…</pre>
+    <button id="retry" type="button">اجرای دوباره تست</button>
+  </section>
+</main>
+<script>
+(function(){
+  const statusEl=document.getElementById('status');
+  const reportEl=document.getElementById('report');
+  const retry=document.getElementById('retry');
+  const target='./diag-split-main.js?probe='+Date.now();
+  const lines=[];
+  const start=performance.now();
+  const ms=n=>Math.round(n)+' ms';
+  function log(s){lines.push(s);reportEl.textContent=lines.join('\\n')}
+  function finish(label,kind){statusEl.textContent=label;statusEl.className=kind||'status'}
+  async function run(){
+    retry.disabled=true;lines.length=0;reportEl.textContent='';
+    finish('در حال دریافت فایل…');
+    log('آدرس: '+target);
+    log('مرورگر: '+navigator.userAgent);
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),30000);
+    try{
+      const response=await fetch(target,{cache:'no-store',signal:controller.signal,credentials:'same-origin'});
+      log('HTTP status: '+response.status+' '+response.statusText);
+      log('Content-Type: '+(response.headers.get('content-type')||'نامشخص'));
+      log('Content-Length header: '+(response.headers.get('content-length')||'در دسترس نیست'));
+      if(!response.ok) throw new Error('HTTP '+response.status);
+      if(!response.body||!response.body.getReader){
+        const source=await response.text();
+        log('روش دریافت: response.text');
+        log('تعداد نویسه‌ها: '+source.length);
+        log('زمان دریافت: '+ms(performance.now()-start));
+        finish('دریافت انجام شد؛ بررسی نحوی…');
+        try{new Function(source);log('Syntax check: PASS');finish('موفق: فایل دریافت و تجزیه شد','ok')}
+        catch(e){log('Syntax check: FAIL — '+e.name+': '+e.message);finish('فایل دریافت شد اما بررسی نحوی خطا داد','bad')}
+        return;
+      }
+      const reader=response.body.getReader();
+      const chunks=[];
+      let bytes=0,firstChunk=null;
+      while(true){
+        const part=await reader.read();
+        if(part.done)break;
+        if(firstChunk===null)firstChunk=performance.now();
+        chunks.push(part.value);bytes+=part.value.byteLength;
+        log('دریافت‌شده: '+bytes.toLocaleString('en-US')+' bytes');
+      }
+      clearTimeout(timer);
+      const receivedAt=performance.now();
+      const all=new Uint8Array(bytes);let offset=0;
+      for(const chunk of chunks){all.set(chunk,offset);offset+=chunk.byteLength}
+      const source=new TextDecoder('utf-8').decode(all);
+      log('دریافت کامل: '+bytes.toLocaleString('en-US')+' bytes');
+      log('تعداد نویسه‌ها: '+source.length.toLocaleString('en-US'));
+      log('شروع اولین داده: '+(firstChunk===null?'داده‌ای نرسید':ms(firstChunk-start)));
+      log('مدت دریافت بدنه: '+ms(receivedAt-start));
+      finish('دریافت کامل شد؛ بررسی نحوی…');
+      try{
+        new Function(source);
+        log('Syntax check: PASS (کد فقط parse شد و اجرا نشد)');
+        finish('موفق: فایل کامل دریافت و از نظر نحوی قابل تجزیه است','ok');
+      }catch(e){
+        log('Syntax check: FAIL — '+e.name+': '+e.message);
+        finish('فایل دریافت شد اما بررسی نحوی خطا داد','bad');
+      }
+      const entries=performance.getEntriesByName(new URL(target,location.href).href);
+      if(entries.length){
+        const e=entries[entries.length-1];
+        log('Resource timing: '+ms(e.responseEnd-e.startTime)+' total; TTFB '+ms(e.responseStart-e.requestStart));
+      }
+    }catch(e){
+      clearTimeout(timer);
+      log('خطا: '+e.name+': '+e.message);
+      log('زمان سپری‌شده: '+ms(performance.now()-start));
+      finish(e.name==='AbortError'?'توقف: دریافت بیش از ۳۰ ثانیه طول کشید':'تست ناموفق بود','bad');
+    }finally{retry.disabled=false}
+  }
+  retry.addEventListener('click',run);
+  run();
+})();
+</script>
+</body>
+</html>
