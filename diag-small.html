@@ -13,31 +13,43 @@ window.addEventListener('DOMContentLoaded', function () {
 window.addEventListener('load', function () {
   var el = document.getElementById('load');
   if (el) el.textContent = 'window.load: OK';
-  var nav = performance.getEntriesByType('navigation')[0];
-  var info = document.getElementById('info');
-  if (info && nav) {
-    function ms(value) { return Math.round(value || 0) + 'ms'; }
-    var lines = [
-      'readyState=' + document.readyState,
-      'transferSize=' + nav.transferSize + ' bytes',
-      'encodedBodySize=' + nav.encodedBodySize + ' bytes',
-      'decodedBodySize=' + nav.decodedBodySize + ' bytes',
-      'redirect=' + ms(nav.redirectEnd - nav.redirectStart),
-      'DNS=' + ms(nav.domainLookupEnd - nav.domainLookupStart),
-      'TCP connect=' + ms(nav.connectEnd - nav.connectStart),
-      'TLS=' + (nav.secureConnectionStart ? ms(nav.connectEnd - nav.secureConnectionStart) : 'n/a'),
-      'request-to-first-byte=' + ms(nav.responseStart - nav.requestStart),
-      'download=' + ms(nav.responseEnd - nav.responseStart),
-      'responseStart=' + ms(nav.responseStart),
-      'responseEnd=' + ms(nav.responseEnd),
-      'DOMContentLoaded=' + ms(nav.domContentLoadedEventEnd),
-      'loadEventEnd=' + ms(nav.loadEventEnd)
-    ];
-    if (nav.serverTiming && nav.serverTiming.length) {
-      lines.push('Server-Timing=' + nav.serverTiming.map(function (x) { return x.name + ':' + x.duration + 'ms'; }).join(', '));
+  // Read after the load event has fully completed so loadEventEnd is populated.
+  setTimeout(function () {
+    var nav = performance.getEntriesByType('navigation')[0];
+    var info = document.getElementById('info');
+    if (info && nav) {
+      function ms(value) { return Math.round(value || 0) + 'ms'; }
+      var lines = [
+        'readyState=' + document.readyState,
+        'visibilityState=' + document.visibilityState,
+        'serviceWorkerController=' + (navigator.serviceWorker && navigator.serviceWorker.controller ? 'yes' : 'no'),
+        'nextHopProtocol=' + (nav.nextHopProtocol || 'n/a'),
+        'transferSize=' + nav.transferSize + ' bytes',
+        'encodedBodySize=' + nav.encodedBodySize + ' bytes',
+        'decodedBodySize=' + nav.decodedBodySize + ' bytes',
+        'fetchStart=' + ms(nav.fetchStart),
+        'workerStart=' + ms(nav.workerStart),
+        'DNS start=' + ms(nav.domainLookupStart),
+        'DNS end=' + ms(nav.domainLookupEnd),
+        'connectStart=' + ms(nav.connectStart),
+        'TCP connect end=' + ms(nav.connectEnd),
+        'TLS start=' + ms(nav.secureConnectionStart),
+        'requestStart=' + ms(nav.requestStart),
+        'pre-request gap=' + ms(nav.requestStart - nav.fetchStart),
+        'request-to-first-byte=' + ms(nav.responseStart - nav.requestStart),
+        'download=' + ms(nav.responseEnd - nav.responseStart),
+        'responseStart=' + ms(nav.responseStart),
+        'responseEnd=' + ms(nav.responseEnd),
+        'DOMContentLoaded=' + ms(nav.domContentLoadedEventEnd),
+        'loadEventStart=' + ms(nav.loadEventStart),
+        'loadEventEnd=' + ms(nav.loadEventEnd)
+      ];
+      if (nav.serverTiming && nav.serverTiming.length) {
+        lines.push('Server-Timing=' + nav.serverTiming.map(function (x) { return x.name + ':' + x.duration + 'ms'; }).join(', '));
+      }
+      info.textContent = lines.join('\\n');
     }
-    info.textContent = lines.join('\\n');
-  }
+  }, 0);
 });
 </script>
 </head>
