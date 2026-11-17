@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISE | تست تکه‌ای انتقال فایل</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:20px;background:#101318;color:#f4f5f7;font:15px/1.9 system-ui,sans-serif}
+main{max-width:760px;margin:auto}.panel{background:#1b2029;border:1px solid #343c49;border-radius:16px;padding:18px;margin:14px 0}
+h1{font-size:21px;margin:0 0 8px}.muted{color:#aab3c2}.status{font-weight:700;color:#f6d27a}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0c0f14;border-radius:10px;padding:14px;direction:ltr;text-align:left;font:13px/1.6 ui-monospace,monospace}
+button{border:0;border-radius:10px;background:#e5bd70;color:#171717;padding:11px 18px;font-weight:700;font-size:15px}
+</style></head><body><main>
+<h1>تست تکه‌ای انتقال فایل اصلی SISE</h1>
+<p class="muted">این تست فقط چند بازهٔ کوچک از فایل جاوااسکریپت را جداگانه درخواست می‌کند. کد فروشگاه اجرا نمی‌شود و هیچ اطلاعاتی تغییر نمی‌کند.</p>
+<section class="panel"><div id="status" class="status">آماده‌سازی…</div><pre id="report">در حال شروع…</pre><button id="retry">اجرای دوباره</button></section>
+</main><script>
+(function(){
+const status=document.getElementById('status'),report=document.getElementById('report'),button=document.getElementById('retry');
+const url='./diag-split-main.js?rangeprobe='+Date.now();
+const ranges=[[0,16383],[16384,32767],[32768,49151],[49152,65535]];
+let lines=[];
+function log(s){lines.push(s);report.textContent=lines.join('\\n')}
+const ms=n=>Math.round(n)+' ms';
+async function run(){
+button.disabled=true;lines=[];report.textContent='';status.textContent='در حال آزمایش بازه‌های فایل…';
+log('URL: '+url);log('User-Agent: '+navigator.userAgent);
+for(const [start,end] of ranges){
+ const controller=new AbortController(),t0=performance.now();
+ const timeout=setTimeout(()=>controller.abort(),10000);
+ try{
+  const response=await fetch(url,{method:'GET',headers:{'Range':'bytes='+start+'-'+end},cache:'no-store',signal:controller.signal});
+  const headers=['HTTP '+response.status,response.statusText,
+   'Content-Range: '+(response.headers.get('content-range')||'ندارد'),
+   'Content-Length: '+(response.headers.get('content-length')||'ندارد'),
+   'Content-Encoding: '+(response.headers.get('content-encoding')||'ندارد'),
+   'Accept-Ranges: '+(response.headers.get('accept-ranges')||'ندارد')].join(' | ');
+  log('\\nبازه '+start+'-'+end+': '+headers);
+  if(response.status!==206){
+    log('سرور پاسخ جزئی 206 نداد؛ برای جلوگیری از دانلود کامل، تست متوقف شد.');
+    await response.body?.cancel();
+    clearTimeout(timeout);status.textContent='سرور درخواست بازه‌ای را نپذیرفت یا نادیده گرفت';status.className='status';return;
+  }
+  const reader=response.body.getReader();let received=0;
+  while(true){const part=await reader.read();if(part.done)break;received+=part.value.byteLength}
+  clearTimeout(timeout);
+  log('دریافت‌شده: '+received+' bytes | زمان: '+ms(performance.now()-t0));
+  if(received!==end-start+1){log('هشدار: تعداد بایت با اندازهٔ درخواستی برابر نیست.');status.textContent='اندازهٔ پاسخ بازه‌ای غیرمنتظره است';return}
+ }catch(e){
+  clearTimeout(timeout);log('خطا: '+e.name+': '+e.message+' | زمان: '+ms(performance.now()-t0));
+  status.textContent=e.name==='AbortError'?'دریافت یکی از بازه‌ها بیش از ۱۰ ثانیه طول کشید':'درخواست بازه‌ای ناموفق بود';return;
+ }
+}
+status.textContent='موفق: هر چهار بازه جداگانه دریافت شدند';status.className='status';
+log('\\nتمام بازه‌های آزمایشی با موفقیت دریافت شدند.');
+button.disabled=false;
+}
+button.addEventListener('click',run);run();
+})();
+</script></body></html>
