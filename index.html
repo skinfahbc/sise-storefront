@@ -900,6 +900,87 @@ body.lock #nv{display:none!important;pointer-events:none!important}
 <main class="app" id="app"><div class="skel">در حال بارگذاری…</div></main>
 <nav class="nv" id="nv" aria-label="ناوبری اصلی"></nav>
 <script>
+/* SISE temporary boot diagnostics — branch-only */
+(function () {
+  var phase = 'script-init';
+  var failed = false;
+  var ready = false;
+  function report(error, source) {
+    if (failed || ready) return;
+    failed = true;
+    var message = '';
+    try {
+      message = error && (error.message || error.reason) ? String(error.message || error.reason) : String(error || 'Unknown error');
+    } catch (_) {
+      message = 'Unknown error';
+    }
+    message = message.slice(0, 280);
+    var details = 'SISE boot diagnostic\nمرحله: ' + phase + '\nمنبع: ' + String(source || 'unknown') + '\nخطا: ' + message;
+    try { console.error('[SISE boot diagnostic]', details, error); } catch (_) {}
+    try {
+      var splash = document.getElementById('splash');
+      if (splash) splash.remove();
+      var panel = document.createElement('section');
+      panel.id = 'sise-boot-diagnostic';
+      panel.setAttribute('dir', 'rtl');
+      panel.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;background:#f4eee7;color:#241b16;font-family:Tahoma,Arial,sans-serif;box-sizing:border-box';
+      var card = document.createElement('div');
+      card.style.cssText = 'width:min(100%,520px);padding:24px;border:1px solid #d8c7b7;border-radius:18px;background:#fff;box-shadow:0 12px 40px #0002;box-sizing:border-box';
+      var title = document.createElement('h2');
+      title.textContent = 'بارگذاری فروشگاه متوقف شد';
+      title.style.cssText = 'margin:0 0 14px;font-size:20px';
+      var stage = document.createElement('p');
+      stage.textContent = 'مرحله: ' + phase;
+      stage.style.cssText = 'margin:8px 0;font-size:14px';
+      var detail = document.createElement('pre');
+      detail.textContent = 'منبع: ' + String(source || 'unknown') + '\nخطا: ' + message;
+      detail.style.cssText = 'direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f3ef;padding:12px;border-radius:10px;font:12px/1.6 monospace;max-height:32vh;overflow:auto';
+      var note = document.createElement('p');
+      note.textContent = 'لطفاً از این پیام عکس بگیر و برای بررسی بفرست.';
+      note.style.cssText = 'font-size:13px;line-height:1.8';
+      var actions = document.createElement('div');
+      actions.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap';
+      var copy = document.createElement('button');
+      copy.type = 'button';
+      copy.textContent = 'کپی گزارش خطا';
+      copy.style.cssText = 'border:0;border-radius:9px;padding:11px 16px;background:#68442e;color:#fff;font:inherit';
+      copy.onclick = function () {
+        try {
+          var p = navigator.clipboard && navigator.clipboard.writeText(details);
+          if (p && p.catch) p.catch(function () {});
+          copy.textContent = 'در صورت کپی نشدن، عکس بگیر';
+        } catch (_) {
+          copy.textContent = 'لطفاً عکس بگیر';
+        }
+      };
+      var reload = document.createElement('button');
+      reload.type = 'button';
+      reload.textContent = 'تلاش دوباره';
+      reload.style.cssText = 'border:1px solid #c9b9aa;border-radius:9px;padding:11px 16px;background:#fff;color:#241b16;font:inherit';
+      reload.onclick = function () { location.reload(); };
+      actions.append(copy, reload);
+      card.append(title, stage, detail, note, actions);
+      panel.append(card);
+      document.body.append(panel);
+    } catch (uiError) {
+      try { alert('SISE: ' + phase + ' — ' + message); } catch (_) {}
+    }
+  }
+  window.__siseBootSetPhase = function (value) { phase = String(value || 'unknown'); };
+  window.__siseBootMarkReady = function () { ready = true; };
+  window.__siseBootReport = report;
+  window.addEventListener('error', function (event) {
+    if (event && event.error) report(event.error, 'javascript');
+  }, true);
+  window.addEventListener('unhandledrejection', function (event) {
+    report(event && event.reason, 'unhandled-promise');
+  });
+  setTimeout(function () {
+    if (!ready && !failed) report(new Error('Startup exceeded 15 seconds'), 'watchdog-15s');
+  }, 15000);
+})();
+</script>
+<script>
 /* ---------- helpers ---------- */
 const $=(s,r=document)=>r.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -1825,10 +1906,34 @@ function openSearch(){let close;const inp=h('input',{id:'s-q',placeholder:'جس�
  close=openModal(h('div',{class:'sh',style:{minHeight:'70vh'}},h('div',{class:'grab'}),h('div',{class:'search glass'},I('search',20),inp),h('div',{style:{height:'14px'}}),res),'b');setTimeout(()=>inp.focus(),150)}
 /* ---------- boot ---------- */
 let rT=0;function refreshStore(){clearTimeout(rT);rT=setTimeout(()=>{applySplashSettings();applyTheme();applyFav();renderHeader();buildNav();renderMain();setNav(false);drawBanner()},120)}
-async function boot(){siseBackInit();await loadState();custOAuthCallback();applySplashSettings();applyTheme();renderHeader();buildNav();renderMain();drawBanner();loadStock(true);requestAnimationFrame(()=>setNav(false));document.fonts&&document.fonts.ready.then(()=>setNav(false));
- let hs='';try{hs=location.hash}catch(e){}if(hs==='#admin'||window.OPEN_ADMIN)openAdminLogin();const seoProductId=new URLSearchParams(location.search).get('product');if(seoProductId)setTimeout(()=>openProduct(seoProductId),350);hideSplash();
- // Remote data and customer-session recovery must never block the first storefront render.
- sbPull(HAD_CACHE?4000:6000).then(r=>{if(applyRemote(r))refreshStore()}).catch(e=>console.warn('Remote store sync deferred:',e.message)).finally(()=>{custRestore().catch(e=>console.warn('Customer session restore deferred:',e.message));retryOrders()})}
+async function boot(){
+ try{
+  window.__siseBootSetPhase('history');siseBackInit();
+  window.__siseBootSetPhase('load-state');await loadState();
+  window.__siseBootSetPhase('customer-oauth');custOAuthCallback();
+  window.__siseBootSetPhase('splash-settings');applySplashSettings();
+  window.__siseBootSetPhase('theme');applyTheme();
+  window.__siseBootSetPhase('header');renderHeader();
+  window.__siseBootSetPhase('navigation');buildNav();
+  window.__siseBootSetPhase('home-render');renderMain();
+  window.__siseBootSetPhase('banner');drawBanner();
+  window.__siseBootSetPhase('stock');loadStock(true);
+  window.__siseBootSetPhase('navigation-position');requestAnimationFrame(()=>setNav(false));
+  document.fonts&&document.fonts.ready.then(()=>setNav(false));
+  let hs='';try{hs=location.hash}catch(e){}
+  if(hs==='#admin'||window.OPEN_ADMIN){window.__siseBootSetPhase('admin-login');openAdminLogin()}
+  const seoProductId=new URLSearchParams(location.search).get('product');
+  if(seoProductId)setTimeout(()=>openProduct(seoProductId),350);
+  window.__siseBootSetPhase('hide-splash');hideSplash();
+  window.__siseBootMarkReady();
+  // Remote data and customer-session recovery must never block the first storefront render.
+  sbPull(HAD_CACHE?4000:6000).then(r=>{if(applyRemote(r))refreshStore()})
+   .catch(e=>console.warn('Remote store sync deferred:',e.message))
+   .finally(()=>{custRestore().catch(e=>console.warn('Customer session restore deferred:',e.message));retryOrders().catch(e=>console.warn('Order retry deferred:',e.message))});
+ }catch(e){
+  window.__siseBootReport(e,'boot-catch');
+ }
+}
 function applySplashSettings(){const st=S.store||{},sp=document.getElementById('splash');if(!sp)return;sp.style.setProperty('--splash-bg',st.loadingBg||'#efe2d2');sp.style.setProperty('--splash-mid',st.loadingBg||'#f6eee5');sp.style.setProperty('--splash-deep',st.loadingBg||'#e7d5c1');sp.style.setProperty('--splash-accent',st.loadingAccent||'#68442e');sp.style.setProperty('--splash-text',S.theme&&S.theme.accent2||'#f4dcae');const title=document.getElementById('sp-name'),sub=document.getElementById('sp-text'),mark=document.getElementById('sp-mark');if(title)title.textContent=st.loadingTitle||st.name||'SISE';if(sub)sub.textContent=st.loadingText||'DISCOVER YOUR STYLE';if(mark){const logo=st.loadingLogo||st.logo;if(logo){mark.innerHTML='<img class="sp-logo" alt=""><i class="sp-ring"></i><i class="sp-ring r2"></i>';mark.querySelector('img').src=logo}else{mark.innerHTML='<svg viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="sp-bag" d="M16 23h32l3.5 31h-39z"/><path class="sp-h" d="M24 23v-5a8 8 0 0116 0v5"/><circle class="sp-k" cx="32" cy="37" r="2.6"/></svg><i class="sp-ring"></i><i class="sp-ring r2"></i>'}}}
 function hideSplash(){const sp=document.getElementById('splash');if(!sp)return;if(S.store&&S.store.loadingEnabled===false){sp.remove();return}const ms=Math.max(0,Math.min(10000,+S.store.loadingDuration||0));const w=Math.max(0,ms-performance.now());setTimeout(()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),700)},w)}
 /* ---------- stock ---------- */
