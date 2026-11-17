@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISE - تست دریافت صفحه</title>
+<script>
+window.__siseSmallHead = true;
+window.addEventListener('DOMContentLoaded', function () {
+  var el = document.getElementById('dom');
+  if (el) el.textContent = 'DOMContentLoaded: OK';
+});
+window.addEventListener('load', function () {
+  var el = document.getElementById('load');
+  if (el) el.textContent = 'window.load: OK';
+  // Read after the load event has fully completed so loadEventEnd is populated.
+  setTimeout(function () {
+    var nav = performance.getEntriesByType('navigation')[0];
+    var info = document.getElementById('info');
+    if (info && nav) {
+      function ms(value) { return Math.round(value || 0) + 'ms'; }
+      var lines = [
+        'readyState=' + document.readyState,
+        'visibilityState=' + document.visibilityState,
+        'serviceWorkerController=' + (navigator.serviceWorker && navigator.serviceWorker.controller ? 'yes' : 'no'),
+        'nextHopProtocol=' + (nav.nextHopProtocol || 'n/a'),
+        'transferSize=' + nav.transferSize + ' bytes',
+        'encodedBodySize=' + nav.encodedBodySize + ' bytes',
+        'decodedBodySize=' + nav.decodedBodySize + ' bytes',
+        'fetchStart=' + ms(nav.fetchStart),
+        'workerStart=' + ms(nav.workerStart),
+        'DNS start=' + ms(nav.domainLookupStart),
+        'DNS end=' + ms(nav.domainLookupEnd),
+        'connectStart=' + ms(nav.connectStart),
+        'TCP connect end=' + ms(nav.connectEnd),
+        'TLS start=' + ms(nav.secureConnectionStart),
+        'requestStart=' + ms(nav.requestStart),
+        'pre-request gap=' + ms(nav.requestStart - nav.fetchStart),
+        'request-to-first-byte=' + ms(nav.responseStart - nav.requestStart),
+        'download=' + ms(nav.responseEnd - nav.responseStart),
+        'responseStart=' + ms(nav.responseStart),
+        'responseEnd=' + ms(nav.responseEnd),
+        'DOMContentLoaded=' + ms(nav.domContentLoadedEventEnd),
+        'loadEventStart=' + ms(nav.loadEventStart),
+        'loadEventEnd=' + ms(nav.loadEventEnd)
+      ];
+      if (nav.serverTiming && nav.serverTiming.length) {
+        lines.push('Server-Timing=' + nav.serverTiming.map(function (x) { return x.name + ':' + x.duration + 'ms'; }).join(', '));
+      }
+      info.textContent = lines.join('\\n');
+    }
+  }, 0);
+});
+</script>
+</head>
+<body style="font-family:Tahoma,Arial,sans-serif;padding:24px;line-height:2;background:#f5f0e9;color:#241b16">
+<h2>تست دریافت صفحه SISE</h2>
+<p>اگر این پیام را می‌بینی، فایل کوچک HTML دریافت شده است.</p>
+<p id="dom">در انتظار پایان پردازش صفحه...</p>
+<p id="load">در انتظار رویداد load...</p>
+<p id="end">اسکریپت انتهای صفحه اجرا شد.</p>
+<pre id="info" style="white-space:pre-wrap;direction:ltr;text-align:left"></pre>
+<script>
+document.getElementById('end').textContent = 'اسکریپت انتهای صفحه: OK';
+</script>
+</body>
+</html>
