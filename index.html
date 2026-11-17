@@ -970,7 +970,10 @@ body.lock #nv{display:none!important;pointer-events:none!important}
   window.__siseBootMarkReady = function () { ready = true; };
   window.__siseBootReport = report;
   window.addEventListener('error', function (event) {
-    if (event && event.error) report(event.error, 'javascript');
+    if (!event) return;
+    var detail = event.error || event.message || 'JavaScript error';
+    var where = (event.filename || location.href) + ':' + (event.lineno || 0) + ':' + (event.colno || 0);
+    report(detail, 'javascript: ' + where);
   }, true);
   window.addEventListener('unhandledrejection', function (event) {
     report(event && event.reason, 'unhandled-promise');
@@ -981,6 +984,8 @@ body.lock #nv{display:none!important;pointer-events:none!important}
 })();
 </script>
 <script>
+window.__siseMainScriptEntered = true;
+window.__siseBootSetPhase('main-script-entered');
 /* ---------- helpers ---------- */
 const $=(s,r=document)=>r.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -2290,7 +2295,12 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
    fld('بازگردانی از پشتیبان',imp),h('button',{class:'btn',style:{alignSelf:'flex-start'},onclick:()=>{try{const d=JSON.parse(imp.value);if(!d||d.v!==1||!d.products)throw 0;S=d;persist();refreshStore();toast('بازگردانی شد');document.querySelector('.tb.on').click()}catch(e){toast('متن پشتیبان معتبر نیست')}}},'بازگردانی')),
   card('بازنشانی',h('p',{},'همه‌چیز به داده‌های نمونه برمی‌گردد و تغییرات شما پاک می‌شود.'),h('button',{class:'btn dg',style:{alignSelf:'flex-start'},onclick:e=>{const b=e.currentTarget;if(b.dataset.s){S=seed();V.cart=[];V.orders=[];V.seen={};saveV();persist();refreshStore();toast('بازنشانی شد');document.querySelector('.tb.on').click()}else{b.dataset.s=1;b.textContent='مطمئنید؟ دوباره بزنید'}}},I('undo',16),'بازنشانی به نمونه'))]}
 };
+window.__siseBootSetPhase('boot-call');
+window.__siseMainScriptReachedBoot = true;
 boot();
+</script>
+<script>
+window.__siseMainScriptTagFinished = true;
 </script>
 </body>
 </html>
