@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SISE serial main-domain test</title>
+<style>body{font:16px system-ui;max-width:850px;margin:22px auto;padding:0 14px;background:#f6f6f6;color:#222}h2{font-size:21px}.note{line-height:1.9}.item{background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px;margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere}.ok{border-right:5px solid #16834a}.bad{border-right:5px solid #c33}button{font:inherit;padding:10px 18px;border:0;border-radius:8px;background:#222;color:#fff}</style></head>
+<body><h2>تست ترتیبی دامنهٔ اصلی SISE</h2>
+<p class="note">این بار درخواست‌ها یکی‌یکی اجرا می‌شوند، نه هم‌زمان. هر درخواست حداکثر ۲۰ ثانیه فرصت دارد. فقط چهار مسیر خوانده می‌شوند؛ هیچ کد فروشگاهی اجرا نمی‌شود و هیچ داده‌ای تغییر نمی‌کند. صفحه را روشن و در پیش‌زمینه نگه دارید.</p>
+<button id="run">اجرای تست دوباره</button><p id="meta"></p><div id="out"></div>
+<script>
+const targets=[
+ ["صفحه اصلی /","https://sisestore.ir/"],
+ ["index.html","https://sisestore.ir/index.html"],
+ ["robots.txt","https://sisestore.ir/robots.txt"],
+ ["sitemap.xml","https://sisestore.ir/sitemap.xml"]
+];
+const out=document.getElementById("out"),meta=document.getElementById("meta"),btn=document.getElementById("run");
+async function check([name,base]){
+ const el=document.createElement("div");el.className="item";el.textContent=name+" : در حال بررسی";out.appendChild(el);
+ const started=performance.now(),controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);
+ try{
+  const url=base+(base.includes("?")?"&":"?")+"sise_serial="+Date.now()+"_"+Math.random().toString(36).slice(2);
+  const response=await fetch(url,{mode:"no-cors",cache:"no-store",redirect:"follow",signal:controller.signal});
+  const ms=Math.round(performance.now()-started);el.className="item ok";
+  el.textContent=name+"\nنتیجه: پاسخ دریافت شد (نوع: "+response.type+")\nزمان: "+ms+" ms\nکد HTTP به‌دلیل محدودیت CORS قابل مشاهده نیست.";
+  return {name,result:"response",ms};
+ }catch(e){
+  const ms=Math.round(performance.now()-started),timed=controller.signal.aborted;el.className="item bad";
+  el.textContent=name+"\nنتیجه: "+(timed?"مهلت ۲۰ ثانیه‌ای تمام شد":"خطا: "+e.name+" – "+e.message)+"\nزمان: "+ms+" ms";
+  return {name,result:timed?"timeout":"error",ms,error:e.name};
+ }finally{clearTimeout(timer);}
+}
+async function run(){
+ btn.disabled=true;out.innerHTML="";const started=performance.now();
+ meta.textContent="شروع: "+new Date().toISOString()+"\nمرورگر: "+navigator.userAgent+"\nوضعیت صفحه: "+document.visibilityState;
+ const results=[];for(const target of targets){results.push(await check(target));}
+ meta.textContent+="\nپایان: "+new Date().toISOString()+"\nکل زمان: "+Math.round(performance.now()-started)+" ms\nنتایج: "+results.filter(x=>x.result==="response").length+" پاسخ، "+results.filter(x=>x.result!=="response").length+" خطا/توقف";
+ btn.disabled=false;
+}
+btn.addEventListener("click",run);run();
+</script></body></html>
