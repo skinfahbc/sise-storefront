@@ -15,11 +15,29 @@ window.addEventListener('load', function () {
   if (el) el.textContent = 'window.load: OK';
   var nav = performance.getEntriesByType('navigation')[0];
   var info = document.getElementById('info');
-  if (info && nav) info.textContent = 'readyState=' + document.readyState +
-    ' | transferSize=' + nav.transferSize +
-    ' | encodedBodySize=' + nav.encodedBodySize +
-    ' | decodedBodySize=' + nav.decodedBodySize +
-    ' | responseEnd=' + Math.round(nav.responseEnd) + 'ms';
+  if (info && nav) {
+    function ms(value) { return Math.round(value || 0) + 'ms'; }
+    var lines = [
+      'readyState=' + document.readyState,
+      'transferSize=' + nav.transferSize + ' bytes',
+      'encodedBodySize=' + nav.encodedBodySize + ' bytes',
+      'decodedBodySize=' + nav.decodedBodySize + ' bytes',
+      'redirect=' + ms(nav.redirectEnd - nav.redirectStart),
+      'DNS=' + ms(nav.domainLookupEnd - nav.domainLookupStart),
+      'TCP connect=' + ms(nav.connectEnd - nav.connectStart),
+      'TLS=' + (nav.secureConnectionStart ? ms(nav.connectEnd - nav.secureConnectionStart) : 'n/a'),
+      'request-to-first-byte=' + ms(nav.responseStart - nav.requestStart),
+      'download=' + ms(nav.responseEnd - nav.responseStart),
+      'responseStart=' + ms(nav.responseStart),
+      'responseEnd=' + ms(nav.responseEnd),
+      'DOMContentLoaded=' + ms(nav.domContentLoadedEventEnd),
+      'loadEventEnd=' + ms(nav.loadEventEnd)
+    ];
+    if (nav.serverTiming && nav.serverTiming.length) {
+      lines.push('Server-Timing=' + nav.serverTiming.map(function (x) { return x.name + ':' + x.duration + 'ms'; }).join(', '));
+    }
+    info.textContent = lines.join('\\n');
+  }
 });
 </script>
 </head>
