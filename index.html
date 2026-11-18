@@ -2394,7 +2394,7 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
 const SISE_chatViewOriginal=chatView;
 function SISE_chatHeader(tabs){
  const menu=h('button',{type:'button',class:'sise-chat-icon','aria-label':'راهنمای گفتگو',title:'راهنمای گفتگو',html:ic('more-horizontal',21),onclick:()=>openModal(h('div',{class:'sh sise-chat-help'},h('div',{class:'grab'}),h('h3',{},'راهنمای گفتگوی SISE'),h('p',{},'از تب‌ها برای جابه‌جایی بین گفتگوی عمومی، مدیریت و دستیار هوشمند استفاده کنید.'),h('p',{},'برای واکنش به پیام، یکی از شکلک‌ها را انتخاب کنید و از منوی روی پیام، گزینه‌های همان پیام را ببینید.')),'b')});
- const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISE'),h('small',{},'MESSENGER'));
+ const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISÉ'),h('small',{},'MESSENGER'));
  const actions=h('div',{class:'sise-chat-actions'},
   h('button',{type:'button',class:'sise-chat-icon','aria-label':'جستجوی محصولات',title:'جستجو',html:ic('search',20),onclick:()=>openSearch()}),
   h('button',{type:'button',class:'sise-chat-icon','aria-label':'ورود یا حساب کاربری',title:'حساب کاربری',html:ic('user-round',20),onclick:openAuth}),
@@ -2609,6 +2609,31 @@ cartView=function(){const view=SISE_cartBase();return view};
  .sise-chat-large-text .sise-chat-screen .chm .chb p{font-size:20px}
  @media(max-width:600px){.ov.sise-menu-overlay{padding:17.3vh 8.5vw 16px}.ov.sise-menu-overlay .sise-menu-panel{width:83vw;padding:12px 12px;border-radius:30px}.sise-menu-row{min-height:70px;padding:10px 13px;font-size:17px}.sise-menu-icon{flex-basis:36px;width:36px;height:36px}}
 
+ /* Precise compact Messenger header proportions from the supplied reference */
+ .sise-chat-head{direction:ltr;display:grid;grid-template-columns:42px minmax(0,1fr) 132px;align-items:center;gap:5px;min-height:56px;padding:0 1px 5px}
+ .sise-chat-head>button,.sise-chat-actions button{width:36px;height:36px;border-radius:13px}
+ .sise-chat-menu{justify-self:start!important;width:38px!important;height:38px!important;border-radius:14px!important}
+ .sise-chat-brand{justify-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1;min-width:0;white-space:nowrap}
+ .sise-chat-brand b{font:700 22px/1 Georgia,'Times New Roman',serif;letter-spacing:.18em;padding-left:.18em;color:#8e704b}
+ .sise-chat-brand small{margin-top:3px;font:700 7px/1 Georgia,'Times New Roman',serif;letter-spacing:.28em;padding-left:.28em;color:#b18e60}
+ .sise-chat-actions{justify-self:end;display:flex;align-items:center;gap:5px}
+ .sise-chat-actions button{width:36px;height:36px}
+ .sise-chat-actions button svg{width:17px;height:17px}
+ .sise-chat-tabs .cht{flex-direction:column!important;gap:3px!important;min-height:57px;padding:6px 3px 5px;font-size:11px;line-height:1.25}
+ .sise-chat-tabs .cht .sise-tab-ic{flex:0 0 auto;width:20px;height:20px}
+ .sise-chat-tabs .cht .sise-tab-ic svg{width:18px;height:18px}
+ @media(max-width:390px){
+  .sise-chat-head{grid-template-columns:38px minmax(0,1fr) 120px;min-height:52px;gap:3px}
+  .sise-chat-head>button,.sise-chat-actions button{width:33px;height:33px;border-radius:12px}
+  .sise-chat-menu{width:35px!important;height:35px!important}
+  .sise-chat-actions{gap:4px}
+  .sise-chat-actions button{width:33px;height:33px}
+  .sise-chat-brand b{font-size:20px;letter-spacing:.16em;padding-left:.16em}
+  .sise-chat-brand small{font-size:6.5px}
+  .sise-chat-tabs .cht{min-height:53px;font-size:10px;gap:2px!important}
+  .sise-chat-tabs .cht .sise-tab-ic{width:18px;height:18px}
+  .sise-chat-tabs .cht .sise-tab-ic svg{width:16px;height:16px}
+ }
  .sise-chat-brand{direction:ltr;text-align:center;line-height:1;min-width:0}
  .sise-chat-brand b{display:block;font:600 31px/1 Georgia,'Times New Roman',serif;letter-spacing:.20em;padding-left:.20em;color:#8e704b}
  .sise-chat-brand small{display:block;margin-top:5px;font-size:9px;letter-spacing:.30em;color:#b18e60;font-weight:700}
@@ -2616,7 +2641,7 @@ cartView=function(){const view=SISE_cartBase();return view};
  .sise-chat-actions button{width:52px;height:52px}
  .sise-chat-actions button.active{background:linear-gradient(145deg,#c7a36e,#a98551);color:#fff;border-color:rgba(255,255,255,.68);box-shadow:0 5px 14px rgba(128,91,48,.18),inset 0 1px 0 rgba(255,255,255,.35)}
  .sise-chat-tabs{direction:rtl;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0;border:0;border-radius:0;background:transparent;overflow:visible}
- .sise-chat-tabs .cht{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:62px;padding:7px 6px;border:1px solid rgba(255,255,255,.62);border-radius:20px;background:rgba(255,255,255,.12);color:#927653;font-size:12px;font-weight:700;line-height:1.3;white-space:normal}
+ .sise-chat-tabs .cht{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:62px;padding:7px 6px;border:1px solid rgba(255,255,255,.62);border-radius:20px;background:rgba(255,255,255,.12);color:#927653;font-size:12px;font-weight:700;line-height:1.3;white-space:normal}
  .sise-chat-tabs .cht .sise-tab-ic{display:grid;place-items:center;flex:0 0 22px;color:#bd9a68}.sise-chat-tabs .cht .sise-tab-ic svg{display:block;width:19px;height:19px}
  .sise-chat-tabs .cht.on{border-color:rgba(177,139,87,.66);background:linear-gradient(145deg,rgba(255,255,255,.30),rgba(226,192,143,.27));color:#795c36;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 4px 12px rgba(118,86,48,.06)}
  .sise-chat-tabs .cht.on .sise-tab-ic{color:#a98551}
@@ -2660,7 +2685,7 @@ cartView=function(){const view=SISE_cartBase();return view};
   const list=root.querySelector(':scope > .ch-list'),composer=root.querySelector(':scope > .ch-cp');
   const current=channel==='ai'?'ai':channel==='pm'?'pm':'pub';
   const tabs=h('div',{class:'ch-tabs sise-chat-tabs','aria-label':'بخش‌های گفتگو'});
-  tabInfo.forEach(([key,label,ico])=>tabs.append(h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{CH.tab=key;cur='chat';renderMain();setNav(true)}},h('span',{class:'sise-tab-ic',html:ic(ico,19)}),h('span',{},label))));
+  tabInfo.forEach(([key,label,ico])=>tabs.append(h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{CH.tab=key;cur='chat';try{renderMain();setNav(true)}catch(e){console.error('SISE chat tab render failed',e);toast('خطا در باز شدن گفتگو: '+(e&&e.message?e.message:'خطای نامشخص'))}}},h('span',{class:'sise-tab-ic',html:ic(ico,19)}),h('span',{},label))));
   function openChatMenu(){
   let large=false;
   const panel=h('div',{class:'sise-menu-panel',role:'dialog','aria-label':'تنظیمات گفتگو'},
