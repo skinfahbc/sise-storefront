@@ -312,3 +312,35 @@ body.chat-lock{
  .app.chatp .ch-redesign-actions button,.app.chatp .ch-redesign-bar>.chat-more{width:35px;min-width:35px;height:35px}
  .app.chatp .ch-redesign-tabs .cht{font-size:10.5px;min-height:60px;padding-inline:3px}
 }
+
+
+/* Compact chat header and small tab icons */
+.app.chatp .ch-redesign-top{gap:5px;padding:6px 7px 7px;border-radius:19px}
+.app.chatp .ch-redesign-bar{min-height:30px}
+.app.chatp .ch-redesign-brand strong{font-size:16px;letter-spacing:.23em}
+.app.chatp .ch-redesign-brand span{font-size:7px;letter-spacing:.27em}
+.app.chatp .ch-redesign-actions button,.app.chatp .ch-redesign-bar>.chat-more{width:32px;min-width:32px;height:32px;border-radius:11px}
+.app.chatp .ch-redesign-actions button svg,.app.chatp .ch-redesign-bar>.chat-more svg{width:16px;height:16px}
+.app.chatp .ch-redesign-tabs{gap:6px}
+.app.chatp .ch-redesign-tabs .cht{
+ min-height:46px;
+ padding:6px 4px;
+ gap:3px;
+ border-radius:13px;
+ font-size:10.5px;
+ line-height:1.25;
+}
+.app.chatp .ch-redesign-tabs .cht .ch-tab-icon{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ width:16px;
+ height:16px;
+ color:color-mix(in srgb,var(--accent) 85%,var(--ink));
+}
+.app.chatp .ch-redesign-tabs .cht .ch-tab-icon svg{width:15px;height:15px;display:block}
+.app.chatp .ch-redesign-tabs .cht.on .ch-tab-icon{color:var(--accent)}
+@media(max-width:380px){
+ .app.chatp .ch-redesign-top{padding:5px 6px 6px}
+ .app.chatp .ch-redesign-tabs .cht{min-height:43px;font-size:9.8px}
+}
