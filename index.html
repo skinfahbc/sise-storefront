@@ -2765,26 +2765,29 @@ cartView=function(){const view=SISE_cartBase();return view};
   tabInfo.forEach(([key,label,ico])=>tabs.append(h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{CH.tab=key;cur='chat';try{renderMain();setNav(true)}catch(e){console.error('SISE chat tab render failed',e);toast('خطا در باز شدن گفتگو: '+(e&&e.message?e.message:'خطای نامشخص'))}}},h('span',{class:'sise-tab-ic',html:ic(ico,19)}),h('span',{},label))));
   function openChatMenu(){
   let large=false,rulesOpen=false,guideOpen=false;
-  const rulesPage=(S.pages||DEF_PAGES()).find(p=>p.id==='rules');
   const rulesBody=h('div',{class:'sise-menu-expand sise-menu-rules',style:{display:'none'}},
-   h('h4',{},rulesPage&&rulesPage.title?rulesPage.title:'قوانین و مقررات'),
-   h('p',{},rulesPage&&rulesPage.text?rulesPage.text:'ثبت سفارش به معنی پذیرش قوانین فروشگاه است. برای پیگیری یا پرسش با پشتیبانی تماس بگیرید.')
+   h('h4',{},'قوانین چت'),
+   h('p',{},'۱. با احترام و رعایت ادب با دیگر کاربران گفتگو کنید.'),
+   h('p',{},'۲. ارسال توهین، تهدید، محتوای آزاردهنده یا خلاف قوانین ممنوع است.'),
+   h('p',{},'۳. از انتشار شماره تماس، نشانی و اطلاعات شخصی خود یا دیگران خودداری کنید.'),
+   h('p',{},'۴. تبلیغات، پیام‌های تکراری و مزاحمت برای کاربران مجاز نیست.'),
+   h('p',{},'۵. برای گزارش تخلف یا دریافت کمک، از گزینه «گزارش مشکل / ارتباط با مدیریت» استفاده کنید.')
   );
   const guideBody=h('div',{class:'sise-menu-expand sise-menu-guide',style:{display:'none'}},
    h('h4',{},'راهنمای گفتگو'),
    h('p',{},'از تب‌ها برای جابه‌جایی بین چت عمومی، چت با مدیریت و چت با هوش مصنوعی استفاده کنید.'),
    h('p',{},'برای واکنش به پیام، شکلک دلخواه را انتخاب کنید. از گزینه کپی برای کپی‌کردن متن پیام استفاده کنید.')
   );
-  const makeExpandRow=(label,body,which)=>h('button',{type:'button',class:'sise-menu-row sise-menu-expand-toggle','aria-expanded':'false',onclick:e=>{
+  const makeExpandRow=(label,body,which,iconName)=>h('button',{type:'button',class:'sise-menu-row sise-menu-expand-toggle','aria-expanded':'false',onclick:e=>{
    if(which==='rules'){rulesOpen=!rulesOpen;body.style.display=rulesOpen?'block':'none';e.currentTarget.setAttribute('aria-expanded',String(rulesOpen))}
    else{guideOpen=!guideOpen;body.style.display=guideOpen?'block':'none';e.currentTarget.setAttribute('aria-expanded',String(guideOpen))}
-  }},h('span',{class:'sise-menu-label'},label),h('span',{class:'sise-menu-caret'},'⌄'));
+  }},h('span',{class:'sise-menu-icon',html:ic(iconName,25)}),h('span',{class:'sise-menu-label'},label),h('span',{class:'sise-menu-caret'},'⌄'));
   const panel=h('div',{class:'sise-menu-panel',role:'dialog','aria-label':'تنظیمات گفتگو'},
    h('button',{type:'button',class:'sise-menu-row',onclick:()=>{close();toggleMode()}},h('span',{class:'sise-menu-icon',html:ic(isDark()?'sun':'moon',26)}),h('span',{class:'sise-menu-label'},'حالت روشن / تاریک')),
    h('button',{type:'button',class:'sise-menu-row',onclick:e=>{large=!large;document.documentElement.classList.toggle('sise-chat-large-text',large);e.currentTarget.querySelector('.sise-menu-label').textContent='اندازه متن: '+(large?'بزرگ':'معمولی')}} ,h('span',{class:'sise-menu-icon sise-menu-type'},'A⁺'),h('span',{class:'sise-menu-label'},'اندازه متن: معمولی')),
-   makeExpandRow('راهنمای گفتگو',guideBody,'guide'),guideBody,
-   makeExpandRow('قوانین سایت',rulesBody,'rules'),rulesBody,
-   h('button',{type:'button',class:'sise-menu-row report',onclick:()=>{close();if(typeof openContact==='function')openContact();else if(typeof callSupport==='function')callSupport();else toast('برای ارتباط با مدیریت از بخش تماس با ما اقدام کنید.')}},h('span',{class:'sise-menu-label'},'گزارش مشکل / ارتباط با مدیریت'))
+   makeExpandRow('راهنمای گفتگو',guideBody,'guide','circle-help'),guideBody,
+   makeExpandRow('قوانین چت',rulesBody,'rules','shield-check'),rulesBody,
+   h('button',{type:'button',class:'sise-menu-row report',onclick:()=>{close();if(typeof openContact==='function')openContact();else if(typeof callSupport==='function')callSupport();else toast('برای ارتباط با مدیریت از بخش تماس با ما اقدام کنید.')}},h('span',{class:'sise-menu-icon',html:ic('headset',25)}),h('span',{class:'sise-menu-label'},'گزارش مشکل / ارتباط با مدیریت'))
   );
   const close=openModal(panel,'sise-menu-overlay');
  }
