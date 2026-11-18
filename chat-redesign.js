@@ -17,7 +17,12 @@
   home.addEventListener('click',()=>{if(typeof window.go==='function')window.go('home');else location.href='/'});
   const account=document.createElement('button');account.type='button';account.className='chat-account';account.setAttribute('aria-label',window.curUser&&window.curUser()?'حساب کاربری':'ورود');account.setAttribute('title',window.curUser&&window.curUser()?'حساب کاربری':'ورود');account.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>';
   account.addEventListener('click',()=>{if(typeof window.openAuth==='function')window.openAuth()});
-  actions.append(home,account);top.append(brand,tabs,actions);
+  actions.append(home,account);
+  const more=document.createElement('button');more.type='button';more.className='chat-more';more.setAttribute('aria-label','اطلاعات گفتگو');more.setAttribute('aria-expanded','false');more.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
+  const info=document.createElement('div');info.className='ch-header-info';info.hidden=true;info.textContent='برای ارتباط با پشتیبانی، تب «چت با مدیریت» را انتخاب کنید.';
+  more.addEventListener('click',()=>{info.hidden=!info.hidden;more.setAttribute('aria-expanded',String(!info.hidden))});
+  const bar=document.createElement('div');bar.className='ch-redesign-bar';bar.append(actions,brand,more,info);
+  top.append(bar,tabs);
   const chatHead=root.querySelector('.ch-hd');if(chatHead)chatHead.remove();
   root.insertBefore(top,root.firstChild);
   root.dataset.redesigned='1';
