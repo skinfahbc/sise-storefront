@@ -2531,7 +2531,7 @@ chMsgEl=function(m,o){
   const readReactions=()=>{try{return JSON.parse(localStorage.getItem(reactionKey)||'{}')}catch(e){return {}}};
   const saveReactions=v=>{try{localStorage.setItem(reactionKey,JSON.stringify(v))}catch(e){}};
   const reactions=[['👍','like'],['❤️','love'],['😂','laugh']];
-  const data=readReactions(),mid=String(m.dataset.mid||m.id||''),mine=data[mid]||'';
+  const mid=String((node&&node.dataset&&node.dataset.mid)||(m&&m.id)||''),data=readReactions(),mine=data[mid]||'';
   const bar=h('div',{class:'sise-reactions','aria-label':'واکنش به پیام'});
   reactions.forEach(([emoji,key])=>{
    const counts=data[mid+'_counts']||{},selected=mine===key;
@@ -2668,6 +2668,19 @@ cartView=function(){const view=SISE_cartBase();return view};
  .sise-demo-form{display:flex;gap:8px}
  .sise-demo-form input{min-width:0;flex:1}
  @media(max-width:390px){.sise-chat-top{padding:8px 9px 9px;border-radius:25px}.sise-chat-head{min-height:66px;grid-template-columns:43px minmax(0,1fr) auto}.sise-chat-head>button,.sise-chat-actions button{width:43px;height:43px;border-radius:15px}.sise-chat-actions{gap:4px}.sise-chat-brand{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;line-height:1}.sise-chat-brand b{font-family:Georgia,'Times New Roman',serif;font-size:31px;letter-spacing:.25em;padding-inline-start:.25em;font-weight:700;color:#856b48}.sise-chat-brand small{display:block;margin-top:3px;font-family:Georgia,'Times New Roman',serif;font-size:9px;letter-spacing:.32em;padding-inline-start:.32em;font-weight:700;color:#b99a6a}.sise-chat-tabs .cht{min-height:54px;font-size:10px;gap:5px;border-radius:16px;padding:6px 3px}.sise-chat-tabs .cht .sise-tab-ic{flex-basis:19px}.sise-chat-tabs .cht .sise-tab-ic svg{width:17px;height:17px}.sise-guest-demo{padding:16px 15px}.sise-guest-demo h3{font-size:19px}}
+ /* Final reference lock: compact centered SISÉ header and icon-over-label tabs */
+ .sise-chat-head{grid-template-columns:38px minmax(0,1fr) 120px!important;min-height:54px!important;gap:3px!important;padding:0 1px 5px!important}
+ .sise-chat-head>button,.sise-chat-actions button{width:33px!important;height:33px!important;border-radius:12px!important}
+ .sise-chat-menu{width:35px!important;height:35px!important;justify-self:start!important}
+ .sise-chat-brand{justify-self:center!important;align-items:center!important;text-align:center!important;min-width:0!important}
+ .sise-chat-brand b{font:700 20px/1 Georgia,'Times New Roman',serif!important;letter-spacing:.16em!important;padding-left:.16em!important;color:#8e704b!important}
+ .sise-chat-brand small{margin-top:3px!important;font:700 6.5px/1 Georgia,'Times New Roman',serif!important;letter-spacing:.28em!important;padding-left:.28em!important;color:#b18e60!important}
+ .sise-chat-actions{justify-self:end!important;display:flex!important;gap:4px!important}
+ .sise-chat-actions button svg{width:16px!important;height:16px!important}
+ .sise-chat-tabs .cht{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;min-height:53px!important;padding:6px 3px 5px!important;font-size:10px!important;line-height:1.25!important}
+ .sise-chat-tabs .cht .sise-tab-ic{display:grid!important;place-items:center!important;width:18px!important;height:18px!important;flex:0 0 18px!important}
+ .sise-chat-tabs .cht .sise-tab-ic svg{width:16px!important;height:16px!important}
+ @media(max-width:390px){.sise-chat-head{grid-template-columns:35px minmax(0,1fr) 111px!important}.sise-chat-head>button,.sise-chat-actions button{width:31px!important;height:31px!important}.sise-chat-menu{width:33px!important;height:33px!important}.sise-chat-brand b{font-size:19px!important}.sise-chat-brand small{font-size:6px!important}.sise-chat-tabs .cht{font-size:9.5px!important;min-height:50px!important}}
  `;
  if(!document.getElementById('sise-reference-chat-css')){const st=document.createElement('style');st.id='sise-reference-chat-css';st.textContent=css;document.head.append(st)}
  const tabInfo=[['pub','چت عمومی','users'],['pm','چت با مدیریت','lock'],['ai','چت با هوش مصنوعی','sparkles']];
@@ -2697,7 +2710,7 @@ cartView=function(){const view=SISE_cartBase();return view};
   const close=openModal(panel,'sise-menu-overlay');
  }
  const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('more-horizontal',22),onclick:openChatMenu});
-  const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISE'),h('small',{},'MESSENGER'));
+  const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISÉ'),h('small',{},'MESSENGER'));
   const actions=h('div',{class:'sise-chat-actions'},
    h('button',{type:'button','aria-label':'جستجو',title:'جستجو',html:ic('search',22),onclick:()=>openSearch()}),
    h('button',{type:'button','aria-label':'حساب کاربری',title:'حساب کاربری',html:ic('user',22),onclick:openAuth}),
