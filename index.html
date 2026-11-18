@@ -879,7 +879,7 @@ html{overflow-x:hidden;max-width:100%}
 /* Keep the fixed bottom navigation out of modal, story, gallery and drawer layers. */
 body.lock #nv{display:none!important;pointer-events:none!important}
 </style>
-<link rel="stylesheet" href="/chat-redesign.css?v=6">
+<link rel="stylesheet" href="/chat-redesign.css?v=7">
 </head>
 <body>
 <div id="splash" role="status" aria-label="در حال بارگذاری">
@@ -1645,7 +1645,7 @@ function catView(){
  const filters=h('div',{class:'cat-filters'},sort,price,color,stock,...(brands.length?[brand]:[]),h('button',{class:'tb',type:'button',onclick:()=>{sort.value='new';price.value='all';color.value='';stock.value='all';brand.value='';draw()}},'پاک‌کردن فیلترها'));
  const draw=()=>{
   res.innerHTML='';
-  let l=S.products.filter(p=>(!catFilter||p.cat===catFilter)&&(!catQ||(p.title+' '+(p.desc||'')).toLocaleLowerCase().includes(catQ.toLocaleLowerCase())));
+  let l=S.products.filter(p=>(!catFilter||p.cat===catFilter)&&(!catQ||normSearchText(p.title+' '+(p.desc||'')+' '+(p.brand||'')).includes(normSearchText(catQ))));
   if(price.value==='low')l=l.filter(p=>+p.price<1000000);
   if(price.value==='mid')l=l.filter(p=>+p.price>=1000000&&+p.price<=3000000);
   if(price.value==='high')l=l.filter(p=>+p.price>3000000);
@@ -2380,6 +2380,6 @@ boot();
 <script>
 window.__siseMainScriptTagFinished = true;
 </script>
-<script src="/chat-redesign.js?v=8"></script>
+<script src="/chat-redesign.js?v=9"></script>
 </body>
 </html>
