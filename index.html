@@ -1232,7 +1232,7 @@ async function retryOrders(){for(const o of S.orders.filter(x=>x.pending)){try{a
 async function refreshMine(){let ch=false;for(const c of V.orders.slice(-8)){const o=S.orders.find(x=>x.code===c);if(!o||o.pending)continue;const d=await sbTrack(c);if(d&&(d.status!==o.status||d.payRef!==o.payRef)){o.status=d.status;o.payRef=d.payRef;ch=true}}if(ch){persist();return true}return false}
 
 /* viewer (per visitor) */
-let V={seen:{},liked:{},wish:{},cart:[],user:null,orders:[],mode:null};
+let V={seen:{},liked:{},wish:{},cart:[],compare:[],user:null,orders:[],mode:null};
 try{Object.assign(V,JSON.parse(localStorage.getItem('kifara_v')||'{}'))}catch(e){}
 document.documentElement.setAttribute('data-theme',V.mode||'light');
 const saveV=()=>{try{localStorage.setItem('kifara_v',JSON.stringify(V))}catch(e){}};
@@ -1295,7 +1295,7 @@ addEventListener('popstate',e=>{try{if(stack&&stack.length){stack[stack.length-1
 /* ---------- views ---------- */
 let _ps=0;addEventListener('resize',()=>{const p=innerWidth>=900?10:8;if(_ps&&p!==_ps&&(cur==='home'||cur==='categories'))renderMain();_ps=p});_ps=innerWidth>=900?10:8;
 setInterval(()=>{try{if(purgeSt(S)){refreshStories();}}catch(e){}},60000);
-function renderMain(){applyFav();const app=$('#app');app.innerHTML='';const v={home:homeView,categories:catView,cart:cartView,track:trackView,pay:payView,chat:chatView}[cur]||homeView;add(app,[v()]);app.classList.toggle('home',!!$('.hero',app));syncChatLock();syncAiFab();updateHd();revealInit()}
+function renderMain(){applyFav();const app=$('#app');app.innerHTML='';const v={home:homeView,categories:catView,cart:cartView,track:trackView,pay:payView,chat:chatView}[cur]||homeView;add(app,[v()]);app.classList.toggle('home',!!$('.hero',app));syncChatLock();syncAiFab();syncCompareTray();updateHd();revealInit()}
 function secHead(t,extra){return h('div',{class:'sec-h'},h('h3',{},t),extra)}
 function srCut(orig){let src=orig,svg=false;if(src.startsWith('data:image/svg+xml')){try{const t=decodeURIComponent(src.slice(src.indexOf(',')+1)).replace(/<rect width="\d+" height="\d+" fill="url\(#[gr][^"]*\)"\/>/g,'').replace(/<ellipse[^>]*filter=[^>]*\/>/,'');src='data:image/svg+xml;utf8,'+encodeURIComponent(t);svg=true}catch(e){}}
  return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.onerror=()=>res(orig);im.onload=()=>{try{
@@ -1450,13 +1450,20 @@ function saleRail(){
    if(pend.touch)lp=setTimeout(()=>begin(e),320)})}
  liveSway(row);const stage=h('div',{class:'sr-stage'},h('span',{class:'sr-spot',style:{left:'18%'}}),h('span',{class:'sr-spot',style:{left:'50%'}}),h('span',{class:'sr-spot',style:{left:'82%'}}),row,toteEl());
  return h('section',{class:'srl srs'},secHead(R.title||'تخفیف‌خورده‌ها',h('button',{onclick:()=>go('categories')},'مشاهده همه')),stage,h('p',{class:'sr-hint'},R.hint||'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید'))}
+function homeCollections(){
+ const cats=(S.categories||[]).filter(c=>c&&c.img).slice(0,6);
+ if(!cats.length)return null;
+ return h('section',{class:'home-collections'},secHead('کالکشن‌های SISE',h('button',{type:'button',onclick:()=>go('categories')},'همه دسته‌ها')),
+  h('div',{class:'home-cat-grid'},cats.map(c=>h('button',{type:'button',class:'home-cat-card',onclick:()=>{catFilter=c.id;go('categories')}},h('img',{src:c.img,alt:c.name,loading:'lazy',decoding:'async'}),h('span',{},c.name),h('i',{},'مشاهده')))))
+}
 function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;return[
  hn,!hn&&sh.stories&&storiesSec(false),
  sh.intro&&h('section',{class:'intro glass'},h('span',{class:'star',html:ic('star',34)}),h('span',{class:'k'},A.kicker),h('h3',{},A.introTitle),h('p',{},A.introText)),
+ homeCollections(),
  sh.products&&saleRail(),
  sh.products&&h('section',{},secHead('جدیدترین محصولات',h('button',{onclick:()=>go('categories')},'مشاهده همه')),(()=>{const sec=h('div',{});const newest=[...S.products].sort((a,b)=>(+b.createdAt||+b.created_at||0)-(+a.createdAt||+a.created_at||0));sec.append(pagedGrid(newest,()=>sec.parentElement));return sec})()),
  sh.features&&h('section',{class:'feat'},S.features.map(f=>h('div',{class:'fc glass'},h('span',{class:'fi',html:ic(f.icon,26)}),h('b',{},f.title),h('span',{},f.text)))),
- sh.night&&h('button',{class:'night glass',onclick:toggleMode},h('span',{class:'ni',html:ic('moon',24)}),h('span',{class:'nt'},h('small',{},A.nightHint),h('b',{},A.nightTitle)),h('span',{class:'tg'+(isDark()?' on':'')})),
+ sh.night&&h('button',{class:'night glass',onclick:toggleMode},h('span',{class:'ni',html:ic('moon',24)}),h('span',{class:'nt'},h('small',{},A.nightHint),h('b',{},A.nightTitle)),h('span',{class:'tg'+(isDark()?' on':''})),
  sh.about&&h('section',{class:'about glass',id:'about'},h('h3',{},A.title),h('p',{},A.text),
   sh.social&&h('div',{class:'soc'},S.socials.map(s=>h('a',{href:s.url,target:'_blank',rel:'noopener','aria-label':s.name,title:s.name,html:ic(s.icon,24)}))),
   h('div',{class:'links'},S.links.map(l=>h('a',{href:'#',onclick:e=>{e.preventDefault();runTarget(l.target)}},l.label)))),
@@ -1492,11 +1499,41 @@ function revealInit(){if(!fxOn('reveal')||!('IntersectionObserver'in window))ret
  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('rvd');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px',threshold:.08});
  els.forEach((e,i)=>{if(e.closest('.hero'))return;e.classList.add('rv');e.style.setProperty('--d',(i%2)*70+'ms');io.observe(e)})}
 function skImg(src,alt){const i=h('img',{src,alt,loading:'lazy',decoding:'async'}),ok=()=>i.parentNode&&i.parentNode.classList.remove('sk');i.addEventListener('load',ok);i.addEventListener('error',ok);if(i.complete&&src)setTimeout(ok,0);return i}
-function pcard(p){const d=disc(p),so=qtyOf(p)<=0;return h('article',{class:'pc glass'+(so?' so':''),title:p.title,'aria-label':p.title,onclick:()=>openProduct(p.id)},
+function pcard(p){const d=disc(p),so=qtyOf(p)<=0,comp=(V.compare||[]).includes(p.id);return h('article',{class:'pc glass'+(so?' so':''),title:p.title,'aria-label':p.title,onclick:()=>openProduct(p.id)},
  h('div',{class:'im'+(fxOn('skeleton')?' sk':'')},skImg(p.images[0]||'',p.title),p.badge?h('div',{class:'bd k-'+(p.badgeKind||'gold')},p.badge):null,d?h('span',{class:'off'},fa(d)+'٪ تخفیف'):null,
   so?h('span',{class:'sold'},'اتمام موجودی'):null,
   h('button',{class:'rb fav'+(V.wish[p.id]?' on':''),'aria-label':'علاقه‌مندی',html:ic('heart',20),onclick:e=>{e.stopPropagation();toggleWish(p.id,e.currentTarget)}})),
- h('div',{class:'in'},cdEl(p,'sm'),h('div',{class:'old'},p.oldPrice>p.price?money(p.oldPrice):''),h('div',{class:'price'},fa(p.price),' ',h('small',{},S.store.currency)),revs(p).length?h('div',{class:'xrt'},h('b',{},'★ '),fa1(revAvg(p))+' ('+fa(revs(p).length)+')'):null))}
+ h('div',{class:'in'},cdEl(p,'sm'),h('div',{class:'old'},p.oldPrice>p.price?money(p.oldPrice):''),h('div',{class:'price'},fa(p.price),' ',h('small',{},S.store.currency)),revs(p).length?h('div',{class:'xrt'},h('b',{},'★ '),fa1(revAvg(p))+' ('+fa(revs(p).length)+')'):null,
+  h('button',{type:'button',class:'pc-compare'+(comp?' on':''),'data-product-id':p.id,onclick:e=>{e.stopPropagation();compareToggle(p.id)}},comp?'✓ در مقایسه':'＋ مقایسه'))}
+function compareToggle(id){
+ const arr=Array.isArray(V.compare)?V.compare.slice():[],at=arr.indexOf(id);
+ if(at>=0)arr.splice(at,1);else{if(arr.length>=3)return toast('حداکثر ۳ محصول را می‌توانید مقایسه کنید');arr.push(id)}
+ V.compare=arr;saveV();syncCompareTray();
+ document.querySelectorAll('.pc-compare[data-product-id]').forEach(b=>{const on=arr.includes(b.dataset.productId);b.classList.toggle('on',on);b.textContent=on?'✓ در مقایسه':'＋ مقایسه'});
+}
+function openCompare(){
+ const items=(V.compare||[]).map(prod).filter(Boolean);if(items.length<2)return toast('برای مقایسه، حداقل دو محصول انتخاب کنید');
+ const close=()=>{ov.remove();document.removeEventListener('keydown',esc)};
+ const esc=e=>{if(e.key==='Escape')close()};
+ const ov=h('div',{class:'compare-overlay',role:'dialog','aria-modal':'true','aria-label':'مقایسه محصولات'},
+  h('div',{class:'compare-sheet'},h('div',{class:'compare-head'},h('b',{},'مقایسه محصولات'),h('button',{type:'button','aria-label':'بستن',onclick:close},'×')),
+   h('div',{class:'compare-grid'},items.map(p=>h('article',{class:'compare-item'},
+    h('img',{src:p.images[0]||'',alt:p.title,loading:'lazy'}),h('b',{},p.title),
+    h('strong',{},money(p.price)),h('span',{},'دسته‌بندی: '+(S.categories.find(c=>c.id===p.cat)?.name||'—')),
+    h('span',{},'برند: '+(p.brand||'ثبت نشده')),h('span',{},'رنگ‌ها: '+((p.colors||[]).map(c=>c.name).join('، ')||'ثبت نشده')),
+    h('span',{},qtyOf(p)>0?'موجود':'ناموجود'),h('p',{},p.desc||'توضیحی ثبت نشده'),
+    h('button',{type:'button',class:'btn',onclick:()=>{close();openProduct(p.id)}},'جزئیات محصول'))))))
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});document.addEventListener('keydown',esc);document.body.append(ov);
+}
+function syncCompareTray(){
+ const old=document.getElementById('siseCompareTray');if(old)old.remove();
+ const ids=(V.compare||[]).filter(id=>prod(id));V.compare=ids;if(!ids.length)return;
+ const bar=h('div',{id:'siseCompareTray',class:'compare-tray'},
+  h('span',{},fa(ids.length)+' محصول انتخاب شده'),
+  h('button',{type:'button',onclick:openCompare,disabled:ids.length<2},ids.length<2?'یک محصول دیگر انتخاب کن':'مقایسه محصولات'),
+  h('button',{type:'button',class:'clear',onclick:()=>{V.compare=[];saveV();syncCompareTray();document.querySelectorAll('.pc-compare').forEach(b=>{b.classList.remove('on');b.textContent='＋ مقایسه'})}},'پاک‌کردن'));
+ document.body.append(bar);
+}
 function pageSize(){return innerWidth>=900?10:8}
 function pgList(n,cur,tot){const a=[];const add=x=>a.push(x);if(tot<=7){for(let i=1;i<=tot;i++)add(i)}else{add(1);let s=Math.max(2,cur-1),e=Math.min(tot-1,cur+1);if(cur<=3){s=2;e=4}if(cur>=tot-2){s=tot-3;e=tot-1}if(s>2)add('…');for(let i=s;i<=e;i++)add(i);if(e<tot-1)add('…');add(tot)}return a}
 function pagedGrid(list,scrollEl){let page=1;const box=h('div',{});
@@ -1944,8 +1981,8 @@ function openStory(start){const list=S.stories;if(!list.length)return;let i=star
 
 function updateHd(){const hd=$('#hd');if(!hd)return;const hr=$('.hero');hd.classList.toggle('over',cur==='home'&&!!hr&&scrollY<70)}
 addEventListener('scroll',updateHd,{passive:true});
-function openSearch(){let close;const inp=h('input',{id:'s-q',placeholder:'جستجوی کیف، رنگ یا دسته…','aria-label':'جستجو',autocomplete:'off'}),res=h('div',{class:'grid'});
- const draw=()=>{const q=inp.value.trim();res.innerHTML='';const l=S.products.filter(p=>!q||(p.title+' '+p.desc+' '+(S.categories.find(c=>c.id===p.cat)?.name||'')+' '+p.colors.map(c=>c.name).join(' ')).includes(q));
+function normSearchText(v){return String(v||'').toLocaleLowerCase().replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[\u064B-\u065F]/g,'').trim()}\nfunction openSearch(){let close;const inp=h('input',{id:'s-q',placeholder:'جستجوی کیف، رنگ یا دسته…','aria-label':'جستجو',autocomplete:'off'}),res=h('div',{class:'grid'});
+ const draw=()=>{const q=normSearchText(inp.value);res.innerHTML='';const l=S.products.filter(p=>{if(!q)return true;const hay=normSearchText([p.title,p.desc,p.brand,S.categories.find(c=>c.id===p.cat)?.name,...(p.colors||[]).map(c=>c.name)].join(' '));return q.split(/\\s+/).filter(Boolean).every(w=>hay.includes(w))});
   add(res,l.length?l.map(p=>{const c=pcard(p);c.onclick=()=>{close();openProduct(p.id)};return c}):h('div',{class:'empty',style:{gridColumn:'1/-1'}},I('search',40),'محصولی پیدا نشد'))};
  inp.addEventListener('input',draw);draw();
  close=openModal(h('div',{class:'sh',style:{minHeight:'70vh'}},h('div',{class:'grab'}),h('div',{class:'search glass'},I('search',20),inp),h('div',{style:{height:'14px'}}),res),'b');setTimeout(()=>inp.focus(),150)}
