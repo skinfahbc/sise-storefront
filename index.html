@@ -2622,6 +2622,78 @@ cartView=function(){const view=SISE_cartBase();return view};
 
 
 
+
+/* Unified SISE Messenger shell — shared by public, management and AI channels. */
+(function(){
+ const css = `
+ .app.chatp{padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));gap:9px}
+ .app.chatp .ch{gap:9px}
+ .sise-chat-screen{display:flex;flex-direction:column;gap:10px;min-height:0}
+ .sise-chat-top{flex:none;display:flex;flex-direction:column;gap:8px}
+ .sise-chat-head{direction:ltr;display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:8px;min-height:62px;padding:7px 10px;border-radius:21px;border:1px solid rgba(255,255,255,.62);background:linear-gradient(135deg,rgba(255,255,255,.46),rgba(255,255,255,.17) 55%,rgba(221,190,158,.16));box-shadow:0 8px 26px rgba(76,54,36,.07),inset 0 1px 0 rgba(255,255,255,.78);-webkit-backdrop-filter:blur(24px) saturate(165%);backdrop-filter:blur(24px) saturate(165%)}
+ .sise-chat-head button{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.48);background:rgba(255,255,255,.18);color:var(--fg);cursor:pointer}
+ .sise-chat-head .sise-chat-menu{justify-self:start}
+ .sise-chat-brand{direction:ltr;text-align:center;min-width:0;line-height:1}
+ .sise-chat-brand b{display:block;font:500 25px/1 Georgia,'Times New Roman',serif;letter-spacing:.17em;padding-left:.17em;color:#a77a4b}
+ .sise-chat-brand small{display:block;margin-top:5px;font-size:8px;letter-spacing:.28em;color:var(--muted)}
+ .sise-chat-actions{display:flex;gap:5px;align-items:center}
+ .sise-chat-actions button.active{background:linear-gradient(135deg,#e6c99f,#b98b58);color:#fff;border-color:rgba(255,255,255,.7)}
+ .sise-chat-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:5px;border-radius:17px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.15);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
+ .sise-chat-tabs .cht{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:53px;padding:6px 3px;border:1px solid transparent;border-radius:13px;background:transparent;color:var(--muted);font:600 11px/1.25 inherit}
+ .sise-chat-tabs .cht .sise-tab-ic{display:grid;place-items:center}
+ .sise-chat-tabs .cht.on{border-color:rgba(198,158,111,.48);background:linear-gradient(145deg,rgba(255,255,255,.48),rgba(226,196,161,.25));color:#956b40;box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 3px 12px rgba(91,65,42,.06)}
+ .app.chatp .sise-chat-screen{flex:1;min-height:0}
+ .app.chatp .sise-chat-head,.app.chatp .sise-chat-tabs{flex:none}
+ .app.chatp .ch-list{min-height:0}
+ .app.chatp .ch-cp{flex:none;margin-bottom:0}
+ .sise-chat-screen .ch-hd{display:none!important}
+ .sise-chat-screen .ch-list{flex:1;min-height:0}
+ .sise-chat-screen .ch-cp{position:relative;bottom:auto}
+ .sise-chat-screen .ch-cp.glass{background:rgba(255,255,255,.19);border:1px solid rgba(255,255,255,.62);box-shadow:0 8px 26px rgba(74,55,38,.08),inset 0 1px 0 rgba(255,255,255,.72);-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
+ @media(max-width:390px){.sise-chat-brand b{font-size:22px}.sise-chat-head{min-height:58px}.sise-chat-tabs .cht{font-size:10.5px}}
+ `;
+ if(!document.getElementById('sise-messenger-unified-css')){const st=document.createElement('style');st.id='sise-messenger-unified-css';st.textContent=css;document.head.append(st)}
+ const tabInfo=[['ai','چت با هوش مصنوعی','sparkles'],['pm','چت با مدیریت','shield-check'],['pub','چت همگانی','messages-square']];
+ function shell(root,channel){
+  if(!root||root.dataset.siseUnified==='1')return root;
+  root.dataset.siseUnified='1';root.classList.add('sise-chat-screen');
+  const oldHead=root.querySelector(':scope > .ch-hd');if(oldHead)oldHead.remove();
+  const oldTabs=root.querySelector(':scope > .ch-tabs');
+  const list=root.querySelector(':scope > .ch-list'),composer=root.querySelector(':scope > .ch-cp');
+  const current=channel==='ai'?'ai':channel==='pm'?'pm':'pub';
+  const tabs=h('div',{class:'ch-tabs sise-chat-tabs','aria-label':'بخش‌های گفتگو'});
+  tabInfo.forEach(([key,label,ico])=>{
+   const b=h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{if(CH.tab!==key){CH.tab=key;renderMain()}}},h('span',{class:'sise-tab-ic',html:ic(ico,17)}),h('span',{},label));
+   tabs.append(b);
+  });
+  const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('ellipsis',20),onclick:()=>{
+   const content=h('div',{class:'sh',style:{padding:'22px',display:'grid',gap:'10px'}},
+    h('h3',{},'گزینه‌های گفتگو'),
+    h('button',{class:'btn',onclick:()=>{close();openSearch()}},'جستجوی محصولات'),
+    h('button',{class:'btn',onclick:()=>{close();openAuth()}},curUser()?'حساب کاربری':'ورود یا ثبت‌نام'),
+    h('button',{class:'btn',onclick:()=>{close();go('home')}},'صفحه اصلی'));
+   const close=openModal(content,'b');
+  }});
+  const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISE'),h('small',{},'MESSENGER'));
+  const actions=h('div',{class:'sise-chat-actions'},
+   h('button',{type:'button','aria-label':'جستجو',title:'جستجو',html:ic('search',17),onclick:()=>openSearch()}),
+   h('button',{type:'button','aria-label':'حساب کاربری',title:'حساب کاربری',html:ic('user-round',17),onclick:openAuth}),
+   h('button',{type:'button',class:'active','aria-label':'صفحه اصلی',title:'صفحه اصلی',html:ic('house',17),onclick:()=>go('home')})
+  );
+  const head=h('div',{class:'sise-chat-head'},menu,brand,actions);
+  root.innerHTML='';
+  const top=h('div',{class:'sise-chat-top'},head,tabs);
+  root.append(top);
+  if(list)root.append(list);
+  if(composer)root.append(composer);
+  return root;
+ }
+ const oldPublic=chatView;
+ chatView=function(){return shell(oldPublic(),'pub')};
+ const oldPrivate=pmView;
+ pmView=function(channel){return shell(oldPrivate(channel||'management'),channel==='ai'?'ai':'pm')};
+})();
+
 boot();
 </script>
 </body>
