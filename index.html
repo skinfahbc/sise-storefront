@@ -2671,7 +2671,7 @@ cartView=function(){const view=SISE_cartBase();return view};
   );
   const close=openModal(panel,'sise-menu-overlay');
  }
- const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('menu',22),onclick:openChatMenu});
+ const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('more-horizontal',22),onclick:openChatMenu});
   const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISE'),h('small',{},'MESSENGER'));
   const actions=h('div',{class:'sise-chat-actions'},
    h('button',{type:'button','aria-label':'جستجو',title:'جستجو',html:ic('search',22),onclick:()=>openSearch()}),
