@@ -44,14 +44,21 @@
    const on=document.body.classList.toggle('chat-font-large');try{localStorage.setItem('sise_chat_font_large',on?'1':'0')}catch(e){}popToast(on?'اندازه متن بزرگ شد':'اندازه متن معمولی شد');closeMenu();
   });
   const detail=document.createElement('div');detail.className='ch-menu-detail';detail.hidden=true;
-  const detailBtn=item(ico('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-1.1 1-1.7 1.3-1.7 2.7M12 17h.01"/>','راهنمای گفتگو',()=>{
+  const detailBtn=item(ico('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-1.1 1-1.7 1.3-1.7 2.7M12 17h.01"/>'),'راهنمای گفتگو',()=>{
    const tab=currentTab();let title='قوانین چت عمومی',body='با احترام گفتگو کنید؛ از ارسال اطلاعات شخصی، تبلیغات و پیام‌های تکراری خودداری کنید. محتوای نامناسب ممکن است حذف شود.';
    if(tab.includes('مدیریت')){title='حریم خصوصی گفتگو';body='این گفت‌وگو خصوصی است و پیام شما برای مدیریت فروشگاه ارسال می‌شود. اطلاعات حساس بانکی یا رمز عبور را ارسال نکنید.'}
    if(tab.includes('هوش مصنوعی')){title='درباره دستیار هوشمند';body='دستیار هوشمند SISE برای پاسخ‌گویی درباره محصولات و خدمات فروشگاه است. پاسخ‌ها ممکن است نیاز به تأیید مدیریت داشته باشند؛ برای پاسخ قطعی درباره سفارش، با مدیریت گفتگو کنید.'}
    detail.innerHTML='<b>'+title+'</b><p>'+body+'</p>';detail.hidden=false;
-  }));
+  });
   const reportBtn=item(ico('<path d="M12 9v4m0 4h.01"/><path d="M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3l-7.6-13.1a2 2 0 0 0-3.4 0Z"/>'),'گزارش مشکل / ارتباط با مدیریت',()=>{
-   closeMenu();const target=Array.from(tabs.querySelectorAll('.cht')).find(b=>(b.textContent||'').includes('مدیریت'));if(target)target.click();popToast('مشکل را در گفت‌وگوی مدیریت توضیح دهید.');
+   closeMenu();
+   const target=Array.from(tabs.querySelectorAll('.cht')).find(b=>(b.textContent||'').includes('مدیریت'));
+   if(target)target.click();
+   setTimeout(()=>{
+    const input=document.querySelector('.ch-cp input.in');
+    if(input){input.value='سلام، می‌خواهم یک مشکل را در چت گزارش کنم:\\n';input.focus();try{input.setSelectionRange(input.value.length,input.value.length)}catch(e){}}
+    popToast(input?'متن گزارش آماده است؛ مشکل را بنویسید و ارسال کنید.':'برای گزارش مشکل، وارد گفت‌وگوی مدیریت شوید.');
+   },100);
   },'ch-menu-item-support');
   menu.append(themeItem,fontItem,detailBtn,detail,reportBtn);
   more.addEventListener('click',()=>{menu.hidden=!menu.hidden;more.setAttribute('aria-expanded',String(!menu.hidden));detail.hidden=true});
