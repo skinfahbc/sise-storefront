@@ -972,6 +972,51 @@ body.lock #nv{display:none!important;pointer-events:none!important}
 .pc .im .rb.fav{position:absolute!important;top:9px!important;left:9px!important;right:auto!important;bottom:auto!important;z-index:4!important}
 .pc .pc-price-stack{min-width:0!important}
 .pc .pc-price-stack .price{white-space:nowrap!important}
+
+/* SISE mobile home hero/header correction */
+@media (max-width:699px){
+  .hd{
+    top:0!important;left:0!important;right:0!important;
+    width:100%!important;max-width:none!important;
+    transform:none!important;
+    padding:env(safe-area-inset-top,0px) 0 0!important;
+    margin:0!important;
+  }
+  .hd-in{
+    width:100%!important;max-width:none!important;box-sizing:border-box!important;
+    border-radius:0 0 24px 24px!important;
+    padding:8px max(14px,env(safe-area-inset-right,0px)) 8px max(14px,env(safe-area-inset-left,0px))!important;
+    margin:0!important;
+  }
+  .hero .sl::after{
+    background:linear-gradient(0deg,rgba(10,8,6,.72) 0%,rgba(10,8,6,.42) 34%,rgba(10,8,6,.12) 68%,rgba(10,8,6,0) 100%)!important;
+  }
+  .hero .tx{
+    top:auto!important;bottom:clamp(225px,34vw,270px)!important;
+    right:max(22px,env(safe-area-inset-right,0px))!important;left:auto!important;
+    width:min(72%,360px)!important;max-width:calc(100% - 44px)!important;
+    display:flex!important;flex-direction:column!important;
+    align-items:flex-end!important;text-align:right!important;direction:rtl!important;
+    gap:9px!important;padding:0!important;margin:0!important;
+    background:none!important;background-image:none!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    box-shadow:none!important;border:0!important;border-radius:0!important;
+  }
+  .hero .tx .chip{
+    align-self:flex-end!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    box-shadow:none!important;
+  }
+  .hero .tx h2{
+    font-size:clamp(36px,9vw,48px)!important;
+    font-weight:700!important;line-height:1.18!important;text-align:right!important;
+  }
+  .hero .tx p{
+    font-size:16px!important;line-height:1.6!important;text-align:right!important;
+    max-width:none!important;
+  }
+  .hero .tx .btn-g{margin-top:8px!important;align-self:flex-end!important}
+}
 </style>
 </head>
 <body>
@@ -1573,7 +1618,7 @@ function hero(panel){const sl=S.hero;if(!sl.length)return null;let i=0,timer,mov
 function thumbEl(s){if(s.type==='video'&&!s.thumb){const im=h('img',{alt:s.title,src:'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='});vidThumb(s.src).then(d=>{if(d)im.src=d});return im}return h('img',{src:s.thumb||s.src,alt:s.title,loading:'lazy'})}
 function storiesSec(inPanel){const list=S.stories,seen=list.filter(s=>V.seen[s.id]).length,all=seen===list.length;
  const row=h('div',{class:'stories',role:'list'},list.map((s,i)=>h('button',{class:'st',role:'listitem',onclick:()=>openStory(i)},h('div',{class:'ring'+(V.seen[s.id]?' seen':'')},thumbEl(s),s.type==='video'?h('span',{class:'pl',html:ic('play',11)}):null),h('span',{},s.title))));
- return h('section',{id:'stories-sec',class:inPanel?'hero-st glass':''},inPanel?h('div',{class:'st-h'},h('span',{html:ic('sparkle',16)}),h('b',{},'استوری‌ها')):null,row,h('div',{class:inPanel?'hint':'hint glass'},h('button',{class:'nb','aria-label':'بعدی',onclick:()=>row.scrollBy({left:-240,behavior:'smooth'}),html:ic('chl',18)}),
+ return h('section',{id:'stories-sec',class:inPanel?'hero-st glass':''},inPanel?h('div',{class:'st-h'},h('span',{html:ic('star',16)}),h('b',{},'استوری‌ها')):null,row,h('div',{class:inPanel?'hint':'hint glass'},h('button',{class:'nb','aria-label':'بعدی',onclick:()=>row.scrollBy({left:-240,behavior:'smooth'}),html:ic('chl',18)}),
   h('span',{class:'bar'},h('b',{style:{width:(list.length?seen/list.length*100:0)+'%'}})),
   h('span',{},list.length?(all?`${fa(list.length)} استوری · ${S.store.storiesHintDone}`:`${fa(list.length-seen)} استوری جدید · ${fa(seen)} دیده شده`):'هنوز استوری‌ای نیست')))}
 function refreshStories(){const e=$('#stories-sec');if(e&&S.show.stories)e.replaceWith(storiesSec(e.classList.contains('hero-st')))}
