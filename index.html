@@ -2651,8 +2651,8 @@ cartView=function(){const view=SISE_cartBase();return view};
  .sise-chat-actions button{width:52px;height:52px}
  .sise-chat-actions button.active{background:linear-gradient(145deg,#c7a36e,#a98551);color:#fff;border-color:rgba(255,255,255,.68);box-shadow:0 5px 14px rgba(128,91,48,.18),inset 0 1px 0 rgba(255,255,255,.35)}
  .sise-chat-tabs{direction:rtl;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0;border:0;border-radius:0;background:transparent;overflow:visible}
- .sise-chat-tabs .cht{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:91px;padding:8px 4px;border:1px solid rgba(255,255,255,.62);border-radius:24px;background:rgba(255,255,255,.12);color:#927653;font:600 13px/1.35 inherit;white-space:normal}
- .sise-chat-tabs .cht .sise-tab-ic{display:grid;place-items:center;color:#bd9a68}
+ .sise-chat-tabs .cht{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:62px;padding:7px 6px;border:1px solid rgba(255,255,255,.62);border-radius:20px;background:rgba(255,255,255,.12);color:#927653;font-size:12px;font-weight:700;line-height:1.3;white-space:normal}
+ .sise-chat-tabs .cht .sise-tab-ic{display:grid;place-items:center;flex:0 0 22px;color:#bd9a68}.sise-chat-tabs .cht .sise-tab-ic svg{display:block;width:19px;height:19px}
  .sise-chat-tabs .cht.on{border-color:rgba(177,139,87,.66);background:linear-gradient(145deg,rgba(255,255,255,.30),rgba(226,192,143,.27));color:#795c36;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 4px 12px rgba(118,86,48,.06)}
  .sise-chat-tabs .cht.on .sise-tab-ic{color:#a98551}
  .app.chatp .sise-chat-screen{flex:1;min-height:0}
@@ -2677,10 +2677,10 @@ cartView=function(){const view=SISE_cartBase();return view};
  .sise-demo-bubble{align-self:flex-start;max-width:88%;padding:10px 14px;border:1px solid rgba(255,255,255,.65);border-radius:18px 18px 18px 5px;background:rgba(255,255,255,.4);line-height:1.8}
  .sise-demo-form{display:flex;gap:8px}
  .sise-demo-form input{min-width:0;flex:1}
- @media(max-width:390px){.sise-chat-top{padding:8px 9px 9px;border-radius:25px}.sise-chat-head{min-height:66px;grid-template-columns:43px minmax(0,1fr) auto}.sise-chat-head>button,.sise-chat-actions button{width:43px;height:43px;border-radius:15px}.sise-chat-actions{gap:4px}.sise-chat-brand b{font-size:27px}.sise-chat-tabs .cht{min-height:76px;font-size:11px;border-radius:19px}.sise-guest-demo{padding:16px 15px}.sise-guest-demo h3{font-size:19px}}
+ @media(max-width:390px){.sise-chat-top{padding:8px 9px 9px;border-radius:25px}.sise-chat-head{min-height:66px;grid-template-columns:43px minmax(0,1fr) auto}.sise-chat-head>button,.sise-chat-actions button{width:43px;height:43px;border-radius:15px}.sise-chat-actions{gap:4px}.sise-chat-brand b{font-size:27px}.sise-chat-tabs .cht{min-height:54px;font-size:10px;gap:5px;border-radius:16px;padding:6px 3px}.sise-chat-tabs .cht .sise-tab-ic{flex-basis:19px}.sise-chat-tabs .cht .sise-tab-ic svg{width:17px;height:17px}.sise-guest-demo{padding:16px 15px}.sise-guest-demo h3{font-size:19px}}
  `;
  if(!document.getElementById('sise-reference-chat-css')){const st=document.createElement('style');st.id='sise-reference-chat-css';st.textContent=css;document.head.append(st)}
- const tabInfo=[['pub','چت عمومی','users-round'],['pm','چت با مدیریت','headset'],['ai','چت با هوش مصنوعی','sparkles']];
+ const tabInfo=[['pub','چت عمومی','users'],['pm','چت با مدیریت','lock'],['ai','چت با هوش مصنوعی','sparkles']];
  function openDemo(){
   let close;const messages=h('div',{class:'sise-demo-messages'},h('div',{class:'sise-demo-bubble'},h('b',{},'دستیار SISE'),h('div',{},'سلام! این یک گفتگوی آزمایشی است. پیام‌ها فقط در همین صفحه نمایش داده می‌شوند.')));
   const input=h('input',{class:'in',placeholder:'پیام آزمایشی خود را بنویسید…',maxlength:'250'});
@@ -2695,7 +2695,7 @@ cartView=function(){const view=SISE_cartBase();return view};
   const list=root.querySelector(':scope > .ch-list'),composer=root.querySelector(':scope > .ch-cp');
   const current=channel==='ai'?'ai':channel==='pm'?'pm':'pub';
   const tabs=h('div',{class:'ch-tabs sise-chat-tabs','aria-label':'بخش‌های گفتگو'});
-  tabInfo.forEach(([key,label,ico])=>tabs.append(h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{if(CH.tab!==key){CH.tab=key;renderMain()}}},h('span',{class:'sise-tab-ic',html:ic(ico,22)}),h('span',{},label))));
+  tabInfo.forEach(([key,label,ico])=>tabs.append(h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{CH.tab=key;cur='chat';go('chat')}},h('span',{class:'sise-tab-ic',html:ic(ico,19)}),h('span',{},label))));
   function openChatMenu(){
   let large=false;
   const panel=h('div',{class:'sise-menu-panel',role:'dialog','aria-label':'تنظیمات گفتگو'},
