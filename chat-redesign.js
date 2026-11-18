@@ -172,7 +172,7 @@
    reactionChannel=reactionClient.channel('sise-public-chat-reactions-v1',{config:{broadcast:{self:false}}});
    reactionChannel.on('broadcast',{event:'reaction'},event=>{
     const p=event&&event.payload||{},id=String(p.messageId||''),emoji=p.emoji,delta=Number(p.delta);
-    if(!/^\\d+$/.test(id)||!['👍','❤️','😂'].includes(emoji)||![-1,1].includes(delta))return;
+    if(!/^\d+$/.test(id)||!['👍','❤️','😂'].includes(emoji)||![-1,1].includes(delta))return;
     reactionCounts[id]=reactionCounts[id]||{};
     reactionCounts[id][emoji]=Math.max(0,(reactionCounts[id][emoji]||0)+delta);
     updateReactionCount(document.querySelector('#app .ch'),id,emoji);
