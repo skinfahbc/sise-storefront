@@ -523,3 +523,15 @@ body.chat-font-large .app.chatp .ch-list .chb small{font-size:11px!important}
 .app.chatp .ch-reaction.on{background:rgba(201,164,107,.19);border-color:rgba(190,151,91,.55)}
 .app.chatp .ch-reaction small{font-size:9px;opacity:.75}
 .app.chatp .ch-copy-message{margin-inline-start:auto;color:var(--muted)}
+
+
+/* Product discovery filters */
+#app .cat-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 16px}
+#app .cat-filters select{width:100%;min-width:0;min-height:42px;padding:8px 10px;border:1px solid var(--line,rgba(150,130,100,.2));border-radius:12px;background:var(--field,rgba(255,255,255,.65));color:var(--ink);font:inherit;font-size:12px}
+#app .cat-filters .tb{grid-column:1/-1;justify-content:center;min-height:38px}
+@media(min-width:700px){#app .cat-filters{grid-template-columns:repeat(4,minmax(0,1fr))}#app .cat-filters .tb{grid-column:auto}}
+.ch-guest-prompts{display:flex;gap:6px;overflow-x:auto;padding:2px 1px 8px;scrollbar-width:none}
+.ch-guest-prompts::-webkit-scrollbar{display:none}
+.ch-guest-prompts button{flex:none;padding:7px 10px;border:1px solid rgba(190,151,91,.24);border-radius:18px;background:rgba(255,255,255,.07);color:var(--ink);font:inherit;font-size:10px}
+.ch-guest-prompts button:active{background:rgba(190,151,91,.18)}
+.ch-guest-form input{font-size:16px}
