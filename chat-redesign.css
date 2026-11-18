@@ -421,3 +421,28 @@ body.chat-font-large .app.chatp .ch-list .chb small{font-size:11px!important}
 @media(max-width:380px){
  .app.chatp .ch-more-menu{width:min(250px,calc(100vw - 34px))}
 }
+
+
+/* Make overflow panel readable over moving chat messages */
+.app.chatp .ch-redesign-bar{isolation:isolate;z-index:12}
+.app.chatp .ch-more-menu{
+ z-index:100;
+ background:rgba(25,21,16,.985)!important;
+ background-image:linear-gradient(145deg,rgba(52,43,31,.99),rgba(20,18,15,.985))!important;
+ border:1px solid rgba(205,169,111,.48);
+ box-shadow:0 18px 48px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.16);
+ -webkit-backdrop-filter:blur(32px) saturate(155%);
+ backdrop-filter:blur(32px) saturate(155%);
+}
+:root:not([data-theme="dark"]) .app.chatp .ch-more-menu{
+ background:rgba(255,250,241,.99)!important;
+ background-image:linear-gradient(145deg,rgba(255,253,248,.995),rgba(246,237,222,.99))!important;
+ color:#2d2419!important;
+ border-color:rgba(155,117,65,.35);
+ box-shadow:0 18px 48px rgba(56,39,18,.24),inset 0 1px 0 #fff;
+}
+.app.chatp .ch-more-menu .ch-menu-item{position:relative;z-index:1}
+.app.chatp .ch-more-menu .ch-menu-detail{
+ background:rgba(190,151,91,.19);
+ border-color:rgba(190,151,91,.36);
+}
