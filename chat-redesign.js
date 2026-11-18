@@ -73,6 +73,32 @@
   const list=root.querySelector('.ch-list');
   if(list)list.setAttribute('aria-label','پیام‌های گفتگو');
  };
+ /* AI typing feedback: intercept only the SISE AI request; no message or account data is changed. */
+ if(!window.__siseAiTypingPatch){
+  window.__siseAiTypingPatch=true;
+  const nativeFetch=window.fetch;
+  window.fetch=function(input,init){
+   const url=typeof input==='string'?input:(input&&input.url)||'';
+   if(!url.includes('/functions/v1/sise-ai-chat'))return nativeFetch.apply(this,arguments);
+   let indicator=null;
+   try{
+    const root=document.querySelector('.app.chatp .ch');
+    const list=root&&root.querySelector('.ch-list');
+    if(list){
+     indicator=document.createElement('div');
+     indicator.className='ch-typing';
+     indicator.setAttribute('role','status');
+     indicator.setAttribute('aria-live','polite');
+     indicator.innerHTML='<span>دستیار هوشمند در حال نوشتن است</span><span class="ch-typing-dots" aria-hidden="true"><i></i><i></i><i></i></span>';
+     list.appendChild(indicator);
+     list.scrollTop=list.scrollHeight;
+    }
+   }catch(e){}
+   let request;
+   try{request=nativeFetch.apply(this,arguments)}catch(e){if(indicator)indicator.remove();throw e}
+   return Promise.resolve(request).finally(()=>{if(indicator&&indicator.isConnected)indicator.remove()});
+  };
+ }
  const boot=()=>{
   const app=document.getElementById('app');
   if(!app)return;
