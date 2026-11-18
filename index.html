@@ -865,6 +865,29 @@ html{overflow-x:hidden;max-width:100%}
 .sq-n.p{inset-inline-end:max(12px,env(safe-area-inset-right,0px))}.sq-n.n{inset-inline-start:max(12px,env(safe-area-inset-left,0px))}
 @media (max-width:520px){.sq-n{top:auto;bottom:calc(30px + env(safe-area-inset-bottom,0px))}}
 @media (prefers-reduced-motion:reduce){.sq,.sq-g{animation:none!important}}
+
+/* SISE premium glass cart + vertical order tracking */
+.cart-lines{gap:14px!important}
+.ci.glass{display:grid;grid-template-columns:88px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border-radius:24px;background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.24);box-shadow:0 14px 36px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.2);-webkit-backdrop-filter:blur(26px) saturate(175%);backdrop-filter:blur(26px) saturate(175%)}
+.ci.glass>img{width:88px;height:104px;object-fit:cover;border-radius:17px;background:rgba(255,255,255,.08)}
+.ci .m{min-width:0;display:flex;flex-direction:column;gap:5px}.ci .m>b{font-size:14px;line-height:1.7}.ci .m small{color:var(--muted)}
+.ci .qty{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:99px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.16)}
+.ci .qty button{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.11)}
+.ci .x{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#f08c85;background:rgba(240,116,107,.12);border:1px solid rgba(240,116,107,.22)}
+.cpn.glass,.shp.glass,.tot.glass,.frm.glass{border-radius:25px;background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.22);box-shadow:0 14px 36px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.18);-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%)}
+.tot.glass{padding:18px;gap:11px}.tot>div{display:flex;justify-content:space-between;gap:12px}.tot .g{padding-top:12px;margin-top:3px;border-top:1px solid var(--gb);font-weight:800;font-size:16px}.tot .g span:last-child{color:var(--accent2);font-size:19px}
+.frm.glass{padding:18px;gap:12px}.frm .in,.cpn .in{background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.2);border-radius:15px;min-height:48px;padding:10px 13px}
+.track-search{display:flex;align-items:center;gap:10px;padding:12px;border-radius:22px!important;background:rgba(255,255,255,.075)!important;border:1px solid rgba(255,255,255,.24)!important;-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%)}
+.track-search .in{min-width:0;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.17);border-radius:14px;padding:10px 12px}
+.order-track-card{position:relative;padding:18px;border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.22);box-shadow:0 14px 36px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.16);-webkit-backdrop-filter:blur(25px) saturate(170%);backdrop-filter:blur(25px) saturate(170%)}
+.order-track-card .pill{padding:5px 11px;border-radius:99px;background:rgba(224,179,116,.15);border:1px solid rgba(224,179,116,.35);color:var(--accent2);font-size:12px}
+.order-track-card .tl{display:flex;flex-direction:column;gap:0;margin-top:15px;padding-inline-start:6px}
+.order-track-card .tl>div{position:relative;display:flex;align-items:center;min-height:38px;padding:5px 28px 5px 0;color:var(--faint);font-size:12.5px;border-inline-start:1px solid rgba(255,255,255,.2)}
+.order-track-card .tl>div:before{content:"";position:absolute;right:-6px;top:50%;width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.28);transform:translateY(-50%)}
+.order-track-card .tl>div.d{color:var(--fg);border-inline-start-color:var(--accent)}
+.order-track-card .tl>div.d:before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px rgba(224,179,116,.13),0 0 15px rgba(224,179,116,.35)}
+@media(max-width:420px){.ci.glass{grid-template-columns:68px minmax(0,1fr) auto;gap:8px;padding:9px}.ci.glass>img{width:68px;height:82px}.ci .qty{gap:4px;padding:4px}.ci .qty button{width:24px;height:24px}.ci .m>b{font-size:12.5px}.ci .price{font-size:13px}.ci .x{width:29px;height:29px}}
+@media(prefers-reduced-motion:no-preference){.ci.glass,.order-track-card{transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}.ci.glass:active{transform:scale(.99);border-color:rgba(224,179,116,.5)}}
 </style>
 
 <style id="sise-drawer-scroll-fix">
@@ -1278,9 +1301,10 @@ function renderHeader(){const hd=$('#hd'),u=curUser();hd.innerHTML='';
 function buildNav(){const nv=$('#nv');nv.innerHTML='';const inn=h('div',{class:'nv-in'}),bar=h('div',{class:'nv-bar glass'});
  S.nav.forEach(n=>bar.append(h('button',{class:'nv-b','data-v':n.view,'aria-label':n.label,onclick:()=>{const drawer=document.querySelector('.ov.s');if(drawer){const modal=stack.find(x=>x.ov===drawer);if(modal)modal.close();else drawer.remove()}go(n.view)}},I(n.icon,22),h('span',{},n.label),n.view==='cart'?h('em',{class:'cnt',hidden:true}):null)));
  inn.append(bar,h('div',{class:'nv-bub'}));nv.append(inn);cartBadge()}
-function setNav(animate){const nv=$('#nv'),inn=$('.nv-in',nv),bub=$('.nv-bub',nv);if(!inn)return;const btns=[...nv.querySelectorAll('.nv-b')],act=btns.find(b=>b.dataset.v===cur),item=S.nav.find(n=>n.view===cur);
- const apply=()=>{btns.forEach(b=>b.classList.toggle('on',b===act));if(act){const x=act.offsetLeft+act.offsetWidth/2;inn.style.setProperty('--nx',x+'px');bub.style.left=x+'px';bub.innerHTML=ic(item.icon,26);inn.style.setProperty('--nr','37px')}else inn.style.setProperty('--nr','0px')};
- if(!animate){apply();return}nv.classList.add('sw');inn.style.setProperty('--nr','0px');setTimeout(()=>{nv.classList.remove('sw');apply()},180)}
+let navAnimTimer=0,navRenderSeq=0;
+function setNav(animate){const nv=$('#nv'),inn=$('.nv-in',nv),bub=$('.nv-bub',nv);if(!inn)return;const seq=++navRenderSeq;clearTimeout(navAnimTimer);
+ const apply=()=>{if(seq!==navRenderSeq)return;const btns=[...nv.querySelectorAll('.nv-b')],act=btns.find(b=>b.dataset.v===cur),item=S.nav.find(n=>n.view===cur);btns.forEach(b=>b.classList.toggle('on',b===act));if(act&&item){const x=act.offsetLeft+act.offsetWidth/2;inn.style.setProperty('--nx',x+'px');bub.style.left=x+'px';bub.innerHTML=ic(item.icon,26);inn.style.setProperty('--nr','37px')}else{inn.style.setProperty('--nr','0px');bub.innerHTML=''}};
+ if(!animate){nv.classList.remove('sw');apply();return}nv.classList.add('sw');inn.style.setProperty('--nr','0px');navAnimTimer=setTimeout(()=>{nv.classList.remove('sw');apply()},180)}
 addEventListener('resize',()=>setNav(false));
 function cartBadge(){toteSync();const n=V.cart.reduce((a,c)=>a+c.qty,0);document.querySelectorAll('.nv-b .cnt').forEach(e=>{e.hidden=!n;e.textContent=fa(n)})}
 function go(v){const was=cur;if(was!==v){try{history.pushState({...(history.state||{}),siseView:v},'',location.href)}catch(e){}}cur=v;if(v!=='categories'){catFilter=null;catQ=''}renderMain();setNav(was!==v);window.scrollTo({top:0})}
@@ -1594,7 +1618,7 @@ function cartView(){const lines=V.cart.map(l=>({l,i:lineInfo(l)})).filter(x=>x.i
  const cpBox=h('div',{class:'cpn glass'},h('div',{class:'cr'},cin,h('button',{class:'btn',type:'button',onclick:applyCp},'اعمال')),V.cpCode?(cps.err?h('small',{class:'cpm bad'},cps.err):h('small',{class:'cpm ok'},'کد «'+cps.c.code+'» اعمال شد · '+fa(cps.p)+'٪ تخفیف')):null);
  const name=h('input',{class:'in',id:'o-name',placeholder:'نام و نام خانوادگی',value:curUser()?uName(curUser()):''}),phone=h('input',{class:'in',id:'o-phone',type:'tel',inputmode:'tel',placeholder:'شماره موبایل (۰۹…)',value:curUser()?.phone||''}),addr=h('textarea',{class:'in',id:'o-addr',rows:3,placeholder:'آدرس کامل و کد پستی',value:curUser()?[curUser().address,curUser().postal&&'کد پستی: '+curUser().postal].filter(Boolean).join('\n'):''}),note=h('input',{class:'in',id:'o-note',placeholder:'توضیحات (اختیاری)'});
  return[h('h2',{class:'pg-h'},'سبد خرید'),
-  h('div',{style:{display:'flex',flexDirection:'column',gap:'12px'}},lines.map(({l,i})=>h('div',{class:'ci glass'},h('img',{src:i.img,alt:''}),h('div',{class:'m'},h('b',{},i.p.title),i.c?h('small',{},'رنگ: '+i.c.name):null,h('div',{class:'price'},money(i.price))),
+  h('div',{class:'cart-lines',style:{display:'flex',flexDirection:'column',gap:'12px'}},lines.map(({l,i})=>h('div',{class:'ci glass'},h('img',{src:i.img,alt:''}),h('div',{class:'m'},h('b',{},i.p.title),i.c?h('small',{},'رنگ: '+i.c.name):null,h('div',{class:'price'},money(i.price))),
    h('div',{style:{display:'flex',flexDirection:'column',gap:'8px',alignItems:'center'}},h('div',{class:'qty'},h('button',{'aria-label':'افزایش',html:ic('plus',14),onclick:()=>{const mx=qtyOf(i.p);if(l.qty>=mx)return toast('حداکثر موجودی: '+fa(mx)+' عدد');l.qty++;saveV();renderMain();cartBadge()}}),h('b',{},fa(l.qty)),h('button',{'aria-label':'کاهش',html:ic('down',14),onclick:()=>{l.qty=Math.max(1,l.qty-1);saveV();renderMain();cartBadge()}})),
     h('button',{class:'x','aria-label':'حذف',html:ic('trash',18),onclick:()=>{V.cart=V.cart.filter(c=>c!==l);saveV();renderMain();cartBadge()}}))))),
   cpBox,shipBox,
@@ -1614,13 +1638,13 @@ function cartView(){const lines=V.cart.map(l=>({l,i:lineInfo(l)})).filter(x=>x.i
 const myOrders=()=>S.orders.filter(o=>V.orders.includes(o.code));
 const stName=k=>(STATUSES.find(s=>s[0]===k)||[0,k])[1];
 function orderCard(o){const steps=STATUSES.filter(s=>s[0]!=='new'&&s[0]!=='canceled'),idx=steps.findIndex(s=>s[0]===o.status);
- return h('div',{class:'oc glass'},h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px'}},h('b',{style:{direction:'ltr'}},o.code),h('span',{class:'pill'},stName(o.status))),
+ return h('div',{class:'oc glass order-track-card'},h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px'}},h('b',{style:{direction:'ltr'}},o.code),h('span',{class:'pill'},stName(o.status))),
   h('small',{style:{color:'var(--muted)'}},new Date(o.created).toLocaleDateString('fa-IR')+' · '+o.items.map(i=>`${i.title}${i.color?' ('+i.color+')':''} × ${fa(i.qty)}`).join('، ')),h('div',{class:'price'},money(o.total)),
   o.status==='canceled'?h('div',{style:{color:'var(--bad)'}},'این سفارش لغو شده است'):h('div',{class:'tl'},steps.map((s,k)=>h('div',{class:k<=idx?'d':''},s[1]))))}
-function trackView(){setTimeout(()=>{if(cur==='track'&&V.orders.length)refreshMine().then(c=>c&&cur==='track'&&renderMain())},50);const q=h('input',{class:'in',id:'t-q',placeholder:'کد پیگیری یا شماره موبایل',style:{flex:1}}),out=h('div',{style:{display:'flex',flexDirection:'column',gap:'12px'}});
+function trackView(){setTimeout(()=>{if(cur==='track'&&V.orders.length)refreshMine().then(c=>c&&cur==='track'&&renderMain())},50);const q=h('input',{class:'in',id:'t-q',placeholder:'کد پیگیری یا شماره موبایل',style:{flex:1}}),out=h('div',{class:'track-results',style:{display:'flex',flexDirection:'column',gap:'12px'}});
  const show=list=>{out.innerHTML='';add(out,list.length?list.map(orderCard):[h('div',{class:'empty glass'},I('truck',44),h('div',{},'سفارشی پیدا نشد؛ کد یا شماره را بررسی کنید'))])};
  const mine=myOrders();
- const view=[h('h2',{class:'pg-h'},'پیگیری خرید'),h('form',{class:'search glass',onsubmit:async e=>{e.preventDefault();const v=q.value.trim().toUpperCase(),n=normNum(q.value);if(!v)return;let l=S.orders.filter(o=>o.code===v||(n.length>=10&&o.phone===n));if(!l.length&&/^(?:K\d{6}|SI[A-F0-9]{32})$/.test(v)){out.innerHTML='';out.append(h('div',{class:'empty glass'},'در حال جستجو…'));const d=await sbTrack(v);l=d?[d]:[]}show(l)}},I('search',20),q,h('button',{class:'btn',type:'submit',style:{padding:'8px 16px'}},'جستجو')),out];
+ const view=[h('h2',{class:'pg-h track-title'},'پیگیری خرید'),h('form',{class:'search glass track-search',onsubmit:async e=>{e.preventDefault();const v=q.value.trim().toUpperCase(),n=normNum(q.value);if(!v)return;let l=S.orders.filter(o=>o.code===v||(n.length>=10&&o.phone===n));if(!l.length&&/^(?:K\d{6}|SI[A-F0-9]{32})$/.test(v)){out.innerHTML='';out.append(h('div',{class:'empty glass'},'در حال جستجو…'));const d=await sbTrack(v);l=d?[d]:[]}show(l)}},I('search',20),q,h('button',{class:'btn',type:'submit',style:{padding:'8px 16px'}},'جستجو')),out];
  if(mine.length){add(out,[h('div',{class:'sec-h'},h('h3',{},'سفارش‌های شما'))]);add(out,mine.map(orderCard))}else out.append(h('div',{class:'empty glass'},I('truck',44),h('div',{},'کد پیگیری سفارش را وارد کنید')));
  return view}
 function payView(){if(!payView.r){payView.r=1;setTimeout(()=>{payView.r=0;if(cur==='pay'&&V.orders.length)refreshMine().then(c=>c&&cur==='pay'&&renderMain())},50)}const un=myOrders().filter(o=>o.status==='new'),P=S.pay||{};
