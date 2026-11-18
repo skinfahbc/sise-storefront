@@ -1038,6 +1038,24 @@ body.chat-lock #app .sise-chat-screen .chm .chb p{line-height:1.75}
 body.chat-lock #app .sise-chat-screen>.ch-cp{background:rgba(255,255,255,.085)!important;border-color:rgba(255,255,255,.24)!important;box-shadow:0 12px 34px rgba(30,24,15,.11),inset 0 1px 0 rgba(255,255,255,.23)!important}
 body.chat-lock #app .sise-chat-screen>.ch-cp .in{background:rgba(255,255,255,.085)!important;border-color:rgba(255,255,255,.16)!important}
 @media(max-width:420px){.sise-chat-top{gap:6px;padding:6px!important}.sise-chat-top .ch-tabs .cht{padding:9px 7px!important;font-size:11px!important}.sise-chat-actions{gap:4px}.sise-chat-actions button{width:35px;height:37px}.sise-reaction{height:29px;min-width:39px;padding:0 7px}}
+
+/* SISE chat polish: compact guest state, stable scrolling and clearer glass surfaces */
+body.chat-lock #app.app.chatp{height:var(--vvh,100dvh)!important;min-height:0!important;max-height:var(--vvh,100dvh)!important;padding:calc(8px + env(safe-area-inset-top,0px)) 12px calc(10px + env(safe-area-inset-bottom,0px))!important;overflow:hidden!important}
+body.chat-lock #app .sise-chat-screen{flex:1 1 auto!important;min-height:0!important;height:100%!important;gap:10px!important}
+body.chat-lock #app .sise-chat-screen>.ch-list{flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:8px 3px 12px!important}
+body.chat-lock #app .sise-chat-screen>.ch-cp{flex:0 0 auto!important;position:relative!important;inset:auto!important;margin:0 0 env(safe-area-inset-bottom,0px)!important;border-radius:24px!important;gap:9px!important}
+body.chat-lock #app .sise-chat-screen>.ch-cp:has(.ch-login){justify-content:center!important;min-height:64px!important;padding:10px!important}
+body.chat-lock #app .sise-chat-screen>.ch-cp .ch-login{width:auto!important;min-width:170px!important;max-width:220px!important;min-height:44px!important;border-radius:16px!important}
+body.chat-lock #app .sise-chat-screen .ch-list>.empty{align-self:center;max-width: min(92%,420px);margin:auto;padding:18px 20px;border:1px solid rgba(255,255,255,.16);border-radius:22px;background:rgba(255,255,255,.055);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);text-align:center;line-height:1.9}
+body.chat-lock #app .sise-chat-top{flex:0 0 auto;min-height:54px;background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.17)!important;box-shadow:0 10px 30px rgba(20,18,14,.08),inset 0 1px 0 rgba(255,255,255,.12)!important}
+body.chat-lock #app .sise-chat-top .ch-tabs .cht.on{background:rgba(255,255,255,.16)!important;border-color:rgba(255,255,255,.24)!important}
+body.chat-lock #app .sise-chat-screen .chm .chb{position:relative;box-shadow:0 8px 24px rgba(20,18,14,.055),inset 0 1px 0 rgba(255,255,255,.13)}
+body.chat-lock #app .sise-chat-screen .sise-reactions{padding-top:2px}
+body.chat-lock #app .sise-chat-screen .sise-reaction{transition:transform .18s ease,background .18s ease,border-color .18s ease}
+body.chat-lock #app .sise-chat-screen .sise-reaction:active{transform:scale(.94)}
+body.chat-lock #app .sise-chat-screen .sise-ai-typing{align-self:flex-start;display:flex;align-items:center;gap:7px}
+@media(max-width:380px){body.chat-lock #app.app.chatp{padding-inline:8px!important}.sise-chat-top{min-height:50px}.sise-chat-top .ch-tabs .cht{font-size:10px!important;padding-inline:5px!important}}
+
 </style>
 </head>
 <body>
