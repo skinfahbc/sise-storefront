@@ -1600,7 +1600,7 @@ function pcard(p){const d=disc(p),so=qtyOf(p)<=0,comp=(V.compare||[]).includes(p
  h('div',{class:'in'},h('h4',{},p.title),
   colors.length?h('div',{class:'pc-colors', 'aria-label':'رنگ‌بندی',title:colors.map(c=>c.name).join('، ')},colors.map(c=>h('i',{style:{background:c.hex||'#c9b99f'},title:c.name}))):null,
   h('div',{class:'pc-price-row'},h('div',{class:'pc-price-stack'},p.oldPrice>p.price?h('div',{class:'old'},money(p.oldPrice)):null,h('div',{class:'price'},fa(p.price),' ',h('small',{},S.store.currency))),
-   h('button',{type:'button',class:'pc-add',disabled:so,'aria-label':'افزودن '+p.title+' به سبد خرید',onclick:e=>{e.stopPropagation();if(addCart(p.id,(p.colors||[])[0]?.id||'',1))toast('به سبد خرید اضافه شد')}},ic('plus',19))),
+   h('button',{type:'button',class:'pc-add',disabled:so,'aria-label':'افزودن '+p.title+' به سبد خرید',html:ic('plus',19),onclick:e=>{e.stopPropagation();if(addCart(p.id,(p.colors||[])[0]?.id||'',1))toast('به سبد خرید اضافه شد')}})),
   revs(p).length?h('div',{class:'xrt'},h('b',{},'★ '),fa1(revAvg(p))+' ('+fa(revs(p).length)+')'):null,
   h('button',{type:'button',class:'pc-compare'+(comp?' on':''),'data-product-id':p.id,onclick:e=>{e.stopPropagation();compareToggle(p.id)}},comp?'✓ در مقایسه':'＋ مقایسه')))}
 
