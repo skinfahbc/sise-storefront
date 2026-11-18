@@ -1,0 +1,29 @@
+/* SISE full-screen chat refresh */
+body.chat-lock{background:var(--bg);overflow:hidden}
+body.chat-lock .hd,body.chat-lock #nv{display:none!important}
+.app.chatp{height:var(--vvh,100dvh)!important;min-height:0!important;box-sizing:border-box!important;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px calc(env(safe-area-inset-bottom,0px) + 10px)!important;gap:10px!important;overflow:hidden!important}
+.app.chatp .ch{height:100%;flex:1 1 auto;min-height:0;gap:10px!important}
+.app.chatp .ch-redesign-top{display:flex;align-items:center;gap:8px;flex:none;min-height:54px;padding:6px;border:1px solid var(--gb);border-radius:20px;background:var(--card,var(--bg));box-shadow:0 8px 26px rgba(0,0,0,.06)}
+.ch-redesign-tabs{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.ch-redesign-tabs::-webkit-scrollbar{display:none}
+.ch-redesign-tabs .cht{white-space:nowrap;flex:1;min-width:max-content;padding:11px 12px;border-radius:14px;font-size:12.5px}
+.ch-redesign-actions{display:flex;align-items:center;gap:6px;flex:none}
+.ch-redesign-actions button{height:40px;min-width:40px;padding:0 11px;border:1px solid var(--gb);border-radius:13px;background:var(--field);color:var(--ink);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.ch-redesign-actions .chat-home{background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on-accent);border:0}
+.app.chatp .ch-hd{display:none!important}
+.app.chatp .ch-tabs{display:none!important}
+.app.chatp .ch-list{flex:1 1 auto;min-height:0!important;height:0;overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:10px 4px 14px;scrollbar-width:thin}
+.app.chatp .ch-cp{position:relative!important;inset:auto!important;bottom:auto!important;flex:none!important;margin:0;padding:10px;gap:8px;border:1px solid var(--gb);border-radius:25px;background:var(--card,var(--bg));box-shadow:0 8px 30px rgba(0,0,0,.09)}
+.app.chatp .ch-cp .in{min-width:0;flex:1;height:46px;padding-inline:16px;border-radius:17px;background:var(--field);border:1px solid var(--gb);font-size:14px}
+.app.chatp .ch-cp .btn{min-height:44px;border-radius:16px}
+.app.chatp .ch-cp .ch-st{width:42px;height:42px;flex:none;border-radius:14px;background:var(--field);border:1px solid var(--gb)}
+.app.chatp .chm{max-width:min(88%,520px);animation:chatBubbleIn .22s ease both}
+.app.chatp .chm .chb{box-shadow:0 3px 12px rgba(0,0,0,.035)}
+.ch-typing{display:flex;align-items:center;gap:8px;align-self:flex-start;padding:8px 12px;border-radius:16px;background:var(--field);color:var(--muted);font-size:12px}
+.ch-typing-dots{display:inline-flex;gap:3px}
+.ch-typing-dots i{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:chatDot 1s infinite ease-in-out}
+.ch-typing-dots i:nth-child(2){animation-delay:.15s}.ch-typing-dots i:nth-child(3){animation-delay:.3s}
+@keyframes chatDot{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
+@keyframes chatBubbleIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:420px){.app.chatp{padding-inline:8px!important}.ch-redesign-actions button{min-width:38px;padding-inline:8px}.ch-redesign-tabs .cht{font-size:11.5px;padding:10px 8px}}
+@media(max-height:560px){.app.chatp .ch-redesign-top{min-height:44px}.app.chatp .ch-cp{padding:6px}}
