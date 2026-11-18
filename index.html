@@ -1064,6 +1064,23 @@ body.chat-lock #app .sise-chat-screen>.ch-cp{flex:0 0 auto!important;position:re
 body.chat-lock #app .sise-chat-screen>.ch-cp:has(.ch-login){justify-content:center!important;min-height:62px!important;padding:9px!important}
 body.chat-lock #app .sise-chat-screen>.ch-cp .ch-login{width:auto!important;min-width:170px!important;max-width:220px!important;min-height:44px!important}
 
+
+/* Reference-matched SISE Messenger glass header: brand row + utility icons + channel tabs. */
+body.chat-lock #app .sise-chat-top{display:flex!important;flex:0 0 auto!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important;min-height:0!important;padding:12px 13px 10px!important;border-radius:26px!important;background:rgba(255,255,255,.075)!important;border:1px solid rgba(255,255,255,.25)!important;box-shadow:0 12px 34px rgba(35,27,15,.09),inset 0 1px 0 rgba(255,255,255,.3)!important;-webkit-backdrop-filter:blur(30px) saturate(1.55)!important;backdrop-filter:blur(30px) saturate(1.55)!important}
+.sise-chat-head{width:100%;min-height:56px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:8px;direction:ltr}
+.sise-chat-brand{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;direction:ltr;color:#9b7847;text-align:center;line-height:1}
+.sise-chat-brand b{font-family:Georgia,serif;font-size:25px;font-weight:700;letter-spacing:5px}
+.sise-chat-brand small{margin-top:4px;font-size:9px;font-weight:800;letter-spacing:3px}
+.sise-chat-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:15px;color:#987548;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.27);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.sise-chat-head>.sise-chat-icon{justify-self:start}
+.sise-chat-actions{display:flex!important;align-items:center;justify-content:flex-end;gap:7px;direction:rtl}
+.sise-chat-actions .sise-chat-icon{width:42px;height:42px}
+.sise-chat-tabs{width:100%;box-sizing:border-box;display:flex!important;gap:7px!important;padding:4px!important;border:0!important;border-radius:18px!important;background:transparent!important;overflow-x:auto;scrollbar-width:none}
+.sise-chat-tabs::-webkit-scrollbar{display:none}
+.sise-chat-tabs .cht{flex:1 0 0!important;min-width:0!important;min-height:57px;padding:7px 5px!important;white-space:normal!important;border:1px solid rgba(255,255,255,.25)!important;border-radius:20px!important;background:rgba(255,255,255,.09)!important;color:#9a7b51!important;font-size:12px!important;line-height:1.5!important}
+.sise-chat-tabs .cht.on{background:rgba(255,255,255,.2)!important;border-color:rgba(177,139,83,.48)!important;color:#80623b!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 5px 14px rgba(60,45,20,.06)!important}
+.sise-chat-help{padding:22px;border-radius:24px}
+@media(max-width:420px){body.chat-lock #app .sise-chat-top{padding:9px 9px 8px!important;gap:7px!important}.sise-chat-head{grid-template-columns:38px minmax(0,1fr) auto;gap:5px}.sise-chat-brand b{font-size:22px;letter-spacing:4px}.sise-chat-icon,.sise-chat-actions .sise-chat-icon{width:36px;height:36px;border-radius:13px}.sise-chat-actions{gap:5px}.sise-chat-tabs{gap:5px!important}.sise-chat-tabs .cht{min-height:53px;font-size:10.5px!important;padding:6px 3px!important}}
 </style>
 </head>
 <body>
@@ -2373,27 +2390,33 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
    fld('بازگردانی از پشتیبان',imp),h('button',{class:'btn',style:{alignSelf:'flex-start'},onclick:()=>{try{const d=JSON.parse(imp.value);if(!d||d.v!==1||!d.products)throw 0;S=d;persist();refreshStore();toast('بازگردانی شد');document.querySelector('.tb.on').click()}catch(e){toast('متن پشتیبان معتبر نیست')}}},'بازگردانی')),
   card('بازنشانی',h('p',{},'همه‌چیز به داده‌های نمونه برمی‌گردد و تغییرات شما پاک می‌شود.'),h('button',{class:'btn dg',style:{alignSelf:'flex-start'},onclick:e=>{const b=e.currentTarget;if(b.dataset.s){S=seed();V.cart=[];V.orders=[];V.seen={};saveV();persist();refreshStore();toast('بازنشانی شد');document.querySelector('.tb.on').click()}else{b.dataset.s=1;b.textContent='مطمئنید؟ دوباره بزنید'}}},I('undo',16),'بازنشانی به نمونه'))]}
 };
-/* Rebuild the chat page shell around the existing, working message channels */
+/* Rebuild the full SISE Messenger header shown in the approved reference. */
 const SISE_chatViewOriginal=chatView;
+function SISE_chatHeader(tabs){
+ const menu=h('button',{type:'button',class:'sise-chat-icon','aria-label':'راهنمای گفتگو',title:'راهنمای گفتگو',html:ic('more-horizontal',21),onclick:()=>openModal(h('div',{class:'sh sise-chat-help'},h('div',{class:'grab'}),h('h3',{},'راهنمای گفتگوی SISE'),h('p',{},'از تب‌ها برای جابه‌جایی بین گفتگوی عمومی، مدیریت و دستیار هوشمند استفاده کنید.'),h('p',{},'برای واکنش به پیام، یکی از شکلک‌ها را انتخاب کنید و از منوی روی پیام، گزینه‌های همان پیام را ببینید.')),'b')});
+ const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISE'),h('small',{},'MESSENGER'));
+ const actions=h('div',{class:'sise-chat-actions'},
+  h('button',{type:'button',class:'sise-chat-icon','aria-label':'جستجوی محصولات',title:'جستجو',html:ic('search',20),onclick:()=>openSearch()}),
+  h('button',{type:'button',class:'sise-chat-icon','aria-label':'ورود یا حساب کاربری',title:'حساب کاربری',html:ic('user-round',20),onclick:openAuth}),
+  h('button',{type:'button',class:'sise-chat-icon','aria-label':'صفحه اصلی',title:'صفحه اصلی',html:ic('house',20),onclick:()=>go('home')})
+ );
+ const head=h('div',{class:'sise-chat-head'},menu,brand,actions);
+ if(tabs){
+  tabs.classList.add('sise-chat-tabs');
+  const labels=['چت عمومی','چت با مدیریت','چت با هوش مصنوعی'];
+  [...tabs.children].forEach((b,i)=>{if(labels[i])b.textContent=labels[i]});
+ }
+ return h('div',{class:'sise-chat-top'},head,tabs||chTabs());
+}
 chatView=function(){
  const root=SISE_chatViewOriginal();
  if(!root)return root;
  root.classList.add('sise-chat-screen');
  const oldHead=root.querySelector(':scope > .ch-hd');if(oldHead)oldHead.remove();
  const tabs=root.querySelector(':scope > .ch-tabs');
- if(tabs){
-  tabs.classList.add('sise-chat-tabs');
-  const labels=['چت همگانی','چت با مدیریت','چت هوش مصنوعی'];
-  [...tabs.children].forEach((b,i)=>{if(labels[i])b.textContent=labels[i]});
- }
  const list=root.querySelector(':scope > .ch-list'),composer=root.querySelector(':scope > .ch-cp');
- const actions=h('div',{class:'sise-chat-actions'},
-  h('button',{type:'button','aria-label':'صفحه اصلی',title:'صفحه اصلی',html:ic('house',19),onclick:()=>go('home')}),
-  h('button',{type:'button','aria-label':'ورود یا حساب کاربری',title:'ورود یا حساب کاربری',html:ic('user-round',19),onclick:openAuth})
- );
- const top=h('div',{class:'sise-chat-top'},tabs||chTabs(),actions);
  root.innerHTML='';
- root.append(top);
+ root.append(SISE_chatHeader(tabs));
  if(list)root.append(list);
  if(composer)root.append(composer);
  return root;
