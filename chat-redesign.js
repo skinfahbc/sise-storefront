@@ -163,6 +163,11 @@
   });
  };
  const connectReactionRealtime=async root=>{
+  const activeTab=root&&root.querySelector('.ch-tabs .cht.on');
+  if(!activeTab||!activeTab.textContent.includes('عمومی')){
+   if(reactionChannel&&reactionClient){reactionClient.removeChannel(reactionChannel);reactionChannel=null;reactionLive=false;reactionCounts={}}
+   setReactionLive(root,false);return;
+  }
   if(reactionChannel){setReactionLive(root,reactionLive);return}
   setReactionLive(root,false);
   try{
