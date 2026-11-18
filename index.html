@@ -1981,8 +1981,9 @@ function openStory(start){const list=S.stories;if(!list.length)return;let i=star
 
 function updateHd(){const hd=$('#hd');if(!hd)return;const hr=$('.hero');hd.classList.toggle('over',cur==='home'&&!!hr&&scrollY<70)}
 addEventListener('scroll',updateHd,{passive:true});
-function normSearchText(v){return String(v||'').toLocaleLowerCase().replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[\u064B-\u065F]/g,'').trim()}\nfunction openSearch(){let close;const inp=h('input',{id:'s-q',placeholder:'جستجوی کیف، رنگ یا دسته…','aria-label':'جستجو',autocomplete:'off'}),res=h('div',{class:'grid'});
- const draw=()=>{const q=normSearchText(inp.value);res.innerHTML='';const l=S.products.filter(p=>{if(!q)return true;const hay=normSearchText([p.title,p.desc,p.brand,S.categories.find(c=>c.id===p.cat)?.name,...(p.colors||[]).map(c=>c.name)].join(' '));return q.split(/\\s+/).filter(Boolean).every(w=>hay.includes(w))});
+function normSearchText(v){return String(v||'').toLocaleLowerCase().replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[\u064B-\u065F]/g,'').trim()}
+function openSearch(){let close;const inp=h('input',{id:'s-q',placeholder:'جستجوی کیف، رنگ یا دسته…','aria-label':'جستجو',autocomplete:'off'}),res=h('div',{class:'grid'});
+ const draw=()=>{const q=normSearchText(inp.value);res.innerHTML='';const l=S.products.filter(p=>{if(!q)return true;const hay=normSearchText([p.title,p.desc,p.brand,S.categories.find(c=>c.id===p.cat)?.name,...(p.colors||[]).map(c=>c.name)].join(' '));return q.split(/\s+/).filter(Boolean).every(w=>hay.includes(w))});
   add(res,l.length?l.map(p=>{const c=pcard(p);c.onclick=()=>{close();openProduct(p.id)};return c}):h('div',{class:'empty',style:{gridColumn:'1/-1'}},I('search',40),'محصولی پیدا نشد'))};
  inp.addEventListener('input',draw);draw();
  close=openModal(h('div',{class:'sh',style:{minHeight:'70vh'}},h('div',{class:'grab'}),h('div',{class:'search glass'},I('search',20),inp),h('div',{style:{height:'14px'}}),res),'b');setTimeout(()=>inp.focus(),150)}
