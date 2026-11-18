@@ -87,6 +87,16 @@
   top.append(bar,tabs);
   const chatHead=root.querySelector('.ch-hd');if(chatHead)chatHead.remove();
   root.insertBefore(top,root.firstChild);
+  /* Local message search: filters only messages already loaded in this browser. */
+  const searchBtn=document.createElement('button');searchBtn.type='button';searchBtn.className='chat-search-toggle';searchBtn.setAttribute('aria-label','جستجو در گفتگو');searchBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>';
+  actions.append(searchBtn);
+  const searchPanel=document.createElement('div');searchPanel.className='ch-search-panel';searchPanel.hidden=true;searchPanel.innerHTML='<input type="search" maxlength="80" placeholder="جستجو در پیام‌های نمایش‌داده‌شده…" aria-label="جستجو در پیام‌ها"><button type="button" aria-label="بستن جستجو">×</button>';
+  top.after(searchPanel);
+  const searchInput=searchPanel.querySelector('input');
+  const filterMessages=()=>{const q=searchInput.value.trim().toLocaleLowerCase();root.querySelectorAll('.ch-list .chm').forEach(m=>{m.hidden=!!q&&!m.textContent.toLocaleLowerCase().includes(q)})};
+  searchBtn.addEventListener('click',()=>{searchPanel.hidden=!searchPanel.hidden;if(!searchPanel.hidden)searchInput.focus();else{searchInput.value='';filterMessages()}});
+  searchPanel.querySelector('button').addEventListener('click',()=>{searchPanel.hidden=true;searchInput.value='';filterMessages()});
+  searchInput.addEventListener('input',filterMessages);
   root.dataset.redesigned='1';
   const list=root.querySelector('.ch-list');
   if(list)list.setAttribute('aria-label','پیام‌های گفتگو');
@@ -117,12 +127,46 @@
    return Promise.resolve(request).finally(()=>{if(indicator&&indicator.isConnected)indicator.remove()});
   };
  }
+ const enhanceChatMessages=()=>{
+  const root=document.querySelector('#app .ch');
+  if(!root)return;
+  root.querySelectorAll('.ch-list .chm').forEach(message=>{
+   const bubble=message.querySelector('.chb');
+   if(!bubble||bubble.querySelector('.ch-local-tools'))return;
+   const tools=document.createElement('div');tools.className='ch-local-tools';
+   const key='sise_chat_reactions_v1';
+   let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){}
+   const id=String(message.dataset.mid||'');if(!id)return;
+   const reactions=['👍','❤️','😂'];
+   reactions.forEach(emoji=>{
+    const count=Array.isArray(saved[id])?saved[id].filter(x=>x===emoji).length:0;
+    const b=document.createElement('button');b.type='button';b.className='ch-reaction'+(count?' on':'');b.setAttribute('aria-label','واکنش '+emoji);b.innerHTML='<span>'+emoji+'</span><small>'+count+'</small>';
+    b.addEventListener('click',()=>{
+     let data={};try{data=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){}
+     const arr=Array.isArray(data[id])?data[id]:[],at=arr.indexOf(emoji);if(at>=0)arr.splice(at,1);else arr.push(emoji);
+     if(arr.length)data[id]=arr;else delete data[id];
+     try{localStorage.setItem(key,JSON.stringify(data))}catch(e){}
+     b.classList.toggle('on',at<0);b.querySelector('small').textContent=arr.filter(x=>x===emoji).length;
+    });
+    tools.append(b);
+   });
+   const copy=document.createElement('button');copy.type='button';copy.className='ch-copy-message';copy.textContent='کپی';copy.addEventListener('click',async()=>{
+    const text=(bubble.querySelector('p')?.textContent||'').trim();if(!text)return;
+    try{await navigator.clipboard.writeText(text);copy.textContent='کپی شد';setTimeout(()=>{if(copy.isConnected)copy.textContent='کپی'},1400)}
+    catch(e){copy.textContent='کپی نشد';setTimeout(()=>{if(copy.isConnected)copy.textContent='کپی'},1400)}
+   });
+   tools.append(copy);bubble.append(tools);
+  });
+ };
  const boot=()=>{
   const app=document.getElementById('app');
   if(!app)return;
   const mo=new MutationObserver(()=>requestAnimationFrame(enhance));
   mo.observe(app,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
   enhance();
+  const chatMo=new MutationObserver(()=>requestAnimationFrame(enhanceChatMessages));
+  chatMo.observe(app,{childList:true,subtree:true});
+  enhanceChatMessages();
  };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
