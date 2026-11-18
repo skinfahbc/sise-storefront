@@ -1596,12 +1596,37 @@ function payView(){if(!payView.r){payView.r=1;setTimeout(()=>{payView.r=0;if(cur
    P.gateway?h('button',{class:'pbtn',onclick:()=>openUrl(P.gateway)},I('card',18),'ورود به درگاه پرداخت'):h('div',{class:'auth-vpn-note',style:{marginTop:'4px'}},h('b',{},'درگاه پرداخت هنوز تنظیم نشده است'),h('p',{},'از پنل مدیریت ← تنظیمات ← اطلاعات پرداخت، لینک درگاه خود را وارد و ذخیره کنید.')),
    h('small',{class:'fh'},'پس از اتصال درگاه، برای تأیید خودکار پرداخت باید سرویس بازگشت و تأیید تراکنش در سمت سرور نیز تنظیم شود.'))])};
  draw();return[h('h2',{class:'pg-h'},'پرداخت آنلاین'),box]}
-function catView(){const q=h('input',{id:'c-q',placeholder:'جستجوی کیف…',value:catQ,'aria-label':'جستجو'}),res=h('div',{});
- const draw=()=>{res.innerHTML='';const l=S.products.filter(p=>(!catFilter||p.cat===catFilter)&&(!catQ||p.title.includes(catQ)));const c=S.categories.find(x=>x.id===catFilter);
-  add(res,[secHead(c?c.name:'همه محصولات',h('span',{style:{color:'var(--muted)',fontSize:'13px'}},fa(l.length)+' محصول')),l.length?pagedGrid(l,()=>res):h('div',{class:'empty glass'},I('search',40),h('div',{},'محصولی پیدا نشد'))])};
+function catView(){
+ const q=h('input',{id:'c-q',placeholder:'جستجوی کیف…',value:catQ,'aria-label':'جستجو'}),res=h('div',{});
+ const colors=[...new Set(S.products.flatMap(p=>(p.colors||[]).map(c=>c.name).filter(Boolean)))].sort();
+ const brands=[...new Set(S.products.map(p=>p.brand).filter(Boolean))].sort();
+ const sort=h('select',{class:'in','aria-label':'مرتب‌سازی'},h('option',{value:'new'},'جدیدترین'),h('option',{value:'low'},'ارزان‌ترین'),h('option',{value:'high'},'گران‌ترین'));
+ const price=h('select',{class:'in','aria-label':'محدوده قیمت'},h('option',{value:'all'},'همه قیمت‌ها'),h('option',{value:'low'},'زیر ۱ میلیون'),h('option',{value:'mid'},'۱ تا ۳ میلیون'),h('option',{value:'high'},'بیشتر از ۳ میلیون'));
+ const color=h('select',{class:'in','aria-label':'رنگ'},h('option',{value:''},'همه رنگ‌ها'),colors.map(c=>h('option',{value:c},c)));
+ const stock=h('select',{class:'in','aria-label':'موجودی'},h('option',{value:'all'},'همه کالاها'),h('option',{value:'yes'},'فقط موجود'),h('option',{value:'no'},'ناموجود'));
+ const brand=h('select',{class:'in','aria-label':'برند'},h('option',{value:''},'همه برندها'),brands.map(b=>h('option',{value:b},b)));
+ const filters=h('div',{class:'cat-filters'},sort,price,color,stock,...(brands.length?[brand]:[]),h('button',{class:'tb',type:'button',onclick:()=>{sort.value='new';price.value='all';color.value='';stock.value='all';brand.value='';draw()}},'پاک‌کردن فیلترها'));
+ const draw=()=>{
+  res.innerHTML='';
+  let l=S.products.filter(p=>(!catFilter||p.cat===catFilter)&&(!catQ||(p.title+' '+(p.desc||'')).toLocaleLowerCase().includes(catQ.toLocaleLowerCase())));
+  if(price.value==='low')l=l.filter(p=>+p.price<1000000);
+  if(price.value==='mid')l=l.filter(p=>+p.price>=1000000&&+p.price<=3000000);
+  if(price.value==='high')l=l.filter(p=>+p.price>3000000);
+  if(color.value)l=l.filter(p=>(p.colors||[]).some(c=>c.name===color.value));
+  if(stock.value==='yes')l=l.filter(p=>qtyOf(p)>0);
+  if(stock.value==='no')l=l.filter(p=>qtyOf(p)<=0);
+  if(brand.value)l=l.filter(p=>p.brand===brand.value);
+  if(sort.value==='low')l.sort((a,b)=>(+a.price||0)-(+b.price||0));
+  else if(sort.value==='high')l.sort((a,b)=>(+b.price||0)-(+a.price||0));
+  else l.sort((a,b)=>(+b.createdAt||+b.created_at||0)-(+a.createdAt||+a.created_at||0));
+  const c=S.categories.find(x=>x.id===catFilter);
+  add(res,[secHead(c?c.name:'همه محصولات',h('span',{style:{color:'var(--muted)',fontSize:'13px'}},fa(l.length)+' محصول')),l.length?pagedGrid(l,()=>res):h('div',{class:'empty glass'},I('search',40),h('div',{},'محصولی پیدا نشد'))])
+ };
+ [sort,price,color,stock,brand].forEach(el=>el&&el.addEventListener('change',draw));
  q.addEventListener('input',()=>{catQ=q.value.trim();draw()});draw();
  return[h('h2',{class:'pg-h'},'دسته‌بندی‌ها'),h('div',{class:'search glass'},I('search',20),q),
-  h('div',{class:'cats'},S.categories.map(c=>h('button',{class:'cat'+(catFilter===c.id?' on':''),onclick:e=>{catFilter=catFilter===c.id?null:c.id;e.currentTarget.parentNode.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));if(catFilter)e.currentTarget.classList.add('on');draw()}},h('img',{src:c.img,alt:''}),h('b',{},c.name)))),res]}
+  h('div',{class:'cats'},S.categories.map(c=>h('button',{class:'cat'+(catFilter===c.id?' on':''),onclick:e=>{catFilter=catFilter===c.id?null:c.id;e.currentTarget.parentNode.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));if(catFilter)e.currentTarget.classList.add('on');draw()}},h('img',{src:c.img,alt:''}),h('b',{},c.name)))),filters,res]
+}
 
 /* ---------- menu / auth / contact ---------- */
 function openMenu(){let close;const u=curUser();
