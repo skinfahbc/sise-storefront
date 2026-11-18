@@ -865,6 +865,99 @@ html{overflow-x:hidden;max-width:100%}
 .sq-n.p{inset-inline-end:max(12px,env(safe-area-inset-right,0px))}.sq-n.n{inset-inline-start:max(12px,env(safe-area-inset-left,0px))}
 @media (max-width:520px){.sq-n{top:auto;bottom:calc(30px + env(safe-area-inset-bottom,0px))}}
 @media (prefers-reduced-motion:reduce){.sq,.sq-g{animation:none!important}}
+
+/* SISE premium refresh — isolated overrides; preserve the original layout and logic */
+@media(max-width:600px){
+  #hd.hd{top:0;left:0;right:0;transform:none;width:100%;max-width:none;padding:0}
+  #hd .hd-in{width:100%;box-sizing:border-box;border-radius:0 0 24px 24px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;border-top:0}
+}
+@media(min-width:601px){
+  #hd.hd{top:0;left:50%;right:auto;transform:translateX(-50%);padding:0}
+  #hd .hd-in{border-radius:0 0 24px 24px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+}
+.hero{border-radius:0 0 26px 26px;border-top:0}
+.hero .sl::after{background:linear-gradient(0deg,rgba(8,7,6,.78) 0%,rgba(8,7,6,.34) 36%,rgba(8,7,6,.04) 78%,transparent 100%)}
+.hero .tx{left:18px;right:18px;bottom:42px;align-items:flex-start;text-align:right;background:none!important;background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:0!important;width:auto;max-width:min(84%,440px)}
+.hero h2{font-size:clamp(32px,8.8vw,44px);font-weight:700;line-height:1.2}
+.hero p{font-size:14px;line-height:1.9;max-width:32ch}
+.hero .chip{background:rgba(255,255,255,.13);box-shadow:none}
+.btn-g{margin-top:8px}
+#stories-sec{gap:10px}
+.sise-stories-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 10px}
+.sise-stories-head .sise-st-title{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800}
+.sise-stories-head .sise-st-title svg{color:var(--accent2)}
+.sise-stories-head small{font-size:11.5px;color:var(--muted)}
+#stories-sec .st-h{display:none}
+#stories-sec .hint{width:100%;box-sizing:border-box;justify-content:space-between;gap:10px;padding:9px 12px;border:1px solid var(--gb);background:rgba(255,255,255,.045);border-radius:18px}
+#stories-sec .hint .bar{flex:0 0 54px}
+#stories-sec .hint>span:last-child{flex:1;text-align:right;font-size:12px}
+#stories-sec .hint .nb{width:32px;height:32px;border:1px solid var(--gb);background:rgba(255,255,255,.09)}
+.grid{gap:12px}
+.pc{position:relative;border-radius:23px;overflow:hidden;border:1px solid var(--gb);background:var(--sheet);box-shadow:0 10px 28px rgba(0,0,0,.075);transition:transform .22s,box-shadow .22s}
+.pc:active{transform:scale(.985)}
+.pc .im{aspect-ratio:1/1.12;background:var(--bg2)}
+.pc .im img{object-fit:cover}
+.pc .in{padding:10px 12px 13px;gap:4px}
+.pc h4{font-size:13.5px;line-height:1.65;min-height:2.8em;color:var(--fg)}
+.pc .price{font-size:15px}
+.pc .old{min-height:0}
+.pc .xrt{font-size:11px;color:var(--muted)}
+.pc .rb.fav{width:36px;height:36px;bottom:9px;right:9px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.5);box-shadow:0 5px 16px rgba(0,0,0,.12)}
+.sise-compare-card{position:absolute;z-index:4;top:9px;left:9px;display:flex;align-items:center;gap:4px;padding:7px 9px;border-radius:999px;background:rgba(18,18,18,.48);color:#fff;border:1px solid rgba(255,255,255,.36);font-size:10.5px;font-weight:700;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.sise-compare-card.on{background:rgba(170,130,74,.9);color:#fff}
+.sise-compare-dock{position:fixed;z-index:48;left:50%;bottom:calc(158px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(500px,calc(100% - 28px));display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:22px;background:rgba(28,25,22,.82);border:1px solid rgba(255,255,255,.2);color:#fff;box-shadow:0 16px 38px rgba(0,0,0,.28);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5)}
+.sise-compare-dock .sise-cmp-label{flex:1;font-size:12px;line-height:1.5}
+.sise-compare-dock button{border-radius:999px;padding:9px 13px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on-accent);font-size:12px;font-weight:800}
+.sise-compare-dock .sise-cmp-clear{background:rgba(255,255,255,.12);color:#fff}
+.sise-cmp-sheet{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+.sise-cmp-scroll{overflow-x:auto;max-width:100%;border-radius:18px;border:1px solid var(--gb)}
+.sise-cmp-table{width:100%;min-width:520px;border-collapse:separate;border-spacing:0;font-size:12px}
+.sise-cmp-table th,.sise-cmp-table td{padding:11px 9px;text-align:center;border-bottom:1px solid var(--gb);vertical-align:middle;line-height:1.7}
+.sise-cmp-table th:first-child,.sise-cmp-table td:first-child{position:sticky;right:0;background:var(--sheet);font-weight:800;text-align:right;min-width:90px}
+.sise-cmp-table tr:last-child td{border-bottom:0}
+.sise-cmp-table img{width:88px;height:88px;object-fit:cover;border-radius:14px;display:block;margin:0 auto 6px}
+.sise-cmp-table .sise-cmp-remove{font-size:11px;color:var(--bad);text-decoration:underline}
+.sise-search-chips{display:flex;gap:7px;overflow-x:auto;padding:3px 1px 10px;scrollbar-width:none}
+.sise-search-chips button{flex:none;border:1px solid var(--gb);background:var(--field);border-radius:99px;padding:7px 12px;font-size:11.5px;color:var(--fg)}
+.sise-search-chips button.on{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.sise-search-meta{font-size:11.5px;color:var(--muted);padding:2px 4px 10px}
+.search.sise-search-box{border-radius:20px;border:1px solid var(--gb);background:var(--sheet);box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.ci.glass{border-radius:23px;padding:12px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));-webkit-backdrop-filter:blur(24px) saturate(1.45);backdrop-filter:blur(24px) saturate(1.45);border:1px solid var(--gb);box-shadow:0 10px 26px rgba(0,0,0,.07)}
+.ci img{border-radius:17px}
+.tot.glass,.shp.glass,.cpn.glass,.frm.glass{border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.035));-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);border:1px solid var(--gb);box-shadow:0 12px 28px rgba(0,0,0,.07)}
+.frm.glass{padding:18px}
+.sho{border-radius:17px!important;padding:12px!important}
+.oc.glass{border-radius:24px;border:1px solid var(--gb);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);box-shadow:0 10px 26px rgba(0,0,0,.06)}
+.tl{padding:10px 8px}
+.adm{background:var(--bg)}
+.adm-top{background:rgba(24,22,20,.76);-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6);border-bottom:1px solid var(--gb)}
+.adm-t h2{font-weight:800;letter-spacing:-.3px}
+.tb{border-radius:15px;padding:9px 13px}
+.tb.on{box-shadow:0 6px 18px rgba(0,0,0,.16)}
+.ac{border:1px solid var(--gb);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);box-shadow:0 12px 28px rgba(0,0,0,.055)}
+.ch-hd.glass{border-radius:22px;background:rgba(255,255,255,.055);border:1px solid var(--gb);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5)}
+.ch-tabs{display:flex;gap:7px;padding:4px;overflow-x:auto;scrollbar-width:none;border-radius:19px;background:rgba(255,255,255,.055);border:1px solid var(--gb)}
+.ch-tabs .cht{flex:1;white-space:nowrap;border-radius:14px;padding:10px 9px;font-size:12px;color:var(--muted);transition:.2s}
+.ch-tabs .cht.on{background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on-accent);font-weight:800;box-shadow:0 6px 18px rgba(0,0,0,.14)}
+.chm{max-width:min(92%,520px);gap:7px}
+.chm .chb{position:relative;min-width:110px;padding:11px 13px 10px;border-radius:20px 20px 20px 7px;background:rgba(255,255,255,.075);border:1px solid var(--gb);box-shadow:0 7px 20px rgba(0,0,0,.045);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.chm.me .chb{background:linear-gradient(145deg,color-mix(in srgb,var(--accent2) 88%,white 12%),var(--accent));border-radius:20px 20px 7px 20px;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+.chm .chb p{font-size:14px;line-height:1.85}
+.chm .chb small{font-size:10px;opacity:.75}
+.chm .chb .act{display:none;flex-wrap:wrap;gap:10px;padding-top:8px;margin-top:7px;border-top:1px solid var(--gb)}
+.chm .chb .act.open{display:flex}
+.sise-msg-more{position:absolute;top:7px;left:7px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);color:inherit;border:1px solid var(--gb);opacity:.82}
+.chm .chb:has(.sise-msg-more){padding-left:38px}
+.chm .chb .act button{font-size:11px;text-decoration:none;padding:5px 8px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid var(--gb)}
+.ch-cp.glass{border-radius:25px;padding:8px;background:rgba(255,255,255,.075);border:1px solid var(--gb);box-shadow:0 12px 32px rgba(0,0,0,.11);-webkit-backdrop-filter:blur(28px) saturate(1.6);backdrop-filter:blur(28px) saturate(1.6)}
+.ch-cp .in{background:rgba(255,255,255,.055);border:1px solid var(--gb);padding:12px 14px}
+.ch-cp .btn{border-radius:17px}
+.ch-st{width:40px;height:40px;flex:none;border-radius:50%;background:rgba(255,255,255,.09);border:1px solid var(--gb)}
+.sise-ai-typing{display:flex;align-items:center;gap:8px;align-self:flex-start;padding:10px 14px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid var(--gb);color:var(--muted);font-size:12px}
+.sise-ai-typing i{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:siseTyping 1s infinite ease-in-out}
+.sise-ai-typing i:nth-child(2){animation-delay:.15s}.sise-ai-typing i:nth-child(3){animation-delay:.3s}
+@keyframes siseTyping{0%,70%,100%{transform:translateY(0);opacity:.35}35%{transform:translateY(-4px);opacity:1}}
+@media(max-width:380px){.sise-compare-dock{bottom:calc(150px + env(safe-area-inset-bottom,0px))}.sise-compare-dock .sise-cmp-label{font-size:11px}.ch-tabs .cht{font-size:10.5px;padding-inline:6px}}
 </style>
 
 <style id="sise-drawer-scroll-fix">
@@ -2145,7 +2238,157 @@ chat(){let rows=[],err='',pimg='',editId=null;const box=h('div',{class:'lst'});
  const post=async()=>{const t=inp.value.trim();if(!t&&!pimg)return toast('متن یا عکسی بنویسید');
   try{let url=null;if(pimg)url=await chUpload(pimg);const lg=S.store.logo;
    await sbFetch('/rest/v1/chat_messages',{method:'POST',auth:true,headers:{Prefer:'return=minimal'},body:Object.assign({uid:'admin',name:admName(),avatar:(lg&&/^https?:/.test(lg)&&lg.length<400)?lg:null,text:t,image:url,is_admin:true},CH_V2&&rep?{reply_to:rep.id,rname:rep.name,rtext:rqSnip(rep)}:{})});
-   inp.value='';pimg='';drawPv();rep=null;drawRp();toast('پیام ارسال شد');load()}catch(e){toast('ارسال نشد: '+e.message)}};
+   inp.value='';pimg=''
+/* SISE interactive upgrade layer */
+const SISE_COMPARE_KEY='sise_compare_v1';
+let SISE_COMPARE=[];
+try{SISE_COMPARE=JSON.parse(localStorage.getItem(SISE_COMPARE_KEY)||'[]')}catch(e){SISE_COMPARE=[]}
+if(!Array.isArray(SISE_COMPARE))SISE_COMPARE=[];
+const SISE_saveCompare=()=>{try{localStorage.setItem(SISE_COMPARE_KEY,JSON.stringify(SISE_COMPARE))}catch(e){}};
+const SISE_compareProducts=()=>SISE_COMPARE.map(id=>S.products.find(p=>String(p.id)===String(id))).filter(Boolean);
+function SISE_openCompare(){
+ const items=SISE_compareProducts();if(items.length<2)return toast('برای مقایسه حداقل دو محصول انتخاب کنید');
+ const body=h('div',{class:'sise-cmp-scroll'}),table=h('table',{class:'sise-cmp-table'}),sheet=h('div',{class:'sh sise-cmp-sheet'},h('div',{class:'grab'}),h('h3',{},'مقایسه محصولات'),h('p',{class:'fh'},'ویژگی‌ها را کنار هم بررسی کنید'),body);
+ const close=openModal(sheet,'b');
+ const draw=()=>{
+  const ps=SISE_compareProducts();table.innerHTML='';
+  const head=h('thead',{},h('tr',{},h('th',{},'ویژگی'),ps.map(p=>h('th',{},h('img',{src:(p.images&&p.images[0])||'',alt:p.title}),h('b',{},p.title),h('div',{},h('button',{class:'sise-cmp-remove',type:'button',onclick:()=>{SISE_COMPARE=SISE_COMPARE.filter(x=>String(x)!==String(p.id));SISE_saveCompare();SISE_syncCompareDock();draw()}},'حذف از مقایسه'))))));
+  const rows=[
+   ['قیمت',p=>money(p.price)],
+   ['دسته‌بندی',p=>(S.categories.find(c=>c.id===p.cat)||{}).name||'—'],
+   ['وضعیت موجودی',p=>qtyOf(p)>0?'موجود · '+fa(qtyOf(p))+' عدد':'ناموجود'],
+   ['رنگ‌بندی',p=>(p.colors||[]).map(c=>c.name).join('، ')||'—'],
+   ['تخفیف',p=>disc(p)?fa(disc(p))+'٪':'بدون تخفیف'],
+   ['امتیاز',p=>revs(p).length?fa1(revAvg(p))+' از ۵':'هنوز امتیازی ثبت نشده'],
+   ['توضیحات',p=>p.desc||'—']
+  ];
+  const tb=h('tbody',{},rows.map(r=>h('tr',{},h('td',{},r[0]),ps.map(p=>h('td',{},r[1](p))))));
+  table.append(head,tb);body.innerHTML='';body.append(table);
+  if(ps.length<2){body.append(h('div',{class:'empty'},'برای ادامه، یک محصول دیگر به مقایسه اضافه کنید'))}
+ };
+ draw();return close;
+}
+function SISE_syncCompareDock(){
+ let dock=document.getElementById('siseCompareDock');
+ const ps=SISE_compareProducts();
+ if(ps.length<2){if(dock)dock.remove();return}
+ if(!dock){dock=h('div',{id:'siseCompareDock',class:'sise-compare-dock'});document.body.append(dock)}
+ dock.innerHTML='';
+ dock.append(h('div',{class:'sise-cmp-label'},fa(ps.length)+' محصول برای مقایسه انتخاب شده'),h('button',{type:'button',onclick:SISE_openCompare},'مقایسه'),h('button',{type:'button',class:'sise-cmp-clear',onclick:()=>{SISE_COMPARE=[];SISE_saveCompare();SISE_syncCompareDock();document.querySelectorAll('.sise-compare-card').forEach(b=>{b.classList.remove('on');b.setAttribute('aria-pressed','false')})}},'پاک‌کردن'));
+}
+function SISE_toggleCompare(p,btn){
+ const id=String(p.id),has=SISE_COMPARE.some(x=>String(x)===id);
+ if(has)SISE_COMPARE=SISE_COMPARE.filter(x=>String(x)!==id);
+ else{if(SISE_COMPARE.length>=3)return toast('حداکثر سه محصول را هم‌زمان مقایسه کنید');SISE_COMPARE.push(p.id)}
+ SISE_saveCompare();if(btn){btn.classList.toggle('on',!has);btn.setAttribute('aria-pressed',String(!has));btn.innerHTML=(!has?'✓ انتخاب شد':'⇄ مقایسه')}
+ SISE_syncCompareDock();toast(has?'از مقایسه حذف شد':'به مقایسه اضافه شد');
+}
+const SISE_pcardBase=pcard;
+pcard=function(p){
+ const card=SISE_pcardBase(p);
+ const meta=card.querySelector('.in');
+ if(meta&&!meta.querySelector('h4'))meta.insertBefore(h('h4',{},p.title||'محصول SISE'),meta.firstChild);
+ const im=card.querySelector('.im');
+ if(im&&!im.querySelector('.sise-compare-card')){
+  const on=SISE_COMPARE.some(x=>String(x)===String(p.id));
+  im.append(h('button',{type:'button',class:'sise-compare-card'+(on?' on':''),'aria-label':'مقایسه '+(p.title||''),'aria-pressed':String(on),onclick:e=>{e.stopPropagation();SISE_toggleCompare(p,e.currentTarget)}},on?'✓ انتخاب شد':'⇄ مقایسه'));
+ }
+ return card;
+};
+const SISE_renderMainBase=renderMain;
+renderMain=function(){SISE_renderMainBase();SISE_syncCompareDock()};
+const SISE_storiesBase=storiesSec;
+storiesSec=function(inPanel){
+ const sec=SISE_storiesBase(inPanel);
+ const old=sec.querySelector('.st-h');if(old)old.remove();
+ const list=S.stories||[],seen=list.filter(x=>V.seen[x.id]).length,newCount=Math.max(0,list.length-seen);
+ const row=sec.querySelector('.stories');
+ if(row){
+  const head=h('div',{class:'sise-stories-head'},h('div',{class:'sise-st-title'},h('span',{html:ic('star',18)}),h('b',{},'استوری‌ها')),h('small',{},fa(list.length)+' استوری'));
+  sec.insertBefore(head,row);
+ }
+ const hint=sec.querySelector('.hint');
+ if(hint){
+  const text=hint.querySelector('span:last-child');
+  if(text)text.textContent=list.length?(newCount?fa(newCount)+' استوری جدید · '+fa(seen)+' دیده شده':fa(list.length)+' استوری · همه دیده شده'):'هنوز استوری‌ای نیست';
+  const arrow=hint.querySelector('button');if(arrow){arrow.setAttribute('aria-label','رفتن به استوری بعدی');arrow.title='استوری بعدی'}
+ }
+ return sec;
+};
+const SISE_openSearchBase=openSearch;
+openSearch=function(){
+ let close,filterCat='',query='';
+ const inp=h('input',{id:'s-q',placeholder:'نام کیف، رنگ، مدل یا دسته‌بندی را بنویسید…','aria-label':'جستجوی هوشمند محصولات',autocomplete:'off'});
+ const chips=h('div',{class:'sise-search-chips'}),meta=h('div',{class:'sise-search-meta'}),res=h('div',{class:'grid sise-search-grid'});
+ const norm=v=>String(v||'').toLocaleLowerCase('fa').replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\s]+/g,' ').trim();
+ const score=p=>{
+  if(!query)return 1;
+  const cat=(S.categories.find(c=>c.id===p.cat)||{}).name||'';
+  const hay=norm([p.title,p.desc,cat,(p.colors||[]).map(c=>c.name).join(' '),p.badge].join(' '));
+  const tokens=query.split(' ').filter(Boolean);let n=0;
+  tokens.forEach(t=>{if(hay===t)n+=12;else if(norm(p.title).startsWith(t))n+=8;else if(hay.includes(t))n+=4;else if(t.length>3&&[...hay].some((_,i)=>hay.slice(i,i+t.length-1)===t.slice(0,-1)))n+=1});
+  return n;
+ };
+ const draw=()=>{
+  chips.innerHTML='';chips.append(h('button',{type:'button',class:filterCat===''?'on':'',onclick:()=>{filterCat='';draw()}},'همه دسته‌ها'));
+  S.categories.forEach(c=>chips.append(h('button',{type:'button',class:filterCat===c.id?'on':'',onclick:()=>{filterCat=c.id;draw()}},c.name)));
+  const found=S.products.map(p=>({p,n:score(p)})).filter(x=>(!query||x.n>0)&&(!filterCat||x.p.cat===filterCat)).sort((a,b)=>b.n-a.n);
+  meta.textContent=fa(found.length)+' محصول پیدا شد'+(query?' برای «'+query+'»':'');
+  res.innerHTML='';
+  add(res,found.length?found.map(x=>pcard(x.p)):h('div',{class:'empty',style:{gridColumn:'1/-1'}},I('search',40),'نتیجه‌ای پیدا نشد؛ نام رنگ یا دسته‌بندی دیگری را امتحان کنید'));
+ };
+ inp.addEventListener('input',()=>{query=norm(inp.value);draw()});
+ draw();
+ close=openModal(h('div',{class:'sh sise-search-sheet',style:{minHeight:'76vh'}},h('div',{class:'grab'}),h('div',{class:'search glass sise-search-box'},I('search',20),inp),chips,meta,res),'b');
+ setTimeout(()=>inp.focus(),140);
+};
+const SISE_chMsgBase=chMsgEl;
+chMsgEl=function(m,o){
+ const node=SISE_chMsgBase(m,o||{});
+ const bubble=node.querySelector('.chb'),actions=bubble&&bubble.querySelector('.act');
+ if(bubble&&actions){
+  actions.classList.add('sise-msg-actions');
+  const more=h('button',{type:'button',class:'sise-msg-more','aria-label':'گزینه‌های پیام',title:'گزینه‌های پیام',html:ic('more-horizontal',16),onclick:e=>{
+   e.stopPropagation();
+   document.querySelectorAll('.sise-msg-actions.open').forEach(x=>{if(x!==actions)x.classList.remove('open')});
+   actions.classList.toggle('open');
+  }});
+  bubble.insertBefore(more,actions);
+  actions.addEventListener('click',()=>actions.classList.remove('open'));
+ }
+ return node;
+};
+if(!window.__siseChatMenuClose){
+ window.__siseChatMenuClose=true;
+ document.addEventListener('click',e=>{if(!e.target.closest('.sise-msg-more,.sise-msg-actions'))document.querySelectorAll('.sise-msg-actions.open').forEach(x=>x.classList.remove('open'))});
+}
+const SISE_pmViewBase=pmView;
+pmView=function(channel){
+ const root=SISE_pmViewBase(channel||'management');
+ if(channel==='ai'){
+  const list=root.querySelector('.ch-list'),form=root.querySelector('.ch-cp');
+  if(list&&form){
+   let baseline=list.querySelectorAll('.chm.isai').length,hideTimer=0,typing=null;
+   const hide=()=>{if(hideTimer)clearTimeout(hideTimer);hideTimer=0;if(typing){typing.remove();typing=null}};
+   const show=()=>{
+    if(!typing){typing=h('div',{class:'sise-ai-typing'},h('span',{},'دستیار SISE در حال نوشتن'),h('i'),h('i'),h('i'));list.append(typing)}
+    list.scrollTop=list.scrollHeight;clearTimeout(hideTimer);hideTimer=setTimeout(hide,55000);
+   };
+   const observer=new MutationObserver(()=>{
+    const n=list.querySelectorAll('.chm.isai').length;
+    if(n>baseline){baseline=n;hide()}
+   });
+   observer.observe(list,{childList:true,subtree:true});
+   form.addEventListener('submit',()=>{const field=form.querySelector('input.in');if(field&&field.value.trim())show()},true);
+   root.addEventListener('sise:dispose',()=>{observer.disconnect();hide()},{once:true});
+  }
+ }
+ return root;
+};
+const SISE_cartBase=cartView;
+cartView=function(){const view=SISE_cartBase();return view};
+
+;drawPv();rep=null;drawRp();toast('پیام ارسال شد');load()}catch(e){toast('ارسال نشد: '+e.message)}};
  box.append(h('div',{class:'empty'},'در حال بارگیری…'));load();
  return[card('ارسال پیام به‌عنوان ادمین',h('p',{},'پیام شما با برچسب «ادمین» و ظاهر متفاوت در گفتگوی همگانی نمایش داده می‌شود.'),rp,inp,pv,h('div',{class:'row'},h('span',{class:'btn sec up'},I('image',18),'افزودن عکس',file),h('button',{class:'btn',onclick:post},I('comment',18),'ارسال'))),
   h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('chat')},'بروزرسانی'),card('پیام‌های گفتگوی همگانی',box)]},
