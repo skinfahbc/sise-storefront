@@ -14,6 +14,9 @@
    start.addEventListener('click',()=>{
     demo.innerHTML='<div class="ch-guest-head"><div><strong>دستیار هوشمند SISE</strong><small>محیط نمایشی · پیام‌ها ذخیره نمی‌شوند</small></div><span class="ch-guest-tag">DEMO</span></div><div class="ch-guest-messages" aria-live="polite"><div class="ch-guest-bubble ai">سلام! 👋 من دستیار هوشمند SISE هستم. درباره کیف‌ها، رنگ‌ها یا انتخاب محصول از من سؤال کن.</div><div class="ch-guest-product"><div class="ch-guest-product-art">SISE</div><div><b>کیف دستی روزمره</b><small>نمونه کارت محصول · اطلاعات نمایشی</small><strong>۲٬۴۹۰٬۰۰۰ تومان</strong></div></div></div><form class="ch-guest-form"><input maxlength="300" placeholder="پیامت را اینجا بنویس…" aria-label="پیام آزمایشی"><button type="submit">ارسال</button></form>';
     const messages=demo.querySelector('.ch-guest-messages'),form=demo.querySelector('form'),input=form.querySelector('input');
+    const quick=document.createElement('div');quick.className='ch-guest-prompts';quick.innerHTML='<button type="button">کیف روزمره چی پیشنهاد می‌کنی؟</button><button type="button">مدل‌های مشکی رو نشون بده</button><button type="button">راهنمای انتخاب هدیه</button>';
+    demo.querySelector('.ch-guest-messages').after(quick);
+    quick.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{input.value=b.textContent;form.requestSubmit()}));
     form.addEventListener('submit',e=>{
      e.preventDefault();const value=input.value.trim();if(!value)return;
      const user=document.createElement('div');user.className='ch-guest-bubble me';user.textContent=value;messages.appendChild(user);input.value='';
