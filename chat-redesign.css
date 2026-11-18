@@ -535,3 +535,10 @@ body.chat-font-large .app.chatp .ch-list .chb small{font-size:11px!important}
 .ch-guest-prompts button{flex:none;padding:7px 10px;border:1px solid rgba(190,151,91,.24);border-radius:18px;background:rgba(255,255,255,.07);color:var(--ink);font:inherit;font-size:10px}
 .ch-guest-prompts button:active{background:rgba(190,151,91,.18)}
 .ch-guest-form input{font-size:16px}
+
+/* Catalog-backed AI product recommendation card */
+.app.chatp .ch-ai-product-card{display:flex;align-items:center;gap:10px;width:min(100%,330px);margin:9px 0;padding:8px;border:1px solid rgba(190,151,91,.32);border-radius:14px;background:rgba(255,255,255,.09);color:var(--ink);text-align:right;font:inherit;cursor:pointer}
+.app.chatp .ch-ai-product-card img{width:58px;height:64px;object-fit:cover;border-radius:9px;background:rgba(190,151,91,.10)}
+.app.chatp .ch-ai-product-card span{display:flex;flex-direction:column;gap:5px;min-width:0}
+.app.chatp .ch-ai-product-card b{font-size:11px}
+.app.chatp .ch-ai-product-card small{font-size:10px;color:var(--accent)}
