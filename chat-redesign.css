@@ -106,3 +106,70 @@ body.chat-lock{
  .app.chatp .ch-redesign-tabs .cht:active{transform:scale(.97)}
  .app.chatp .ch-cp .btn:active{transform:scale(.97)}
 }
+
+
+/* SISE Messenger header: compact luxury glass identity */
+.app.chatp .ch-redesign-top{
+ position:relative;
+ display:flex;
+ flex-direction:column;
+ align-items:stretch;
+ justify-content:flex-start;
+ gap:7px;
+ min-height:0;
+ padding:9px 8px 7px;
+ border-radius:22px;
+ background:rgba(24,22,18,.045);
+ border-color:rgba(190,151,91,.22);
+}
+.app.chatp .ch-redesign-brand{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:1px;
+ min-height:34px;
+ line-height:1;
+ pointer-events:none;
+}
+.app.chatp .ch-redesign-brand strong{
+ color:var(--ink);
+ font-family:Georgia,serif;
+ font-size:18px;
+ font-weight:700;
+ letter-spacing:.24em;
+ padding-left:.24em;
+}
+.app.chatp .ch-redesign-brand span{
+ color:color-mix(in srgb,var(--accent) 78%,var(--ink));
+ font-size:8px;
+ font-weight:800;
+ letter-spacing:.28em;
+ padding-left:.28em;
+}
+.app.chatp .ch-redesign-actions{
+ position:absolute;
+ top:9px;
+ left:9px;
+ z-index:2;
+}
+.app.chatp .ch-redesign-actions button{
+ background:rgba(255,255,255,.055);
+ border-color:rgba(190,151,91,.20);
+}
+.app.chatp .ch-redesign-actions .chat-home{
+ background:linear-gradient(135deg,rgba(201,164,107,.96),rgba(169,125,67,.96));
+}
+.app.chatp .ch-redesign-tabs{
+ width:100%;
+ flex:0 0 auto;
+}
+.app.chatp .ch-redesign-tabs .cht{
+ padding-top:10px;
+ padding-bottom:10px;
+}
+@media(max-width:380px){
+ .app.chatp .ch-redesign-brand strong{font-size:16px}
+ .app.chatp .ch-redesign-actions{gap:4px;left:7px}
+ .app.chatp .ch-redesign-actions button{height:36px;min-width:36px}
+}
