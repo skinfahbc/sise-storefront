@@ -2408,19 +2408,7 @@ function SISE_chatHeader(tabs){
  }
  return h('div',{class:'sise-chat-top'},head,tabs||chTabs());
 }
-chatView=function(){
- const root=SISE_chatViewOriginal();
- if(!root)return root;
- root.classList.add('sise-chat-screen');
- const oldHead=root.querySelector(':scope > .ch-hd');if(oldHead)oldHead.remove();
- const tabs=root.querySelector(':scope > .ch-tabs');
- const list=root.querySelector(':scope > .ch-list'),composer=root.querySelector(':scope > .ch-cp');
- root.innerHTML='';
- root.append(SISE_chatHeader(tabs));
- if(list)root.append(list);
- if(composer)root.append(composer);
- return root;
-};
+chatView=function(){return SISE_chatViewOriginal()};
 
 
 /* SISE interactive upgrade layer */
@@ -2591,31 +2579,8 @@ pmView=function(channel){
  return root;
 };
 
-/* Apply the same full-screen shell to management and AI private chat.
-   The public-chat wrapper above does not run for pmView(), which caused the old header/login layout to remain. */
-const SISE_pmShellBase=pmView;
-pmView=function(channel){
- const root=SISE_pmShellBase(channel||'management');
- if(!root)return root;
- root.classList.add('sise-chat-screen');
- const oldHead=root.querySelector(':scope > .ch-hd');if(oldHead)oldHead.remove();
- const tabs=root.querySelector(':scope > .ch-tabs');
- if(tabs){
-  tabs.classList.add('sise-chat-tabs');
-  const labels=['چت همگانی','چت با مدیریت','چت هوش مصنوعی'];
-  [...tabs.children].forEach((b,i)=>{if(labels[i])b.textContent=labels[i]});
- }
- const list=root.querySelector(':scope > .ch-list'),composer=root.querySelector(':scope > .ch-cp');
- const actions=h('div',{class:'sise-chat-actions'},
-  h('button',{type:'button','aria-label':'صفحه اصلی',title:'صفحه اصلی',html:ic('house',19),onclick:()=>go('home')}),
-  h('button',{type:'button','aria-label':'ورود یا حساب کاربری',title:'ورود یا حساب کاربری',html:ic('user-round',19),onclick:openAuth})
- );
- const top=h('div',{class:'sise-chat-top'},tabs||chTabs(),actions);
- root.innerHTML='';root.append(top);
- if(list)root.append(list);
- if(composer)root.append(composer);
- return root;
-};
+/* Private chat uses the same final Messenger shell as public chat.
+   Keep pmView unwrapped here; the single shared shell is applied at the end of this file. */
 
 const SISE_cartBase=cartView;
 cartView=function(){const view=SISE_cartBase();return view};
