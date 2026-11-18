@@ -130,9 +130,64 @@
    return Promise.resolve(request).finally(()=>{if(indicator&&indicator.isConnected)indicator.remove()});
   };
  }
+ let reactionClient=null,reactionChannel=null,reactionLoad=null,reactionLive=false,reactionCounts={};
+ const reactionConfig={url:'https://vwprdviufqukdvcroynt.supabase.co',key:'sb_publishable_bw_w5gHwbMaejALHhrmgFQ_kcknv4Z7'};
+ const loadRealtimeSdk=()=>{
+  if(window.supabase&&window.supabase.createClient)return Promise.resolve(window.supabase);
+  if(reactionLoad)return reactionLoad;
+  reactionLoad=new Promise((resolve,reject)=>{
+   const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js';script.async=true;
+   script.onload=()=>window.supabase&&window.supabase.createClient?resolve(window.supabase):reject(new Error('Supabase SDK unavailable'));
+   script.onerror=()=>reject(new Error('Realtime SDK failed to load'));document.head.append(script);
+  });return reactionLoad;
+ };
+ const setReactionLive=(root,on)=>{
+  reactionLive=on;
+  const head=root&&root.querySelector('.ch-hd');
+  if(!head)return;
+  let badge=head.querySelector('.ch-live-pill');
+  if(!badge){badge=document.createElement('span');badge.className='ch-live-pill';head.append(badge)}
+  badge.textContent=on?'واکنش آنلاین':'واکنش محلی';
+  badge.classList.toggle('on',on);
+ };
+ const updateReactionCount=(root,id,emoji)=>{
+  if(!root)return;
+  root.querySelectorAll('.ch-list .chm').forEach(m=>{
+   if(String(m.dataset.mid)!==String(id))return;
+   const btn=[...m.querySelectorAll('.ch-reaction')].find(b=>b.dataset.emoji===emoji);
+   if(!btn)return;
+   let saved={};try{saved=JSON.parse(localStorage.getItem('sise_chat_reactions_v1')||'{}')||{}}catch(e){}
+   const own=Array.isArray(saved[id])?saved[id].filter(x=>x===emoji).length:0;
+   const remote=(reactionCounts[id]&&reactionCounts[id][emoji])||0;
+   btn.querySelector('small').textContent=own+remote;
+  });
+ };
+ const connectReactionRealtime=async root=>{
+  if(reactionChannel){setReactionLive(root,reactionLive);return}
+  setReactionLive(root,false);
+  try{
+   const sdk=await loadRealtimeSdk();
+   if(!document.querySelector('#app .ch'))return;
+   reactionClient=reactionClient||sdk.createClient(reactionConfig.url,reactionConfig.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:6}}});
+   reactionChannel=reactionClient.channel('sise-public-chat-reactions-v1',{config:{broadcast:{self:false}}});
+   reactionChannel.on('broadcast',{event:'reaction'},event=>{
+    const p=event&&event.payload||{},id=String(p.messageId||''),emoji=p.emoji,delta=Number(p.delta);
+    if(!/^\\d+$/.test(id)||!['👍','❤️','😂'].includes(emoji)||![-1,1].includes(delta))return;
+    reactionCounts[id]=reactionCounts[id]||{};
+    reactionCounts[id][emoji]=Math.max(0,(reactionCounts[id][emoji]||0)+delta);
+    updateReactionCount(document.querySelector('#app .ch'),id,emoji);
+   });
+   reactionChannel.subscribe(status=>setReactionLive(document.querySelector('#app .ch'),status==='SUBSCRIBED'));
+  }catch(e){setReactionLive(root,false)}
+ };
+ const sendReactionRealtime=(id,emoji,delta)=>{
+  if(!reactionChannel||!reactionLive||!/^\\d+$/.test(String(id)))return;
+  reactionChannel.send({type:'broadcast',event:'reaction',payload:{messageId:String(id),emoji,delta}}).catch(()=>{});
+ };
  const enhanceChatMessages=()=>{
   const root=document.querySelector('#app .ch');
-  if(!root)return;
+  if(!root){if(reactionChannel&&reactionClient){reactionClient.removeChannel(reactionChannel);reactionChannel=null;reactionLive=false;reactionCounts={}}return}
+  connectReactionRealtime(root);
   root.querySelectorAll('.ch-list .chm').forEach(message=>{
    const bubble=message.querySelector('.chb');
    if(!bubble||bubble.querySelector('.ch-local-tools'))return;
@@ -142,14 +197,15 @@
    const id=String(message.dataset.mid||'');if(!id)return;
    const reactions=['👍','❤️','😂'];
    reactions.forEach(emoji=>{
-    const count=Array.isArray(saved[id])?saved[id].filter(x=>x===emoji).length:0;
-    const b=document.createElement('button');b.type='button';b.className='ch-reaction'+(count?' on':'');b.setAttribute('aria-label','واکنش '+emoji);b.innerHTML='<span>'+emoji+'</span><small>'+count+'</small>';
+    const count=(Array.isArray(saved[id])?saved[id].filter(x=>x===emoji).length:0)+((reactionCounts[id]&&reactionCounts[id][emoji])||0);
+    const b=document.createElement('button');b.type='button';b.dataset.emoji=emoji;b.className='ch-reaction'+(Array.isArray(saved[id])&&saved[id].includes(emoji)?' on':'');b.setAttribute('aria-label','واکنش '+emoji);b.innerHTML='<span>'+emoji+'</span><small>'+count+'</small>';
     b.addEventListener('click',()=>{
      let data={};try{data=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){}
-     const arr=Array.isArray(data[id])?data[id]:[],at=arr.indexOf(emoji);if(at>=0)arr.splice(at,1);else arr.push(emoji);
+     const arr=Array.isArray(data[id])?data[id]:[],at=arr.indexOf(emoji),delta=at>=0?-1:1;if(at>=0)arr.splice(at,1);else arr.push(emoji);
      if(arr.length)data[id]=arr;else delete data[id];
      try{localStorage.setItem(key,JSON.stringify(data))}catch(e){}
-     b.classList.toggle('on',at<0);b.querySelector('small').textContent=arr.filter(x=>x===emoji).length;
+     b.classList.toggle('on',at<0);b.querySelector('small').textContent=arr.filter(x=>x===emoji).length+((reactionCounts[id]&&reactionCounts[id][emoji])||0);
+     sendReactionRealtime(id,emoji,delta);
     });
     tools.append(b);
    });
