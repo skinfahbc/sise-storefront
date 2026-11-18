@@ -879,7 +879,7 @@ html{overflow-x:hidden;max-width:100%}
 /* Keep the fixed bottom navigation out of modal, story, gallery and drawer layers. */
 body.lock #nv{display:none!important;pointer-events:none!important}
 </style>
-<link rel="stylesheet" href="/chat-redesign.css?v=5">
+<link rel="stylesheet" href="/chat-redesign.css?v=6">
 </head>
 <body>
 <div id="splash" role="status" aria-label="در حال بارگذاری">
@@ -1772,11 +1772,12 @@ async function chLoad(first){if(CH.busy)return false;CH.busy=true;let changed=fa
   if(CH.msgs.length>250)CH.msgs=CH.msgs.slice(-200)}
  catch(e){if(CH_V2&&chV2Err(e)){CH_V2=false;CH.busy=false;return chLoad(first)}CH.err=e.message||'خطا'}
  CH.busy=false;return changed}
-function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::'),ai=!!m.ai_generated;
+function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::'),ai=!!m.ai_generated,rec=ai?S.products.find(p=>p.title&&String(m.text||'').includes(p.title)):null;
  return h('div',{class:'chm'+(o.me?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':'')+(ai?' isai':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},ai?'دستیار هوشمند SISE':(m.is_admin?admName():m.name)),m.is_admin?h('span',{class:'adb'},ai?'هوش مصنوعی':'ادمین'):null,ai&&m.needs_admin?h('span',{class:'nb'},'نیازمند بررسی مدیر'):null,
   rqEl(m,chJump),
   m.image?h('img',{class:'chi',src:m.image,alt:'',loading:'lazy',onclick:()=>openLightbox([m.image],0)}):null,
   m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
+  rec?h('button',{type:'button',class:'ch-ai-product-card',onclick:()=>openProduct(rec.id)},h('img',{src:rec.images[0]||'',alt:rec.title,loading:'lazy'}),h('span',{},h('b',{},rec.title),h('small',{},money(rec.price)+' · مشاهده محصول'))):null,
   h('small',{},ago(Date.parse(m.created_at)||Date.now()),m.edited?h('span',{class:'ed'},'· ویرایش‌شده'):null),o.acts||null))}
 /* ---------- private chat with the store manager (Supabase table pm + rpc pm_send / pm_list) ---------- */
 const admName=()=>((S.store&&S.store.adminName)||'').trim()||'sisé';
@@ -2341,6 +2342,6 @@ boot();
 <script>
 window.__siseMainScriptTagFinished = true;
 </script>
-<script src="/chat-redesign.js?v=7"></script>
+<script src="/chat-redesign.js?v=8"></script>
 </body>
 </html>
