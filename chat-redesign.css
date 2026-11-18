@@ -344,3 +344,80 @@ body.chat-lock{
  .app.chatp .ch-redesign-top{padding:5px 6px 6px}
  .app.chatp .ch-redesign-tabs .cht{min-height:43px;font-size:9.8px}
 }
+
+
+/* Functional compact overflow menu */
+.app.chatp .ch-redesign-bar>.ch-more-menu{ }
+.app.chatp .ch-more-menu{
+ position:absolute;
+ z-index:30;
+ top:calc(100% + 9px);
+ right:0;
+ width:min(270px,calc(100vw - 42px));
+ padding:8px;
+ border-radius:18px;
+ border:1px solid rgba(190,151,91,.30);
+ background:rgba(30,25,19,.88);
+ color:#f7efe2;
+ box-shadow:0 16px 42px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.16);
+ -webkit-backdrop-filter:blur(28px) saturate(180%);
+ backdrop-filter:blur(28px) saturate(180%);
+}
+:root:not([data-theme="dark"]) .app.chatp .ch-more-menu{
+ background:rgba(255,251,244,.91);
+ color:#34291b;
+ box-shadow:0 16px 42px rgba(65,47,25,.16),inset 0 1px 0 rgba(255,255,255,.72);
+}
+.app.chatp .ch-more-menu[hidden]{display:none}
+.app.chatp .ch-menu-item{
+ width:100%;
+ min-height:42px;
+ display:flex;
+ align-items:center;
+ gap:11px;
+ padding:8px 10px;
+ border:0;
+ border-radius:12px;
+ background:transparent;
+ color:inherit;
+ text-align:right;
+ font:inherit;
+ font-size:12px;
+ cursor:pointer;
+}
+.app.chatp .ch-menu-item:active{background:rgba(190,151,91,.17)}
+.app.chatp .ch-menu-item svg{width:18px;height:18px;flex:none;color:var(--accent)}
+.app.chatp .ch-menu-item-support{color:var(--accent)}
+.app.chatp .ch-menu-detail{
+ margin:5px 3px 7px;
+ padding:10px 11px;
+ border-radius:12px;
+ background:rgba(190,151,91,.12);
+ border:1px solid rgba(190,151,91,.20);
+ font-size:11px;
+ line-height:1.85;
+}
+.app.chatp .ch-menu-detail[hidden]{display:none}
+.app.chatp .ch-menu-detail b{display:block;margin-bottom:3px;color:var(--accent)}
+.app.chatp .ch-menu-detail p{margin:0}
+.ch-menu-toast{
+ position:fixed;
+ z-index:99999;
+ bottom:calc(24px + env(safe-area-inset-bottom,0px));
+ left:50%;
+ transform:translateX(-50%);
+ max-width:calc(100vw - 32px);
+ padding:10px 15px;
+ border-radius:14px;
+ background:rgba(28,24,19,.92);
+ color:#fff8ed;
+ border:1px solid rgba(190,151,91,.28);
+ box-shadow:0 8px 24px rgba(0,0,0,.2);
+ font-size:12px;
+ text-align:center;
+}
+body.chat-font-large .app.chatp .ch-list .chb p{font-size:15px!important;line-height:1.95}
+body.chat-font-large .app.chatp .ch-list .chb small{font-size:11px!important}
+@media(max-width:380px){
+ .app.chatp .ch-more-menu{width:min(250px,calc(100vw - 34px))}
+}
