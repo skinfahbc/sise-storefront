@@ -2634,6 +2634,16 @@ cartView=function(){const view=SISE_cartBase();return view};
  .sise-chat-head{direction:ltr;display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:8px;min-height:76px;padding:2px 3px 6px;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
  .sise-chat-head>button,.sise-chat-actions button{width:52px;height:52px;display:grid;place-items:center;border-radius:18px;border:1px solid rgba(255,255,255,.52);background:rgba(255,255,255,.20);color:#8d704d;box-shadow:inset 0 1px 0 rgba(255,255,255,.48)}
  .sise-chat-head .sise-chat-menu{justify-self:start}
+ .ov.sise-menu-overlay{align-items:flex-start;justify-content:flex-end;padding:17.3vh 8.5vw 20px;background:rgba(16,14,11,.20);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);z-index:90}
+ .ov.sise-menu-overlay .sise-menu-panel{width:min(70vw,600px);min-width:0;max-height:72vh;overflow:auto;padding:17px 18px;border:1px solid rgba(226,211,190,.95);border-radius:36px;background:#fffaf1;box-shadow:0 18px 55px rgba(50,39,25,.18),inset 0 1px 0 #fff;display:flex;flex-direction:column;gap:4px;direction:rtl}
+ .sise-menu-row{width:100%;min-height:82px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:12px 20px;border:0;border-radius:22px;background:transparent;color:#33291f;text-align:right;font:500 21px/1.5 inherit;cursor:pointer}
+ .sise-menu-row:active{background:rgba(210,177,129,.14)}
+ .sise-menu-icon{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;color:#d5ad70}
+ .sise-menu-type{font:500 29px/1 Georgia,serif}
+ .sise-menu-row.report .sise-menu-label{color:#d9b477}
+ .sise-chat-large-text .sise-chat-screen .chm .chb p{font-size:20px}
+ @media(max-width:600px){.ov.sise-menu-overlay{padding:17.3vh 8.5vw 16px}.ov.sise-menu-overlay .sise-menu-panel{width:83vw;padding:12px 12px;border-radius:30px}.sise-menu-row{min-height:70px;padding:10px 13px;font-size:17px}.sise-menu-icon{flex-basis:36px;width:36px;height:36px}}
+
  .sise-chat-brand{direction:ltr;text-align:center;line-height:1;min-width:0}
  .sise-chat-brand b{display:block;font:600 31px/1 Georgia,'Times New Roman',serif;letter-spacing:.20em;padding-left:.20em;color:#8e704b}
  .sise-chat-brand small{display:block;margin-top:5px;font-size:9px;letter-spacing:.30em;color:#b18e60;font-weight:700}
@@ -2686,7 +2696,17 @@ cartView=function(){const view=SISE_cartBase();return view};
   const current=channel==='ai'?'ai':channel==='pm'?'pm':'pub';
   const tabs=h('div',{class:'ch-tabs sise-chat-tabs','aria-label':'بخش‌های گفتگو'});
   tabInfo.forEach(([key,label,ico])=>tabs.append(h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{if(CH.tab!==key){CH.tab=key;renderMain()}}},h('span',{class:'sise-tab-ic',html:ic(ico,22)}),h('span',{},label))));
-  const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('ellipsis',22),onclick:()=>openModal(h('div',{class:'sh'},h('div',{class:'grab'}),h('h3',{},'گزینه‌های گفتگو'),h('p',{},'برای جستجوی محصولات از آیکون ذره‌بین استفاده کنید.')), 'b')});
+  function openChatMenu(){
+  let large=false;
+  const panel=h('div',{class:'sise-menu-panel',role:'dialog','aria-label':'تنظیمات گفتگو'},
+   h('button',{type:'button',class:'sise-menu-row',onclick:()=>{close();toggleMode()}},h('span',{class:'sise-menu-label'},'حالت روشن / تاریک'),h('span',{class:'sise-menu-icon',html:ic(isDark()?'sun':'moon',28)})),
+   h('button',{type:'button',class:'sise-menu-row',onclick:e=>{large=!large;document.documentElement.classList.toggle('sise-chat-large-text',large);e.currentTarget.querySelector('.sise-menu-label').textContent='اندازه متن: '+(large?'بزرگ':'معمولی')}} ,h('span',{class:'sise-menu-label'},'اندازه متن: معمولی'),h('span',{class:'sise-menu-icon sise-menu-type'},'A⁺')),
+   h('button',{type:'button',class:'sise-menu-row',onclick:()=>{close();openModal(h('div',{class:'sh sise-chat-help'},h('div',{class:'grab'}),h('h3',{},'راهنمای گفتگو'),h('p',{},'از تب‌ها برای جابه‌جایی بین چت عمومی، چت با مدیریت و چت با هوش مصنوعی استفاده کنید.'),h('p',{},'برای واکنش به پیام، شکلک دلخواه را انتخاب کنید. از گزینه کپی برای کپی‌کردن متن پیام استفاده کنید.')),'b')}},h('span',{class:'sise-menu-label'},'راهنمای گفتگو'),h('span',{class:'sise-menu-icon',html:ic('circle-help',28)})),
+   h('button',{type:'button',class:'sise-menu-row report',onclick:()=>{close();if(typeof openContact==='function')openContact();else if(typeof callSupport==='function')callSupport();else toast('برای ارتباط با مدیریت از بخش تماس با ما اقدام کنید.')}},h('span',{class:'sise-menu-label'},'گزارش مشکل / ارتباط با مدیریت'),h('span',{class:'sise-menu-icon',html:ic('triangle-alert',28)}))
+  );
+  const close=openModal(panel,'sise-menu-overlay');
+ }
+ const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('ellipsis',22),onclick:openChatMenu});
   const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISE'),h('small',{},'MESSENGER'));
   const actions=h('div',{class:'sise-chat-actions'},
    h('button',{type:'button','aria-label':'جستجو',title:'جستجو',html:ic('search',22),onclick:()=>openSearch()}),
