@@ -30,10 +30,35 @@
   const account=document.createElement('button');account.type='button';account.className='chat-account';account.setAttribute('aria-label',window.curUser&&window.curUser()?'حساب کاربری':'ورود');account.setAttribute('title',window.curUser&&window.curUser()?'حساب کاربری':'ورود');account.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>';
   account.addEventListener('click',()=>{if(typeof window.openAuth==='function')window.openAuth()});
   actions.append(home,account);
-  const more=document.createElement('button');more.type='button';more.className='chat-more';more.setAttribute('aria-label','اطلاعات گفتگو');more.setAttribute('aria-expanded','false');more.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
-  const info=document.createElement('div');info.className='ch-header-info';info.hidden=true;info.textContent='برای ارتباط با پشتیبانی، تب «چت با مدیریت» را انتخاب کنید.';
-  more.addEventListener('click',()=>{info.hidden=!info.hidden;more.setAttribute('aria-expanded',String(!info.hidden))});
-  const bar=document.createElement('div');bar.className='ch-redesign-bar';bar.append(actions,brand,more,info);
+  const more=document.createElement('button');more.type='button';more.className='chat-more';more.setAttribute('aria-label','منوی گفتگو');more.setAttribute('aria-expanded','false');more.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
+  const menu=document.createElement('div');menu.className='ch-more-menu';menu.hidden=true;menu.setAttribute('dir','rtl');
+  const item=(icon,label,action,extra='')=>{const b=document.createElement('button');b.type='button';b.className='ch-menu-item '+extra;b.innerHTML=icon+'<span>'+label+'</span>';b.addEventListener('click',action);return b};
+  const ico=(path)=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+path+'</svg>';
+  const popToast=(msg)=>{const t=document.createElement('div');t.className='ch-menu-toast';t.textContent=msg;document.body.append(t);setTimeout(()=>t.remove(),2600)};
+  const closeMenu=()=>{menu.hidden=true;more.setAttribute('aria-expanded','false')};
+  const currentTab=()=>{const a=tabs.querySelector('.cht.on');return a?(a.textContent||'').trim():'چت عمومی'};
+  const themeItem=item(ico('<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>'),'حالت روشن / تاریک',()=>{
+   try{const v=JSON.parse(localStorage.getItem('kifara_v')||'{}');const next=(document.documentElement.getAttribute('data-theme')||'light')==='dark'?'light':'dark';v.mode=next;localStorage.setItem('kifara_v',JSON.stringify(v));document.documentElement.setAttribute('data-theme',next);popToast(next==='dark'?'حالت تاریک فعال شد':'حالت روشن فعال شد')}catch(e){popToast('تغییر حالت نمایش انجام نشد')}closeMenu();
+  });
+  const fontItem=item(ico('<path d="M4 19 10 5l6 14M6 15h8M16 11h4m-2-2v4"/>'),'اندازه متن: معمولی / بزرگ',()=>{
+   const on=document.body.classList.toggle('chat-font-large');try{localStorage.setItem('sise_chat_font_large',on?'1':'0')}catch(e){}popToast(on?'اندازه متن بزرگ شد':'اندازه متن معمولی شد');closeMenu();
+  });
+  const detail=document.createElement('div');detail.className='ch-menu-detail';detail.hidden=true;
+  const detailBtn=item(ico('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-1.1 1-1.7 1.3-1.7 2.7M12 17h.01"/>','راهنمای گفتگو',()=>{
+   const tab=currentTab();let title='قوانین چت عمومی',body='با احترام گفتگو کنید؛ از ارسال اطلاعات شخصی، تبلیغات و پیام‌های تکراری خودداری کنید. محتوای نامناسب ممکن است حذف شود.';
+   if(tab.includes('مدیریت')){title='حریم خصوصی گفتگو';body='این گفت‌وگو خصوصی است و پیام شما برای مدیریت فروشگاه ارسال می‌شود. اطلاعات حساس بانکی یا رمز عبور را ارسال نکنید.'}
+   if(tab.includes('هوش مصنوعی')){title='درباره دستیار هوشمند';body='دستیار هوشمند SISE برای پاسخ‌گویی درباره محصولات و خدمات فروشگاه است. پاسخ‌ها ممکن است نیاز به تأیید مدیریت داشته باشند؛ برای پاسخ قطعی درباره سفارش، با مدیریت گفتگو کنید.'}
+   detail.innerHTML='<b>'+title+'</b><p>'+body+'</p>';detail.hidden=false;
+  }));
+  const reportBtn=item(ico('<path d="M12 9v4m0 4h.01"/><path d="M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3l-7.6-13.1a2 2 0 0 0-3.4 0Z"/>'),'گزارش مشکل / ارتباط با مدیریت',()=>{
+   closeMenu();const target=Array.from(tabs.querySelectorAll('.cht')).find(b=>(b.textContent||'').includes('مدیریت'));if(target)target.click();popToast('مشکل را در گفت‌وگوی مدیریت توضیح دهید.');
+  },'ch-menu-item-support');
+  menu.append(themeItem,fontItem,detailBtn,detail,reportBtn);
+  more.addEventListener('click',()=>{menu.hidden=!menu.hidden;more.setAttribute('aria-expanded',String(!menu.hidden));detail.hidden=true});
+  document.addEventListener('click',e=>{if(!menu.contains(e.target)&&!more.contains(e.target))closeMenu()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+  try{if(localStorage.getItem('sise_chat_font_large')==='1')document.body.classList.add('chat-font-large')}catch(e){}
+  const bar=document.createElement('div');bar.className='ch-redesign-bar';bar.append(actions,brand,more,menu);
   top.append(bar,tabs);
   const chatHead=root.querySelector('.ch-hd');if(chatHead)chatHead.remove();
   root.insertBefore(top,root.firstChild);
