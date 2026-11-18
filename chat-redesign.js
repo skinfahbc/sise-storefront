@@ -5,6 +5,24 @@
   const app=document.getElementById('app'),root=app&&app.querySelector('.ch');
   if(!root)return;
   if(root.querySelector('.ch-redesign-top'))return;
+  /* Guest sandbox is intentionally restricted to the public Render preview host. */
+  if(location.hostname==='sise-diagnostic-preview.onrender.com' && root.querySelector('.ch-login') && !root.querySelector('.ch-guest-demo')){
+   const demo=document.createElement('section');demo.className='ch-guest-demo';demo.setAttribute('dir','rtl');
+   demo.innerHTML='<div class="ch-guest-intro"><span class="ch-guest-tag">حالت آزمایشی · بدون ورود</span><strong>چت SISE را امتحان کن</strong><p>این محیط نمایشی است؛ پیام‌ها فقط روی همین صفحه شبیه‌سازی می‌شوند و به سرور یا حساب مشتریان ارسال نمی‌شوند.</p><button type="button" class="ch-guest-start">شروع تست چت</button></div>';
+   root.appendChild(demo);
+   const start=demo.querySelector('.ch-guest-start');
+   start.addEventListener('click',()=>{
+    demo.innerHTML='<div class="ch-guest-head"><div><strong>دستیار هوشمند SISE</strong><small>محیط نمایشی · پیام‌ها ذخیره نمی‌شوند</small></div><span class="ch-guest-tag">DEMO</span></div><div class="ch-guest-messages" aria-live="polite"><div class="ch-guest-bubble ai">سلام! 👋 من دستیار هوشمند SISE هستم. درباره کیف‌ها، رنگ‌ها یا انتخاب محصول از من سؤال کن.</div><div class="ch-guest-product"><div class="ch-guest-product-art">SISE</div><div><b>کیف دستی روزمره</b><small>نمونه کارت محصول · اطلاعات نمایشی</small><strong>۲٬۴۹۰٬۰۰۰ تومان</strong></div></div></div><form class="ch-guest-form"><input maxlength="300" placeholder="پیامت را اینجا بنویس…" aria-label="پیام آزمایشی"><button type="submit">ارسال</button></form>';
+    const messages=demo.querySelector('.ch-guest-messages'),form=demo.querySelector('form'),input=form.querySelector('input');
+    form.addEventListener('submit',e=>{
+     e.preventDefault();const value=input.value.trim();if(!value)return;
+     const user=document.createElement('div');user.className='ch-guest-bubble me';user.textContent=value;messages.appendChild(user);input.value='';
+     const typing=document.createElement('div');typing.className='ch-typing ch-guest-typing';typing.innerHTML='<span>دستیار هوشمند در حال نوشتن است</span><span class="ch-typing-dots" aria-hidden="true"><i></i><i></i><i></i></span>';messages.appendChild(typing);messages.scrollTop=messages.scrollHeight;
+     setTimeout(()=>{if(!typing.isConnected)return;typing.remove();const answer=document.createElement('div');answer.className='ch-guest-bubble ai';answer.textContent='این یک پاسخ نمونه در محیط آزمایشی است. در نسخه واقعی، دستیار بر اساس اطلاعات محصولات SISE پاسخ می‌دهد.';messages.appendChild(answer);messages.scrollTop=messages.scrollHeight},1450);
+    });
+    input.focus();
+   });
+  }
   const oldTabs=root.querySelector('.ch-tabs');
   if(!oldTabs)return;
   const tabIcons=[
