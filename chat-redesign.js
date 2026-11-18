@@ -7,6 +7,18 @@
   if(root.querySelector('.ch-redesign-top'))return;
   const oldTabs=root.querySelector('.ch-tabs');
   if(!oldTabs)return;
+  const tabIcons=[
+   ['users','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>'],
+   ['headset','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><path d="M5 14h2a2 2 0 0 1 2 2v3H7a4 4 0 0 1-4-4v-1ZM19 14h-2a2 2 0 0 0-2 2v3h2a4 4 0 0 0 4-4v-1Z"/></svg>'],
+   ['sparkles','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-2-5.8L4 11l6-2.2L12 3Z"/><path d="m19 14 1.2 2.8L23 18l-2.8 1.1L19 22l-1.1-2.9L15 18l2.9-1.2L19 14Z"/></svg>']
+  ];
+  Array.from(oldTabs.children).forEach((btn,index)=>{
+   if(btn.querySelector('.ch-tab-icon'))return;
+   const item=tabIcons[index];if(!item)return;
+   const icon=document.createElement('span');icon.className='ch-tab-icon';icon.innerHTML=item[1];
+   btn.insertBefore(icon,btn.firstChild);
+   btn.classList.add('ch-tab-with-icon');
+  });
   const top=document.createElement('div');top.className='ch-redesign-top';
   const tabs=document.createElement('div');tabs.className='ch-redesign-tabs';
   while(oldTabs.firstChild)tabs.appendChild(oldTabs.firstChild);
