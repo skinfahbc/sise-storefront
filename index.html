@@ -579,6 +579,8 @@ body.lock .ai-fab{display:none}
 .chm.stk .chb,.chm.me.stk .chb{background:none;border:0;padding:0 4px;min-width:0}
 .chm.stk .chb p{font-size:64px;line-height:1.15}
 .chm.stk .chb b,.chm.stk .chb small,.chm.me.stk .chb b,.chm.me.stk .chb small{color:var(--muted);opacity:1}
+.ch-online,.ch-typing{display:block;font-size:11px;color:var(--muted);margin-top:3px}.ch-online{color:#4b9b70}.ch-typing{color:var(--accent)}
+.ch-rx{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.ch-rx-btn{border:1px solid var(--gb);background:rgba(255,255,255,.48);border-radius:999px;padding:2px 7px;font-size:12px;line-height:1.5;cursor:pointer}.ch-rx-btn.on{border-color:var(--accent);background:var(--accent2);color:var(--on-accent)}.ch-read{color:#5caa83;font-size:10px}
 
 /* ===== SISE luxury silk + glass splash ===== */
 #splash{
@@ -1625,7 +1627,12 @@ const chV2Err=e=>/reply_to|rname|rtext/i.test((e&&e.message)||'');
 const rqSnip=m=>{const x=String(m.text||'');return x.startsWith('::st::')?x.slice(6):(x?x.replace(/\s+/g,' ').slice(0,80):(m.image?'📷 عکس':''))};
 const rqEl=(m,jump)=>m.reply_to?h('div',Object.assign({class:'rq'},jump?{onclick:()=>jump(m.reply_to)}:{}),h('b',{},m.rname||''),h('span',{},m.rtext||'')):null;
 const chJump=id=>{const e=document.querySelector('.chm[data-mid="'+id+'"]');if(e){e.scrollIntoView({block:'center',behavior:'smooth'});e.classList.add('flash');setTimeout(()=>e.classList.remove('flash'),1400)}else toast('پیام اصلی در لیست نیست')};
-const CH={msgs:[],timer:0,busy:false,err:'',sentAt:0,tab:'pub'};
+const CH={msgs:[],timer:0,busy:false,err:'',sentAt:0,tab:'pub',reactions:[],reads:[],rt:null,rtClient:null,rtReady:false,readMarked:new Set(),extraBusy:false,typingTimer:0,redraw:null};
+async function chLoadExtras(){if(CH.extraBusy)return false;const ids=CH.msgs.filter(m=>typeof m.id==='number').slice(-80).map(m=>m.id);if(!ids.length)return false;CH.extraBusy=true;try{const f='&message_id=in.('+ids.join(',')+')';const [rx,rd]=await Promise.all([sbFetch('/rest/v1/chat_reactions?select=message_id,uid,emoji'+f,{timeout:5000}),sbFetch('/rest/v1/chat_reads?select=message_id,uid'+f,{timeout:5000})]);CH.reactions=rx||[];CH.reads=rd||[];return true}catch(e){return false}finally{CH.extraBusy=false}}
+async function chMarkReads(list){const u=curUser();if(!u||!u.id||!list)return;const lr=list.getBoundingClientRect(),visible=new Set([...list.querySelectorAll('.chm')].filter(el=>{const r=el.getBoundingClientRect();return r.top<lr.bottom&&r.bottom>lr.top}).map(el=>String(el.dataset.mid)));const ids=CH.msgs.filter(m=>typeof m.id==='number'&&m.uid!==u.id&&visible.has(String(m.id))&&!CH.readMarked.has(m.id)).map(m=>m.id);if(!ids.length)return;try{const n=await sbFetch('/rest/v1/rpc/chat_mark_read',{method:'POST',body:{p_ids:ids,p_uid:u.id,p_tok:chTok(u)},timeout:6000});if(Number(n)>=0)ids.forEach(id=>CH.readMarked.add(id))}catch(e){}}
+async function chReact(id,emoji){const u=curUser();if(!u){openAuth();return}try{const result=await sbFetch('/rest/v1/rpc/chat_react',{method:'POST',body:{p_id:id,p_uid:u.id,p_tok:chTok(u),p_emoji:emoji},timeout:6000});if(result==='invalid')return toast('برای واکنش، ابتدا یک پیام در گفتگو بفرستید');await chLoadExtras();if(CH.redraw)CH.redraw(false)}catch(e){toast('واکنش ثبت نشد: '+e.message)}}
+async function chStartRealtime(root,onlineEl,typingEl,inp,u,me,adm){try{const mod=await import('https://esm.sh/@supabase/supabase-js@2.57.0');if(!root.isConnected)return;const client=mod.createClient(SB.url,SB.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:5}}});const key=me||((adm?'admin-':'visitor-')+uid());const channel=client.channel('sise-public-chat',{config:{presence:{key}}});channel.on('presence',{event:'sync'},()=>{onlineEl.textContent='● '+Object.keys(channel.presenceState()).length+' نفر آنلاین'}).on('broadcast',{event:'typing'},({payload})=>{if(!payload||payload.uid===key||!payload.active)return;typingEl.textContent=(payload.name||'یک کاربر')+' در حال نوشتن…';typingEl.hidden=false;clearTimeout(CH.typingTimer);CH.typingTimer=setTimeout(()=>{typingEl.hidden=true},2200)}).subscribe(async status=>{if(status==='SUBSCRIBED'){CH.rtReady=true;await channel.track({uid:key,name:u?uName(u):(adm?'مدیر فروشگاه':'مشتری')})}});CH.rtClient=client;CH.rt=channel;let last=0,idle=0;inp.addEventListener('input',()=>{if(!CH.rtReady||!CH.rt)return;const now=Date.now();if(now-last>900){last=now;CH.rt.send({type:'broadcast',event:'typing',payload:{uid:key,name:u?uName(u):(adm?'مدیر فروشگاه':'مشتری'),active:true}})}clearTimeout(idle);idle=setTimeout(()=>{if(CH.rtReady&&CH.rt)CH.rt.send({type:'broadcast',event:'typing',payload:{uid:key,active:false}})},1600)})}catch(e){onlineEl.textContent='اتصال آنلاین موقتاً در دسترس نیست'}}
+function chStopRealtime(){CH.rtReady=false;if(CH.rtClient&&CH.rt){try{CH.rtClient.removeChannel(CH.rt)}catch(e){}}CH.rt=null;CH.rtClient=null;clearTimeout(CH.typingTimer);}
 const chTmp=m=>String(m.id).startsWith('tmp');
 const chSha=async s=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return ''}};
 function chTok(u){if(!u.ctok){u.ctok=uid()+uid()+uid()+uid();persist()}return u.ctok}
@@ -1647,12 +1654,11 @@ async function chLoad(first){if(CH.busy)return false;CH.busy=true;let changed=fa
   if(CH.msgs.length>250)CH.msgs=CH.msgs.slice(-200)}
  catch(e){if(CH_V2&&chV2Err(e)){CH_V2=false;CH.busy=false;return chLoad(first)}CH.err=e.message||'خطا'}
  CH.busy=false;return changed}
-function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::'),ai=!!m.ai_generated;
- return h('div',{class:'chm'+(o.me?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':'')+(ai?' isai':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},ai?'دستیار هوشمند SISE':(m.is_admin?admName():m.name)),m.is_admin?h('span',{class:'adb'},ai?'هوش مصنوعی':'ادمین'):null,ai&&m.needs_admin?h('span',{class:'nb'},'نیازمند بررسی مدیر'):null,
-  rqEl(m,chJump),
-  m.image?h('img',{class:'chi',src:m.image,alt:'',loading:'lazy',onclick:()=>openLightbox([m.image],0)}):null,
-  m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
-  h('small',{},ago(Date.parse(m.created_at)||Date.now()),m.edited?h('span',{class:'ed'},'· ویرایش‌شده'):null),o.acts||null))}
+function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::'),ai=!!m.ai_generated,isPub=typeof m.id==='number',mine=!!o.me,rx=isPub?CH.reactions.filter(x=>x.message_id===m.id):[],rd=isPub&&mine?CH.reads.filter(x=>x.message_id===m.id&&x.uid!==m.uid).length:0,em=['❤️','😂','😍','👍','🔥','👏','😢','🎉'],me=curUser();
+ const chips=isPub?em.map(e=>{const n=rx.filter(x=>x.emoji===e).length;if(!n&&e!=='❤️'&&e!=='👍'&&e!=='😂')return null;const on=rx.some(x=>x.uid===(me&&me.id)&&x.emoji===e);return h('button',{type:'button',class:'ch-rx-btn'+(on?' on':''),'aria-label':'واکنش '+e,onclick:()=>chReact(m.id,e)},e,n?(' '+n):'')}).filter(Boolean):[];
+ return h('div',{class:'chm'+(mine?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':'')+(ai?' isai':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},ai?'دستیار هوشمند SISE':(m.is_admin?admName():m.name)),m.is_admin?h('span',{class:'adb'},ai?'هوش مصنوعی':'ادمین'):null,ai&&m.needs_admin?h('span',{class:'nb'},'نیازمند بررسی مدیر'):null,
+  rqEl(m,chJump),m.image?h('img',{class:'chi',src:m.image,alt:'',loading:'lazy',onclick:()=>openLightbox([m.image],0)}):null,m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
+  h('small',{},ago(Date.parse(m.created_at)||Date.now()),m.edited?h('span',{class:'ed'},'· ویرایش‌شده'):null,rd?h('span',{class:'ch-read'},' · ✓✓ دیده‌شده'):null),h('div',{class:'ch-rx'},chips),o.acts||null))}
 /* ---------- private chat with the store manager (Supabase table pm + rpc pm_send / pm_list) ---------- */
 const admName=()=>((S.store&&S.store.adminName)||'').trim()||'sisé';
 const admAv=()=>(S.store&&S.store.adminAvatar)||'';
@@ -1680,6 +1686,7 @@ function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearIn
   if(err){add(list,h('div',{class:'empty'},pmAuthErr({message:err})?'برای ادامه، دوباره با حساب جیمیل وارد شوید.':pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
   add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},channel==='ai'?'هنوز پیامی نیست؛ هر سؤالی درباره کیف‌ها و خدمات SISE دارید بپرسید.':'هنوز پیامی نیست؛ پیام شما مستقیماً برای مدیریت فروشگاه ارسال می‌شود.'));
   if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
+ CH.redraw=draw;
  const load=async first=>{try{const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const r=await custFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},token,timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
@@ -1697,7 +1704,7 @@ function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearIn
  PM.timer=setInterval(()=>{if(cur!=='chat'||CH.tab!==channelToTab(channel)||!root.isConnected){clearInterval(PM.timer);PM.timer=0;return}if(!document.hidden)load(false)},5000);
  return root}
 function channelToTab(channel){return channel==='ai'?'ai':'pm'}
-function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;if(CH.tab==='pm')return pmView('management');if(CH.tab==='ai')return pmView('ai');const u=curUser(),me=u?u.id:null,adm=!!sbSess();
+function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;chStopRealtime();CH.readMarked=new Set();if(CH.tab==='pm')return pmView('management');if(CH.tab==='ai')return pmView('ai');const u=curUser(),me=u?u.id:null,adm=!!sbSess();
  let pimg='',editing=null,sending=false,replying=null;
  const list=h('div',{class:'ch-list'}),inp=h('input',{class:'in',id:'ch-in',placeholder:'پیام خود را بنویسید…',maxlength:'500',autocomplete:'off'}),root=h('div',{class:'ch'});
  const sp=h('div',{class:'ch-sp',hidden:true},STICKERS.map(s=>h('button',{type:'button',onclick:()=>{sp.hidden=true;send('::st::'+s)}},s)));
@@ -1741,10 +1748,11 @@ function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);P
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
  const cp=(u||adm)?h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},eb,rb,pv,sp,h('button',{class:'ch-st',type:'button','aria-label':'استیکر',onclick:()=>{if(!editing)sp.hidden=!sp.hidden}},'😊'),h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>{if(!editing)file.click()}}),inp,file,sbtn):h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'برای گفتگو وارد شوید یا ثبت‌نام کنید'));
  cp.addEventListener('focusin',e=>{if(e.target.matches('input'))setTimeout(()=>e.target.scrollIntoView({block:'nearest'}),300)});
- root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic('comment',22)}),h('div',{},h('b',{},'گفتگوی همگانی'),h('small',{},'با بقیه‌ی مشتری‌ها گفتگو کنید'))),list,chTabs(),cp);
- draw(true);chLoad(true).then(()=>draw(true));
- CH.timer=setInterval(async()=>{if(cur!=='chat'||!root.isConnected){clearInterval(CH.timer);CH.timer=0;return}if(document.hidden)return;
-  const nu=curUser();if((nu?nu.id:null)!==me){renderMain();return}if(await chLoad(false))draw(false)},4000);
+ const onlineEl=h('small',{class:'ch-online'},'در حال اتصال…'),typingEl=h('small',{class:'ch-typing',hidden:true},'');root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic('comment',22)}),h('div',{},h('b',{},'گفتگوی همگانی'),onlineEl,typingEl)),chTabs(),list,cp);
+ draw(true);chLoad(true).then(async()=>{await chLoadExtras();draw(true);await chMarkReads(list)});
+ chStartRealtime(root,onlineEl,typingEl,inp,u,me,adm);
+ CH.timer=setInterval(async()=>{if(cur!=='chat'||!root.isConnected){clearInterval(CH.timer);CH.timer=0;chStopRealtime();return}if(document.hidden)return;
+  const nu=curUser();if((nu?nu.id:null)!==me){chStopRealtime();renderMain();return}const changed=await chLoad(false);await chLoadExtras();draw(false);await chMarkReads(list)},4000);
  return root}
 /* ---------- stories viewer ---------- */
 function openStory(start){const list=S.stories;if(!list.length)return;let i=start,prog=0,last=0,paused=false,raf=0,vid=null,hold=0,hx=0,sheetOpen=false;
