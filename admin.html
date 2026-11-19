@@ -810,6 +810,63 @@ html{overflow-x:hidden;max-width:100%}
  .ch-tabs .cht:active{transform:scale(.975)}
 }
 
+
+/* SISE luxury admin dashboard — isolated to the admin overview */
+.adm .adm-b:has(.luxdash){max-width:1240px;padding-top:22px;gap:18px}
+.adm .luxdash{display:grid;gap:18px;animation:luxDashIn .55s cubic-bezier(.2,.7,.2,1) both}
+@keyframes luxDashIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.adm .lux-welcome{position:relative;overflow:hidden;min-height:176px;padding:27px 30px;border:1px solid var(--gb);border-radius:26px;background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 13%,var(--sheet)),var(--sheet) 58%,color-mix(in srgb,var(--accent2) 9%,var(--sheet)));display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:var(--shadow)}
+.adm .lux-welcome:after{content:"";position:absolute;width:240px;height:240px;border:1px solid color-mix(in srgb,var(--accent) 24%,transparent);border-radius:50%;left:8%;top:-135px;box-shadow:0 0 0 24px color-mix(in srgb,var(--accent) 4%,transparent),0 0 0 48px color-mix(in srgb,var(--accent) 3%,transparent);pointer-events:none}
+.adm .lux-welcome-copy{position:relative;z-index:1;display:grid;gap:9px}
+.adm .lux-eyebrow{font-size:10px;letter-spacing:1.8px;color:var(--accent2);font-weight:800}
+.adm .lux-welcome h2{font-size:clamp(21px,3vw,29px);font-weight:500;margin:0;letter-spacing:-.5px}
+.adm .lux-welcome p{font-size:13px;color:var(--muted);margin:0;max-width:620px;line-height:1.9}
+.adm .lux-welcome-meta{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;margin-top:3px}
+.adm .lux-welcome-meta svg{color:var(--accent2)}
+.adm .lux-welcome-mark{width:94px;height:94px;flex:none;border-radius:28px;display:grid;place-items:center;color:var(--accent2);border:1px solid color-mix(in srgb,var(--accent) 28%,var(--gb));background:color-mix(in srgb,var(--accent) 8%,var(--field));transform:rotate(-7deg)}
+.adm .lux-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.adm .lux-metric{min-width:0;padding:17px;border:1px solid var(--gb);border-radius:21px;background:var(--sheet);display:flex;align-items:flex-start;gap:12px;box-shadow:0 7px 24px rgba(0,0,0,.035);transition:transform .22s,border-color .22s,box-shadow .22s}
+.adm .lux-metric:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 35%,var(--gb));box-shadow:0 12px 28px rgba(0,0,0,.075)}
+.adm .lux-metric-ico,.adm .lux-shortcut-icon{width:43px;height:43px;flex:none;display:grid;place-items:center;border-radius:15px;color:var(--accent2);background:color-mix(in srgb,var(--accent) 10%,var(--field));border:1px solid color-mix(in srgb,var(--accent) 12%,var(--gb))}
+.adm .lux-metric-copy{min-width:0;display:grid;gap:5px}
+.adm .lux-metric-copy small{font-size:11px;color:var(--muted)}
+.adm .lux-metric-copy b{font-size:clamp(17px,2vw,22px);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm .lux-metric-copy em{font-size:10px;font-style:normal;color:var(--faint);line-height:1.6}
+.adm .lux-main-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:14px;align-items:stretch}
+.adm .lux-panel{min-width:0;padding:20px;border:1px solid var(--gb);border-radius:23px;background:var(--sheet);box-shadow:0 7px 24px rgba(0,0,0,.035)}
+.adm .lux-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:19px}
+.adm .lux-panel-head h3{margin:5px 0 0;font-size:16px;font-weight:650}
+.adm .lux-panel-tag{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--gb);border-radius:99px;color:var(--muted);font-size:10px;white-space:nowrap;background:var(--field)}
+.adm .lux-panel-tag svg{color:var(--accent2)}
+.adm .lux-chart{height:155px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end;padding:5px 2px 0}
+.adm .lux-chart-col{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:9px;min-width:0}
+.adm .lux-bar-track{height:125px;width:min(25px,70%);display:flex;align-items:flex-end;overflow:hidden;border-radius:99px;background:color-mix(in srgb,var(--accent) 7%,var(--field))}
+.adm .lux-bar{display:block;width:100%;min-height:3px;border-radius:99px;background:linear-gradient(180deg,var(--accent2),var(--accent));transition:height .65s cubic-bezier(.2,.7,.2,1);box-shadow:0 2px 12px color-mix(in srgb,var(--accent) 22%,transparent)}
+.adm .lux-chart-col small{font-size:10px;color:var(--muted)}
+.adm .lux-chart-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid var(--gb);font-size:11px;color:var(--muted)}
+.adm .lux-chart-foot b{font-size:13px;color:var(--accent2)}
+.adm .lux-text-link{display:flex;align-items:center;gap:6px;color:var(--accent2);font-size:11px;background:transparent;padding:7px}
+.adm .lux-order-list{display:grid}
+.adm .lux-order-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--gb)}
+.adm .lux-order-row:last-child{border-bottom:0}
+.adm .lux-order-id,.adm .lux-order-value{display:grid;gap:5px;min-width:0}
+.adm .lux-order-id b{font-size:12px;font-weight:650}
+.adm .lux-order-id small,.adm .lux-order-value small{font-size:10px;color:var(--muted)}
+.adm .lux-order-value{text-align:left;flex:none}
+.adm .lux-order-value b{font-size:12px;color:var(--accent2)}
+.adm .lux-empty{min-height:125px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--muted);font-size:12px}
+.adm .lux-empty svg{color:var(--accent2)}
+.adm .lux-shortcuts{padding-bottom:22px}
+.adm .lux-shortcut-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.adm .lux-shortcut{min-width:0;display:flex;align-items:center;gap:11px;text-align:right;padding:13px;border-radius:17px;border:1px solid var(--gb);background:var(--field);transition:transform .2s,border-color .2s,background .2s}
+.adm .lux-shortcut:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 38%,var(--gb));background:color-mix(in srgb,var(--accent) 5%,var(--field))}
+.adm .lux-shortcut>span:nth-child(2){display:grid;gap:4px;flex:1;min-width:0}
+.adm .lux-shortcut b{font-size:12px;font-weight:650}
+.adm .lux-shortcut small{font-size:10px;color:var(--muted)}
+.adm .lux-shortcut>svg{color:var(--faint);flex:none}
+@media(max-width:760px){.adm .lux-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.adm .lux-main-grid{grid-template-columns:1fr}.adm .lux-welcome{padding:21px;border-radius:22px}.adm .lux-welcome-mark{width:66px;height:66px;border-radius:21px}.adm .lux-welcome-mark svg{width:34px;height:34px}.adm .lux-shortcut-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.adm .lux-metric{padding:13px;gap:9px}.adm .lux-metric-ico{width:37px;height:37px;border-radius:13px}.adm .lux-welcome{gap:8px}.adm .lux-welcome p{font-size:11px}.adm .lux-panel{padding:15px}.adm .lux-shortcut{padding:10px;gap:8px}}
+@media(prefers-reduced-motion:reduce){.adm .luxdash,.adm .lux-metric,.adm .lux-shortcut,.adm .lux-bar{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -1858,10 +1915,24 @@ support(){
    h('div',{class:'sise-support-note'},'پاسخ خودکار، مسدودسازی سراسری کاربران و اعلان‌های Push به تنظیمات امن سمت سرور و سیاست دسترسی نیاز دارند؛ این موارد بدون افزودن زیرساخت لازم فعال نمی‌شوند.')));
  load();return[box]
 },
-dash(){const rev=S.orders.filter(o=>['paid','processing','shipped','delivered'].includes(o.status)).reduce((a,o)=>a+o.total,0);
- return[card('خوش آمدید',h('p',{},'همه بخش‌های سایت از همین‌جا قابل تغییر است. تغییرات بلافاصله ذخیره و روی سایت اعمال می‌شود.'),
-  h('div',{class:'stat'},[[S.products.length,'محصول'],[S.stories.length,'استوری'],[S.orders.length,'سفارش'],[S.orders.filter(o=>o.status==='new'||o.status==='paid').length,'سفارش نیازمند بررسی'],[S.users.length,'کاربر ثبت‌نام‌شده'],[money(rev),'فروش تأییدشده']].map(([n,l])=>h('div',{},h('b',{},typeof n==='number'?fa(n):n),h('span',{},l))))),
-  card('میانبر',h('div',{class:'mini'},TABS.slice(1).map(([k,l,i])=>h('button',{class:'pre',type:'button',onclick:()=>{ADM.go&&ADM.go(k)}},I(i,22),l))))]},
+dash(){
+ const paid=S.orders.filter(o=>['paid','processing','shipped','delivered'].includes(o.status));
+ const rev=paid.reduce((a,o)=>a+(+o.total||0),0),pending=S.orders.filter(o=>['new','paid'].includes(o.status));
+ const days=Array.from({length:7},(_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(6-i));const sum=paid.filter(o=>{const x=new Date(o.created||0);return x.toDateString()===d.toDateString()}).reduce((a,o)=>a+(+o.total||0),0);return{d,sum}});
+ const peak=Math.max(1,...days.map(x=>x.sum));
+ const recent=S.orders.slice().sort((a,b)=>(+b.created||0)-(+a.created||0)).slice(0,4);
+ const metric=(icon,label,value,note,accent)=>h('div',{class:'lux-metric'},h('span',{class:'lux-metric-ico'},I(icon,21)),h('div',{class:'lux-metric-copy'},h('small',{},label),h('b',{},value),h('em',{},note)));
+ return[h('div',{class:'luxdash'},
+  h('section',{class:'lux-welcome'},h('div',{class:'lux-welcome-copy'},h('span',{class:'lux-eyebrow'},'SISE  /  ADMINISTRATION'),h('h2',{},'به فضای مدیریت SISE خوش آمدید'),h('p',{},'نمایی آرام و یکپارچه از وضعیت فروشگاه؛ همه‌چیز برای مدیریت روزانه در دسترس شماست.'),h('div',{class:'lux-welcome-meta'},I('shield-check',15),'اتصال مدیریت فعال است')),h('div',{class:'lux-welcome-mark'},I('crown',48))),
+  h('div',{class:'lux-metrics'},
+   metric('wallet','فروش تأییدشده',money(rev),'مجموع سفارش‌های پرداخت‌شده'),
+   metric('shopping-bag','کل سفارش‌ها',fa(S.orders.length),'سفارش ثبت‌شده در فروشگاه'),
+   metric('clock-3','نیازمند بررسی',fa(pending.length),'در انتظار اقدام مدیر'),
+   metric('package','محصولات فعال',fa(S.products.filter(p=>p.active!==false).length),'از '+fa(S.products.length)+' محصول ثبت‌شده')),
+  h('div',{class:'lux-main-grid'},
+   h('section',{class:'lux-panel lux-sales'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'SALES OVERVIEW'),h('h3',{},'روند فروش هفت روز اخیر')),h('span',{class:'lux-panel-tag'},I('trending-up',14),'فروش تأییدشده')),h('div',{class:'lux-chart'},days.map(x=>h('div',{class:'lux-chart-col'},h('div',{class:'lux-bar-track'},h('i',{class:'lux-bar',style:{height:Math.max(x.sum?8:3,(x.sum/peak)*100)+'%'}})),h('small',{},x.d.toLocaleDateString('fa-IR',{weekday:'short'}))))),h('div',{class:'lux-chart-foot'},h('span',{},'فروش ثبت‌شده در بازه اخیر'),h('b',{},money(days.reduce((a,x)=>a+x.sum,0))))),
+   h('section',{class:'lux-panel lux-orders'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'LATEST ACTIVITY'),h('h3',{},'آخرین سفارش‌ها')),h('button',{class:'lux-text-link',onclick:()=>ADM.go&&ADM.go('orders')},'مشاهده همه',I('arrow-left',14))),recent.length? h('div',{class:'lux-order-list'},recent.map(o=>h('div',{class:'lux-order-row'},h('div',{class:'lux-order-id'},h('b',{},o.name||'مشتری'),h('small',{},'#'+(o.code||'—')+' · '+new Date(o.created||Date.now()).toLocaleDateString('fa-IR'))),h('div',{class:'lux-order-value'},h('b',{},money(o.total)),h('small',{},stName(o.status)))))):h('div',{class:'lux-empty'},I('shopping-bag',24),'هنوز سفارشی ثبت نشده است'))),
+  h('section',{class:'lux-panel lux-shortcuts'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'QUICK ACCESS'),h('h3',{},'دسترسی سریع')),h('span',{class:'lux-panel-tag'},'مدیریت روزانه')),h('div',{class:'lux-shortcut-grid'},[['orders','truck','سفارش‌ها','پیگیری و پردازش'],['products','shopping-bag','محصولات','کاتالوگ و قیمت‌ها'],['inventory','package','موجودی','کنترل موجودی کالا'],['support','headset','مرکز پشتیبانی','گفتگو با مشتریان'],['reports','chart-no-axes-column','گزارش فروش','تحلیل عملکرد'],['general','settings-2','تنظیمات فروشگاه','اطلاعات و تنظیمات']].map(([key,icon,title,sub])=>h('button',{class:'lux-shortcut',type:'button',onclick:()=>ADM.go&&ADM.go(key)},h('span',{class:'lux-shortcut-icon'},I(icon,20)),h('span',{},h('b',{},title),h('small',{},sub)),I('arrow-left',15))))))]},
 general(){const s=S.store;if(!s.toteColor)s.toteColor='#eadfcb';return[card('ساک خرید روی رگال',fld('لوگوی روی ساک',imgField(s,'toteLogo',{alpha:true,max:700,clearable:true}),'اگر خالی باشد لوگوی Sisé روی ساک چاپ می‌شود. تصویر PNG شفاف یا با زمینه سفید بگذارید.'),fld('رنگ ساک',colorF(s,'toteColor'),'رنگ بدنه ساکی که کیف‌ها داخلش می‌روند؛ پیش‌فرض کرم است.')),card('صفحه شروع / لودینگ',tog(s,'loadingEnabled','نمایش صفحه لود'),fld('لوگوی صفحه لود (اختیاری)',imgField(s,'loadingLogo',{alpha:true,max:700,clearable:true}),'اگر خالی باشد از لوگوی اصلی سایت استفاده می‌شود.'),g2(fld('نوشته اصلی صفحه لود',tx(s,'loadingTitle')),fld('متن زیر نوار لود',tx(s,'loadingText'))),g2(fld('رنگ پس‌زمینه',colorF(s,'loadingBg')),fld('رنگ تأکیدی لوگو و نوار',colorF(s,'loadingAccent'))),range(s,'loadingDuration',0,5000,' ms','مدت نمایش صفحه لود')),card('هویت فروشگاه',g2(fld('نام فروشگاه',tx(s,'name')),fld('شعار',tx(s,'tagline'))),fld('لوگو',imgField(s,'logo',{alpha:true,max:600,clearable:true}),'اگر لوگو نگذارید نام فروشگاه با فونت تزئینی نمایش داده می‌شود. فایل PNG شفاف پیشنهاد می‌شود.'),fld('آیکون سربرگ مرورگر (Favicon)',imgField(s,'favicon',{alpha:true,max:256,clearable:true}),'همان آیکون کوچکی که کنار عنوان تب مرورگر دیده می‌شود. تصویر مربعی (مثلاً ۲۵۶ در ۲۵۶) بگذارید؛ اگر خالی بماند، آیکون پیش‌فرض SISE نمایش داده می‌شود.'),fld('نماد اعتماد (اینماد) — آدرس لینک',tx(s,'enamadLink',{ph:'https://trustseal.enamad.ir/...'}),'بعد از گرفتن اینماد، آدرس لینک نماد را اینجا بگذارید.'),fld('تصویر نماد اعتماد',imgField(s,'enamadImg',{max:320,clearable:true,alpha:true}),'تصویر نماد را آپلود کنید؛ در صفحه محصول زیر نشان‌های اعتماد نمایش داده می‌شود.'),range(s,'logoH',32,84,'px','اندازه‌ی لوگو در هدر')),
   card('اطلاعات تماس',g2(fld('تلفن',tx(s,'phone')),fld('آدرس',tx(s,'address')),fld('واحد پول',tx(s,'currency')))),
   card('متن‌های سایت',g2(fld('عنوان بخش محصولات',tx(s,'productsTitle')),fld('متن پایان استوری‌ها',tx(s,'storiesHintDone')),fld('متن پایین صفحه',tx(s,'copy'))))]},
