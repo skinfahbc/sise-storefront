@@ -831,7 +831,7 @@ html{overflow-x:hidden;max-width:100%}
 .adm .lux-welcome-meta svg{color:var(--accent2)}
 .adm .lux-welcome-mark{width:94px;height:94px;flex:none;border-radius:28px;display:grid;place-items:center;color:var(--accent2);border:1px solid color-mix(in srgb,var(--accent) 28%,var(--gb));background:color-mix(in srgb,var(--accent) 8%,var(--field));transform:rotate(-7deg)}
 .adm .lux-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
-.adm .lux-metric{min-width:0;padding:17px;border:1px solid var(--gb);border-radius:21px;background:var(--sheet);display:flex;align-items:flex-start;gap:12px;box-shadow:0 7px 24px rgba(0,0,0,.035);transition:transform .22s,border-color .22s,box-shadow .22s}
+.adm .lux-metric{min-width:0;width:100%;padding:17px;border:1px solid var(--gb);border-radius:21px;background:var(--sheet);display:flex;align-items:flex-start;gap:12px;box-shadow:0 7px 24px rgba(0,0,0,.035);transition:transform .24s cubic-bezier(.2,.7,.2,1),border-color .24s,box-shadow .24s;color:inherit;text-align:right;cursor:pointer;font:inherit;position:relative;overflow:hidden}
 .adm .lux-metric:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 35%,var(--gb));box-shadow:0 12px 28px rgba(0,0,0,.075)}
 .adm .lux-metric-ico,.adm .lux-shortcut-icon{width:43px;height:43px;flex:none;display:grid;place-items:center;border-radius:15px;color:var(--accent2);background:color-mix(in srgb,var(--accent) 10%,var(--field));border:1px solid color-mix(in srgb,var(--accent) 12%,var(--gb))}
 .adm .lux-metric-copy{min-width:0;display:grid;gap:5px}
@@ -873,7 +873,36 @@ html{overflow-x:hidden;max-width:100%}
 .adm .lux-shortcut-icon svg{display:block;width:23px;height:23px}
 @media(max-width:760px){.adm .lux-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.adm .lux-main-grid{grid-template-columns:1fr}.adm .lux-welcome{padding:21px;border-radius:22px}.adm .lux-welcome-mark{width:66px;height:66px;border-radius:21px}.adm .lux-welcome-mark svg{width:34px;height:34px}.adm .lux-shortcut-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.adm .lux-metric{padding:13px;gap:9px}.adm .lux-metric-ico{width:37px;height:37px;border-radius:13px}.adm .lux-welcome{gap:8px}.adm .lux-welcome p{font-size:11px}.adm .lux-panel{padding:15px}.adm .lux-shortcut{padding:10px;gap:8px}}
-@media(prefers-reduced-motion:reduce){.adm .luxdash,.adm .lux-metric,.adm .lux-shortcut,.adm .lux-bar{animation:none!important;transition:none!important}}
+
+/* SISE dashboard refinement: clear navigation, real metric icons and polished motion */
+.adm .lux-metric:focus-visible,.adm .lux-shortcut:focus-visible,.adm .lux-settings-link:focus-visible{outline:2px solid #6488ad;outline-offset:3px}
+.adm .lux-metric:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 20%,rgba(100,136,173,.075) 48%,transparent 72%);transform:translateX(-120%);transition:transform .65s ease;pointer-events:none}
+.adm .lux-metric:hover:after{transform:translateX(120%)}
+.adm .lux-metric:hover{transform:translateY(-5px);border-color:rgba(100,136,173,.48);box-shadow:0 15px 34px rgba(45,76,108,.11)}
+.adm .lux-metric:active,.adm .lux-shortcut:active{transform:scale(.975)}
+.adm .lux-metric-action{display:inline-flex;align-items:center;gap:5px;margin-top:4px;color:#6488ad;font-size:10px;font-weight:700;opacity:.82}
+.adm .lux-metric-action svg{transition:transform .2s ease}
+.adm .lux-metric:hover .lux-metric-action svg{transform:translateX(-3px)}
+.adm .lux-settings-link{padding:8px 11px;border:1px solid rgba(100,136,173,.24);border-radius:12px;background:rgba(100,136,173,.07);white-space:nowrap}
+.adm .luxdash>.lux-welcome{animation:luxSectionIn .65s .02s cubic-bezier(.2,.7,.2,1) both}
+.adm .luxdash>.lux-metrics{animation:luxSectionIn .65s .10s cubic-bezier(.2,.7,.2,1) both}
+.adm .luxdash>.lux-main-grid{animation:luxSectionIn .65s .18s cubic-bezier(.2,.7,.2,1) both}
+.adm .luxdash>.lux-shortcuts{animation:luxSectionIn .65s .26s cubic-bezier(.2,.7,.2,1) both}
+.adm .lux-metric:nth-child(1){animation:luxCardIn .55s .10s both}
+.adm .lux-metric:nth-child(2){animation:luxCardIn .55s .16s both}
+.adm .lux-metric:nth-child(3){animation:luxCardIn .55s .22s both}
+.adm .lux-metric:nth-child(4){animation:luxCardIn .55s .28s both}
+.adm .lux-shortcut{position:relative;overflow:hidden;transition:transform .24s cubic-bezier(.2,.7,.2,1),border-color .24s,background .24s,box-shadow .24s}
+.adm .lux-shortcut:hover{box-shadow:0 10px 24px rgba(45,76,108,.09)}
+.adm .lux-shortcut-icon{transition:transform .28s cubic-bezier(.2,.7,.2,1),background .25s}
+.adm .lux-shortcut:hover .lux-shortcut-icon{transform:translateY(-3px) scale(1.06);background:rgba(111,145,181,.17)}
+.adm .lux-panel{transition:box-shadow .28s ease,border-color .28s ease}
+.adm .lux-panel:hover{box-shadow:0 12px 30px rgba(0,0,0,.055);border-color:rgba(100,136,173,.2)}
+.adm .lux-welcome-mark{animation:luxMarkFloat 5s ease-in-out infinite alternate}
+@keyframes luxSectionIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@keyframes luxCardIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes luxMarkFloat{from{transform:rotate(-7deg) translateY(0)}to{transform:rotate(-3deg) translateY(-5px)}}
+@media(prefers-reduced-motion:reduce){.adm .luxdash,.adm .lux-metric,.adm .lux-shortcut,.adm .lux-bar,.adm .lux-welcome-mark,.adm .lux-panel{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -1928,18 +1957,18 @@ dash(){
  const days=Array.from({length:7},(_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(6-i));const sum=paid.filter(o=>{const x=new Date(o.created||0);return x.toDateString()===d.toDateString()}).reduce((a,o)=>a+(+o.total||0),0);return{d,sum}});
  const peak=Math.max(1,...days.map(x=>x.sum));
  const recent=S.orders.slice().sort((a,b)=>(+b.created||0)-(+a.created||0)).slice(0,4);
- const metric=(icon,label,value,note,accent)=>h('div',{class:'lux-metric'},h('span',{class:'lux-metric-ico'},I(icon,21)),h('div',{class:'lux-metric-copy'},h('small',{},label),h('b',{},value),h('em',{},note)));
+ const metric=(icon,label,value,note,target)=>h('button',{class:'lux-metric',type:'button',onclick:()=>ADM.go&&ADM.go(target),'aria-label':label+'؛ ورود به بخش مربوط'},h('span',{class:'lux-metric-ico'},I(icon,21)),h('div',{class:'lux-metric-copy'},h('small',{},label),h('b',{},value),h('em',{},note),h('span',{class:'lux-metric-action'},'مشاهده جزئیات',I('arrow-left',13))));
  return[h('div',{class:'luxdash'},
   h('section',{class:'lux-welcome'},h('div',{class:'lux-welcome-copy'},h('span',{class:'lux-eyebrow'},'SISE  /  ADMINISTRATION'),h('h2',{},'به فضای مدیریت SISE خوش آمدید'),h('div',{class:'lux-welcome-meta'},I('shield-check',15),'اتصال مدیریت فعال است')),h('div',{class:'lux-welcome-mark'},I('crown',48))),
   h('div',{class:'lux-metrics'},
-   metric('wallet','فروش تأییدشده',money(rev),'مجموع سفارش‌های پرداخت‌شده'),
-   metric('shopping-bag','کل سفارش‌ها',fa(S.orders.length),'سفارش ثبت‌شده در فروشگاه'),
-   metric('clock-3','نیازمند بررسی',fa(pending.length),'در انتظار اقدام مدیر'),
-   metric('package','محصولات فعال',fa(S.products.filter(p=>p.active!==false).length),'از '+fa(S.products.length)+' محصول ثبت‌شده')),
+   metric('card','فروش تأییدشده',money(rev),'مجموع سفارش‌های پرداخت‌شده','reports'),
+   metric('bag','کل سفارش‌ها',fa(S.orders.length),'سفارش ثبت‌شده در فروشگاه','orders'),
+   metric('clock','نیازمند بررسی',fa(pending.length),'در انتظار اقدام مدیر','orders'),
+   metric('box','محصولات فعال',fa(S.products.filter(p=>p.active!==false).length),'از '+fa(S.products.length)+' محصول ثبت‌شده','products')),
   h('div',{class:'lux-main-grid'},
    h('section',{class:'lux-panel lux-sales'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'SALES OVERVIEW'),h('h3',{},'روند فروش هفت روز اخیر')),h('span',{class:'lux-panel-tag'},I('trending-up',14),'فروش تأییدشده')),h('div',{class:'lux-chart'},days.map(x=>h('div',{class:'lux-chart-col'},h('div',{class:'lux-bar-track'},h('i',{class:'lux-bar',style:{height:Math.max(x.sum?8:3,(x.sum/peak)*100)+'%'}})),h('small',{},x.d.toLocaleDateString('fa-IR',{weekday:'short'}))))),h('div',{class:'lux-chart-foot'},h('span',{},'فروش ثبت‌شده در بازه اخیر'),h('b',{},money(days.reduce((a,x)=>a+x.sum,0))))),
    h('section',{class:'lux-panel lux-orders'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'LATEST ACTIVITY'),h('h3',{},'آخرین سفارش‌ها')),h('button',{class:'lux-text-link',onclick:()=>ADM.go&&ADM.go('orders')},'مشاهده همه',I('arrow-left',14))),recent.length? h('div',{class:'lux-order-list'},recent.map(o=>h('div',{class:'lux-order-row'},h('div',{class:'lux-order-id'},h('b',{},o.name||'مشتری'),h('small',{},'#'+(o.code||'—')+' · '+new Date(o.created||Date.now()).toLocaleDateString('fa-IR'))),h('div',{class:'lux-order-value'},h('b',{},money(o.total)),h('small',{},stName(o.status)))))):h('div',{class:'lux-empty'},I('shopping-bag',24),'هنوز سفارشی ثبت نشده است'))),
-  h('section',{class:'lux-panel lux-shortcuts'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'QUICK ACCESS'),h('h3',{},'دسترسی سریع')),h('span',{class:'lux-panel-tag'},'مدیریت روزانه')),h('div',{class:'lux-shortcut-grid'},[["general","home","اطلاعات فروشگاه","هویت و اطلاعات پایه"],["theme","palette","رنگ و شیشه","ظاهر و جلوه فروشگاه"],["content","grid","صفحه اصلی","مدیریت بخش‌های صفحه"],["hero","image","اسلایدر","تصاویر و بنرها"],["menu","menu","منوی کشویی","لینک‌ها و دسته‌ها"],["stories","play","استوری‌ها","مدیریت استوری‌ها"],["products","bag","محصولات","کاتالوگ و قیمت‌ها"],["rack","box","مدیریت رگال","چیدمان کیف‌های منتخب"],["nav","grid","منوی پایین","دسترسی‌های پایین سایت"],["orders","truck","سفارش‌ها","پیگیری و پردازش"],["users","users","کاربران","حساب‌ها و پرونده مشتری"],["inventory","box","موجودی","کنترل موجودی کالا"],["shipping","truck","هزینه ارسال","تنظیم روش و هزینه"],["reports","card","گزارش فروش","تحلیل عملکرد"],["comments","comment","نظرات استوری","مدیریت دیدگاه‌ها"],["support","mail","مرکز پشتیبانی","گفتگو با مشتریان"],["chat","comment","گفتگوی همگانی","مدیریت گفتگوی عمومی"],["pm","mail","چت خصوصی با مشتری","گفتگو و پاسخ به پیام‌های خصوصی"],["coupons","tag","کد تخفیف","مدیریت تخفیف‌ها"],["draw","gift","قرعه‌کشی","مدیریت قرعه‌کشی"],["settings","gear","تنظیمات","پشتیبان‌گیری و مدیریت"]].map(([key,icon,title,sub])=>h('button',{class:'lux-shortcut',type:'button',onclick:()=>ADM.go&&ADM.go(key)},h('span',{class:'lux-shortcut-icon'},I(icon,22)),h('span',{},h('b',{},title),h('small',{},sub)))))))]},
+  h('section',{class:'lux-panel lux-shortcuts'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'QUICK ACCESS'),h('h3',{},'دسترسی سریع')),h('button',{class:'lux-text-link lux-settings-link',type:'button',onclick:()=>ADM.go&&ADM.go('settings')},I('gear',16),'تنظیمات')),h('div',{class:'lux-shortcut-grid'},[[["settings","gear","تنظیمات","پشتیبان‌گیری و مدیریت"]],["general","home","اطلاعات فروشگاه","هویت و اطلاعات پایه"],["theme","palette","رنگ و شیشه","ظاهر و جلوه فروشگاه"],["content","grid","صفحه اصلی","مدیریت بخش‌های صفحه"],["hero","image","اسلایدر","تصاویر و بنرها"],["menu","menu","منوی کشویی","لینک‌ها و دسته‌ها"],["stories","play","استوری‌ها","مدیریت استوری‌ها"],["products","bag","محصولات","کاتالوگ و قیمت‌ها"],["rack","box","مدیریت رگال","چیدمان کیف‌های منتخب"],["nav","grid","منوی پایین","دسترسی‌های پایین سایت"],["orders","truck","سفارش‌ها","پیگیری و پردازش"],["users","users","کاربران","حساب‌ها و پرونده مشتری"],["inventory","box","موجودی","کنترل موجودی کالا"],["shipping","truck","هزینه ارسال","تنظیم روش و هزینه"],["reports","card","گزارش فروش","تحلیل عملکرد"],["comments","comment","نظرات استوری","مدیریت دیدگاه‌ها"],["support","mail","مرکز پشتیبانی","گفتگو با مشتریان"],["chat","comment","گفتگوی همگانی","مدیریت گفتگوی عمومی"],["pm","mail","چت خصوصی با مشتری","گفتگو و پاسخ به پیام‌های خصوصی"],["coupons","tag","کد تخفیف","مدیریت تخفیف‌ها"],["draw","gift","قرعه‌کشی","مدیریت قرعه‌کشی"]].map(([key,icon,title,sub])=>h('button',{class:'lux-shortcut',type:'button',onclick:()=>ADM.go&&ADM.go(key)},h('span',{class:'lux-shortcut-icon'},I(icon,22)),h('span',{},h('b',{},title),h('small',{},sub)))))))]},
 general(){const s=S.store;if(!s.toteColor)s.toteColor='#eadfcb';return[card('ساک خرید روی رگال',fld('لوگوی روی ساک',imgField(s,'toteLogo',{alpha:true,max:700,clearable:true}),'اگر خالی باشد لوگوی Sisé روی ساک چاپ می‌شود. تصویر PNG شفاف یا با زمینه سفید بگذارید.'),fld('رنگ ساک',colorF(s,'toteColor'),'رنگ بدنه ساکی که کیف‌ها داخلش می‌روند؛ پیش‌فرض کرم است.')),card('صفحه شروع / لودینگ',tog(s,'loadingEnabled','نمایش صفحه لود'),fld('لوگوی صفحه لود (اختیاری)',imgField(s,'loadingLogo',{alpha:true,max:700,clearable:true}),'اگر خالی باشد از لوگوی اصلی سایت استفاده می‌شود.'),g2(fld('نوشته اصلی صفحه لود',tx(s,'loadingTitle')),fld('متن زیر نوار لود',tx(s,'loadingText'))),g2(fld('رنگ پس‌زمینه',colorF(s,'loadingBg')),fld('رنگ تأکیدی لوگو و نوار',colorF(s,'loadingAccent'))),range(s,'loadingDuration',0,5000,' ms','مدت نمایش صفحه لود')),card('هویت فروشگاه',g2(fld('نام فروشگاه',tx(s,'name')),fld('شعار',tx(s,'tagline'))),fld('لوگو',imgField(s,'logo',{alpha:true,max:600,clearable:true}),'اگر لوگو نگذارید نام فروشگاه با فونت تزئینی نمایش داده می‌شود. فایل PNG شفاف پیشنهاد می‌شود.'),fld('آیکون سربرگ مرورگر (Favicon)',imgField(s,'favicon',{alpha:true,max:256,clearable:true}),'همان آیکون کوچکی که کنار عنوان تب مرورگر دیده می‌شود. تصویر مربعی (مثلاً ۲۵۶ در ۲۵۶) بگذارید؛ اگر خالی بماند، آیکون پیش‌فرض SISE نمایش داده می‌شود.'),fld('نماد اعتماد (اینماد) — آدرس لینک',tx(s,'enamadLink',{ph:'https://trustseal.enamad.ir/...'}),'بعد از گرفتن اینماد، آدرس لینک نماد را اینجا بگذارید.'),fld('تصویر نماد اعتماد',imgField(s,'enamadImg',{max:320,clearable:true,alpha:true}),'تصویر نماد را آپلود کنید؛ در صفحه محصول زیر نشان‌های اعتماد نمایش داده می‌شود.'),range(s,'logoH',32,84,'px','اندازه‌ی لوگو در هدر')),
   card('اطلاعات تماس',g2(fld('تلفن',tx(s,'phone')),fld('آدرس',tx(s,'address')),fld('واحد پول',tx(s,'currency')))),
   card('متن‌های سایت',g2(fld('عنوان بخش محصولات',tx(s,'productsTitle')),fld('متن پایان استوری‌ها',tx(s,'storiesHintDone')),fld('متن پایین صفحه',tx(s,'copy'))))]},
