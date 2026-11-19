@@ -1811,7 +1811,7 @@ function syncAiFab(){let f=document.getElementById('aiFab');const show=cur==='ho
 function chTabs(){const t=(k,l,ico)=>h('button',{type:'button',class:'cht'+(CH.tab===k?' on':''),onclick:()=>{if(CH.tab!==k){CH.tab=k;renderMain()}}},h('span',{class:'cht-ic',html:ic(ico,16)}),h('span',{class:'cht-label'},l));return h('div',{class:'ch-tabs'},t('pub','چت عمومی','messages-square'),t('pm','چت با مدیریت','lock-keyhole'),t('ai','چت با هوش مصنوعی','sparkles'))}
 function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;const u=curUser(),root=h('div',{class:'ch'}),list=h('div',{class:'ch-list'});
  const typingEl=h('small',{class:'sise-typing-live',hidden:true},'IS TAYPING...');
- root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic(channel==='ai'?'sparkles':'lock',22)}),h('div',{},h('b',{},channel==='ai'?'چت با هوش مصنوعی':'چت با مدیریت'),h('small',{},channel==='ai'?'پاسخ‌گویی هوشمند درباره محصولات و خدمات SISE':'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'),typingEl)),list);
+ root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic(channel==='ai'?'sparkles':'lock',22)}),h('div',{},h('b',{},channel==='ai'?'چت با هوش مصنوعی':'چت با مدیریت'),h('small',{},channel==='ai'?'پاسخ‌گویی هوشمند درباره محصولات و خدمات SISE':'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'))),list);
  if(!u){add(list,h('div',{class:'empty'},channel==='ai'?'برای استفاده از دستیار هوشمند ابتدا وارد شوید.':'برای چت خصوصی با مدیریت ابتدا وارد شوید.'));root.append(chTabs(),h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'ورود یا ثبت‌نام')));return root}
  let pimg='',sending=false,err='',sig='';const inp=h('input',{class:'in',placeholder:channel==='ai'?'پیام خود را برای هوش مصنوعی بنویسید…':'پیام خود را بنویسید',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
  const drawPv=()=>{pv.innerHTML='';pv.hidden=!pimg;if(pimg)add(pv,[h('img',{src:pimg,alt:''}),h('span',{},'عکس آماده ارسال است'),h('button',{type:'button',class:'sb dg','aria-label':'حذف عکس',html:ic('close',16),onclick:()=>{pimg='';drawPv()}})])};
@@ -1834,7 +1834,7 @@ function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearIn
    catch(e){PM.rows=PM.rows.filter(x=>x!==tmp);draw();toast(pmSetup(e)?'این بخش هنوز راه‌اندازی نشده است':'ارسال نشد: '+e.message)}}
   finally{sending=false;typingEl.hidden=true;sig='';load(false)}};
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
- root.append(chTabs(),h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},pv,h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>file.click()}),inp,file,h('button',{class:'btn',type:'submit','aria-label':'ارسال'},'ارسال')));
+ root.append(chTabs(),h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},pv,typingEl,h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>file.click()}),inp,file,h('button',{class:'btn',type:'submit','aria-label':'ارسال'},'ارسال')));
  PM.rows=[];draw(true);load(true);
  PM.timer=setInterval(()=>{if(cur!=='chat'||CH.tab!==channelToTab(channel)||!root.isConnected){clearInterval(PM.timer);PM.timer=0;return}if(!document.hidden)load(false)},5000);
  return root}
@@ -2513,7 +2513,7 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
   root.classList.add('sise-chat-screen');
   const list=root.querySelector(':scope > .ch-list'),composer=root.querySelector(':scope > .ch-cp');
   // Preserve live status nodes from the original chat header before shell replaces it.
-  const liveStatus=[...root.querySelectorAll(':scope > .ch-hd .ch-online,:scope > .ch-hd .ch-typing,:scope > .ch-hd .sise-typing-live')];
+  const liveStatus=[...root.querySelectorAll(':scope > .ch-hd .ch-online,:scope > .ch-hd .ch-typing')];
   const current=channel==='ai'?'ai':channel==='pm'?'pm':'pub';
   const tabs=h('div',{class:'ch-tabs sise-chat-tabs','aria-label':'بخش‌های گفتگو'});
   tabInfo.forEach(([key,label,ico])=>tabs.append(h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{CH.tab=key;cur='chat';try{renderMain();setNav(true)}catch(e){console.error('SISE chat tab render failed',e);toast('خطا در باز شدن گفتگو: '+(e&&e.message?e.message:'خطای نامشخص'))}}},h('span',{class:'sise-tab-ic',html:ic(ico,19)}),h('span',{},label))));
