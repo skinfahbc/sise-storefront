@@ -1028,6 +1028,94 @@ html{overflow-x:hidden;max-width:100%}
 .adm .settings-card{background:linear-gradient(145deg,#fff,#f3f7fb)!important}
 @media(max-width:700px){.adm .adm-top{padding-inline:12px}.adm .adm-b{padding-inline:12px}}
 
+
+/* SISE luxury refinement: support, public chat and rack */
+.adm .sise-support{gap:18px}
+.adm .sise-support-hero{position:relative;overflow:hidden;align-items:center;min-height:142px;padding:22px 24px;border-radius:26px;border-color:rgba(105,145,181,.22);background:radial-gradient(circle at 12% 0%,rgba(151,190,220,.22),transparent 42%),linear-gradient(118deg,#183a57 0%,#315c7d 58%,#52799e 100%);color:#f7fbff;box-shadow:0 18px 42px rgba(24,58,87,.2)}
+.adm .sise-support-hero:after{content:"";position:absolute;width:190px;height:190px;left:-48px;top:-105px;border:1px solid rgba(255,255,255,.17);border-radius:50%;box-shadow:0 0 0 20px rgba(255,255,255,.035),0 0 0 42px rgba(255,255,255,.025);pointer-events:none}
+.adm .sise-support-hero-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.adm .sise-support-hero-brand>div{flex:1;min-width:0}
+.adm .sise-support-hero-icon,.adm .sise-chat-hero-icon,.adm .rack-hero-icon{width:58px;height:58px;flex:none;display:grid;place-items:center;border:1px solid rgba(255,255,255,.24);border-radius:19px;background:rgba(255,255,255,.13);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.adm .sise-support-eyebrow,.adm .sise-chat-eyebrow,.adm .rack-eyebrow{display:block;margin-bottom:4px;font-size:9px;letter-spacing:1.6px;color:#d6e6f3;font-weight:800}
+.adm .sise-support-hero h2,.adm .sise-chat-hero h2,.adm .rack-hero h2{margin:0 0 4px;font-size:23px;font-weight:800;color:#fff}
+.adm .sise-support-hero p,.adm .sise-chat-hero p,.adm .rack-hero p{margin:0;color:rgba(245,250,255,.78);font-size:12px;line-height:1.8}
+.adm .sise-support-live,.adm .sise-chat-live{display:inline-flex;align-items:center;gap:7px;flex:none;padding:8px 12px;border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(255,255,255,.1);color:#f2f8fd;font-size:10px;white-space:nowrap}
+.adm .sise-support-live i,.adm .sise-chat-live i{width:7px;height:7px;border-radius:50%;background:#8ce0b4;box-shadow:0 0 0 4px rgba(140,224,180,.14)}
+.adm .sise-support-refresh{position:relative;z-index:1;background:rgba(255,255,255,.13)!important;border-color:rgba(255,255,255,.23)!important;color:#fff!important}
+.adm .sise-support-kpis{gap:12px}
+.adm .sise-support-kpi{display:flex;align-items:center;gap:12px;min-height:86px;padding:15px;border-radius:19px;background:linear-gradient(145deg,#fff, #f1f6fb);border-color:#dce7f0;box-shadow:0 8px 22px rgba(35,68,96,.055)}
+.adm .sise-support-kpi-icon,.adm .sise-chat-stat-icon{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#e6f0f8,#d5e4f1);color:#315f82}
+.adm .sise-support-kpi-copy{display:grid;gap:3px;min-width:0}
+.adm .sise-support-kpi b{font-size:23px;color:#183a57}
+.adm .sise-support-kpi span{font-size:11px;color:#668098}
+.adm .sise-support-channel-switch{display:flex;gap:8px;flex-wrap:wrap}
+.adm .sise-support-channel-switch .btn{min-height:42px;border-radius:13px}
+.adm .sise-support-channel-switch .btn.is-active{background:linear-gradient(135deg,#183a57,#52799e)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 7px 18px rgba(24,58,87,.16)}
+.adm .sise-support-layout{gap:12px}
+.adm .sise-support-thread{background:#f7fafd;border-color:#e0eaf2;transition:transform .2s,border-color .2s,box-shadow .2s}
+.adm .sise-support-thread:hover{transform:translateY(-1px);border-color:#9bb8d0;box-shadow:0 7px 18px rgba(38,75,106,.07)}
+.adm .sise-support-thread.active{border-color:#52799e;background:#edf4fa;box-shadow:inset 0 0 0 1px #52799e,0 8px 18px rgba(38,75,106,.08)}
+.adm .sise-support-avatar{background:linear-gradient(145deg,#183a57,#52799e);color:#fff;border:0}
+.adm .sise-support-pill{background:#e8f0f7;color:#315b7a;border-color:#d5e2ed}
+.adm .sise-support-msg{background:#f1f6fa;border-color:#dce7f0;color:#203b51}
+.adm .sise-support-msg.mine{background:linear-gradient(135deg,#183a57,#315c7d);border-color:#315c7d;color:#fff}
+.adm .sise-support-msg.mine small{color:#d6e6f3}
+.adm .sise-support-tools .btn{border-radius:99px}
+.adm .sise-chat-hero,.adm .rack-hero{position:relative;overflow:hidden;display:flex;align-items:center;gap:15px;padding:22px 24px;min-height:140px;border:1px solid rgba(105,145,181,.22);border-radius:26px;background:radial-gradient(circle at 10% 0%,rgba(151,190,220,.2),transparent 42%),linear-gradient(118deg,#183a57 0%,#315c7d 58%,#52799e 100%);color:#f7fbff;box-shadow:0 18px 42px rgba(24,58,87,.18)}
+.adm .sise-chat-hero:after,.adm .rack-hero:after{content:"";position:absolute;width:200px;height:200px;left:-65px;top:-120px;border:1px solid rgba(255,255,255,.17);border-radius:50%;box-shadow:0 0 0 22px rgba(255,255,255,.035),0 0 0 46px rgba(255,255,255,.025);pointer-events:none}
+.adm .sise-chat-hero-copy{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
+.adm .sise-chat-hero h2,.adm .rack-hero h2{font-size:22px}
+.adm .sise-chat-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.adm .sise-chat-stat{display:flex;align-items:center;gap:11px;min-width:0;padding:14px;border:1px solid #dce7f0;border-radius:18px;background:linear-gradient(145deg,#fff,#f1f6fb);box-shadow:0 8px 22px rgba(35,68,96,.05)}
+.adm .sise-chat-stat>div{display:grid;gap:2px;min-width:0}
+.adm .sise-chat-stat b{font-size:21px;color:#183a57;line-height:1.3}
+.adm .sise-chat-stat small{font-size:10px;color:#668098}
+.adm .rack-hero{justify-content:flex-start}
+.adm .rack-hero>div{position:relative;z-index:1;flex:1;min-width:0}
+.adm .rack-hero-icon{position:relative;z-index:1}
+.adm .rack-count{position:relative;z-index:1;flex:none;padding:8px 13px;border:1px solid rgba(255,255,255,.22);border-radius:99px;background:rgba(255,255,255,.12);color:#fff;font-size:11px;white-space:nowrap}
+.adm .rack-image-zone{padding:15px;border:1px solid #dce7f0;border-radius:19px;background:linear-gradient(145deg,#f8fbfe,#edf4f9);display:grid;gap:13px}
+.adm .rack-image-zone-head{display:flex;align-items:center;gap:10px;color:#315f82}
+.adm .rack-image-zone-head>div{display:grid;gap:2px}
+.adm .rack-image-zone-head b{font-size:13px;color:#24445f}
+.adm .rack-image-zone-head small{font-size:10px;color:#71889b}
+.adm .rack-image-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.adm .rack-image-field{min-width:0;padding:11px;border:1px solid #e0eaf2;border-radius:15px;background:#fff}
+.adm .rack-image-field .imf{display:grid;grid-template-columns:82px minmax(0,1fr);align-items:start;gap:9px}
+.adm .rack-image-field .pv{width:82px;height:92px;border-radius:13px;background:#edf3f8;border:1px solid #d9e5ef;overflow:hidden}
+.adm .rack-image-field .pv img{width:100%;height:100%;object-fit:contain}
+.adm .rack-image-field .ct{display:grid;gap:8px;min-width:0}
+.adm .rack-image-field .ct .row{flex-wrap:wrap}
+.adm .rack-image-field .ct .btn{font-size:11px;padding:8px 10px;border-radius:11px}
+.adm .rack-image-field .ct .in{min-width:0;width:100%}
+.adm .rack-items .li{gap:14px}
+.adm .rack-items .li-h{align-items:flex-start;gap:10px}
+.adm .rack-items .li-a{flex:none;align-items:center;gap:5px}
+.adm .rack-items .li-a .btn{white-space:nowrap}
+.adm .rack-items .li-x{min-width:0}
+.adm .rack-items .li-x>div[style*="display: flex"]{min-width:0}
+@media(max-width:700px){
+ .adm .sise-support-hero{align-items:flex-start;flex-wrap:wrap;padding:17px}
+ .adm .sise-support-hero-brand{flex:1 1 100%}
+ .adm .sise-support-refresh{margin-inline-start:auto}
+ .adm .sise-support-layout{grid-template-columns:1fr}
+ .adm .sise-chat-hero,.adm .rack-hero{align-items:flex-start;padding:17px;flex-wrap:wrap}
+ .adm .sise-chat-hero-copy{flex:1 1 100%}
+ .adm .sise-chat-live{margin-inline-start:auto}
+ .adm .sise-chat-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .adm .sise-chat-stat{padding:10px 8px;gap:7px;flex-direction:column;align-items:flex-start}
+ .adm .sise-chat-stat-icon{width:34px;height:34px}
+ .adm .sise-chat-stat b{font-size:18px}
+ .adm .rack-hero{gap:10px}
+ .adm .rack-hero-icon{width:48px;height:48px}
+ .adm .rack-count{margin-inline-start:auto}
+ .adm .rack-image-grid{grid-template-columns:1fr}
+ .adm .rack-image-field .imf{grid-template-columns:76px minmax(0,1fr)}
+ .adm .rack-image-field .pv{width:76px;height:86px}
+ .adm .rack-items .li-h{flex-wrap:wrap}
+ .adm .rack-items .li-a{width:100%;justify-content:flex-start}
+}
+
 </style>
 </head>
 <body>
@@ -1831,7 +1919,7 @@ function stockF(p){const inp=h('input',{class:'in',type:'text',inputmode:'numeri
  sbFetch('/rest/v1/stock?pid=eq.'+encodeURIComponent(p.id)+'&select=qty',{auth:true}).then(r=>{if(r&&r[0]){inp.value=r[0].qty;st.textContent='موجودی فعلی روی سرور'}else{inp.value=+p.stock||0;st.textContent='هنوز در انبار ثبت نشده؛ با «ذخیره موجودی» ثبت می‌شود'}}).catch(e=>{inp.value=+p.stock||0;st.textContent='خطا: '+e.message});
  return h('div',{style:{display:'grid',gap:'6px'}},h('div',{class:'row',style:{flexWrap:'wrap'}},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn',type:'button',onclick:save},'ذخیره موجودی')),st)}
 function lifeF(s){const info=h('small',{class:'fh'},stLeft(s)),sel=h('select',{class:'in',onchange:()=>{s.life=+sel.value;s.created=Date.now();commit();info.textContent=stLeft(s)}},[[24,'۲۴ ساعت'],[72,'۳ روز'],[168,'یک هفته'],[720,'یک ماه'],[0,'بدون انقضا']].map(([v,l])=>h('option',{value:String(v)},l)));sel.value=String(+s.life||0);return h('div',{style:{display:'grid',gap:'6px'}},sel,info,h('small',{class:'fh'},'شمارش از لحظه ثبت یا تغییر مدت شروع می‌شود و بعد از اتمام، استوری در سایت دیده نمی‌شود و با انتشار بعدی از سرور پاک می‌شود.'))}
-const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['users','کاربران','users'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['support','مرکز پشتیبانی','headset'],['chat','گفتگوی همگانی','users'],['pm','چت خصوصی با مشتری','lock'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
+const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','bag'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['users','کاربران','users'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['support','مرکز پشتیبانی','headset'],['chat','گفتگوی همگانی','users'],['pm','چت خصوصی با مشتری','lock'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
 const ADM={open:false,pmUnread:0,pmPeople:0,chatCount:0,chatUnread:0,badgeTimer:0,drawTabs:null};
 const PM_READ_KEY='sise_admin_pm_last_read';
 function markPmRead(rows){
@@ -1904,17 +1992,19 @@ rack(){
  }
  const productOpts=[['','بدون اتصال به محصول'],...S.products.map(p=>[p.id,p.title])];
  const items=listEd(R.items,(it)=>[
+  h('div',{class:'rack-image-zone'},h('div',{class:'rack-image-zone-head'},I('image',20),h('div',{},h('b',{},'تصاویر محصول'),h('small',{},'عکس اصلی و پشت کیف را جداگانه بارگذاری و پیش‌نمایش کنید.')))),
+  h('div',{class:'rack-image-grid'},h('div',{class:'rack-image-field'},fld('عکس اصلی کیف · پس‌زمینه شفاف پیشنهاد می‌شود',imgField(it,'image',{max:2200,q:.94,clearable:true,alpha:true}))),h('div',{class:'rack-image-field'},fld('عکس پشت کیف (اختیاری)',imgField(it,'backImage',{max:2200,q:.94,clearable:true,alpha:true})))),
   g2(fld('نام کیف',tx(it,'title')),fld('محصول مرتبط (اختیاری)',pick(it,'productId',productOpts))),
   fld('توضیحات و نوشته کیف',tx(it,'desc',{area:true,rows:3})),
   g2(fld('قیمت فروش',tx(it,'price',{num:true})),fld('قیمت قبل از تخفیف',tx(it,'oldPrice',{num:true}))),
   g2(fld('درصد تخفیف (قیمت قبل از تخفیف خودکار محاسبه می‌شود)',pctF(it)),tog(it,'active','نمایش در رگال')),
   fld('موجودی رگال (تعداد؛ صفر = برداشتن از رگال)',tx(it,'stock')),
-  fld('عکس اصلی کیف · پس‌زمینه شفاف پیشنهاد می‌شود',imgField(it,'image',{max:2200,q:.94,clearable:true,alpha:true})),
-  fld('عکس پشت کیف (اختیاری)',imgField(it,'backImage',{max:2200,q:.94,clearable:true,alpha:true})),
   fld('متن دکمه/برچسب (اختیاری)',tx(it,'label'))
  ],()=>({id:uid(),title:'کیف جدید',desc:'',price:0,oldPrice:0,discount:0,image:'',backImage:'',active:true,productId:'',label:'',stock:null}),
  {title:it=>it.title||'کیف بدون نام',addLabel:'افزودن کیف به رگال',thumb:it=>it.image||'',collapse:true,editAction:true});
+ items.classList.add('rack-items');
  return[
+  h('div',{class:'rack-hero'},h('span',{class:'rack-hero-icon'},I('bag',30)),h('div',{},h('span',{class:'rack-eyebrow'},'SISE · CURATED COLLECTION'),h('h2',{},'مدیریت رگال'),h('p',{},'چیدمان کیف‌های منتخب، تصاویر و جزئیات نمایش در فروشگاه')),h('span',{class:'rack-count'},fa(R.items.length)+' کیف')),
   card('مدیریت مستقل رگال',h('p',{},'کیف‌های این بخش مستقل از گالری محصولات مدیریت می‌شوند. عکس، نوشته، قیمت و موجودی هر کیف را همین‌جا وارد کنید. موجودی خالی یعنی بدون شمارش؛ با ثبت عدد صفر، کیف از رگال سایت پنهان می‌شود و در پنل برای ویرایش باقی می‌ماند. برای اتصال دکمه خرید به صفحه محصول، محصول مرتبط را انتخاب کنید؛ در غیر این صورت کیف فقط در رگال و پیش‌نمایش نمایش داده می‌شود.'),
    g2(fld('عنوان رگال',tx(R,'title')),fld('تعداد نمایش (۳ تا ۱۰)',tx(R,'limit',{num:true}))),
    fld('متن راهنمای زیر رگال',tx(R,'hint',{area:true,rows:2})),items,
@@ -2020,7 +2110,7 @@ support(){
   const waiting=new Set(incoming.filter(x=>{const later=messages.some(y=>y.uid===x.uid&&!y.from_admin===false&&y.channel==='management'&&(+y.id)>(+x.id));return !later}).map(x=>x.uid));
   const ai=messages.filter(x=>x.channel==='ai').length;
   kpis.innerHTML='';
-  [[new Set(messages.filter(x=>x.channel==='management').map(x=>x.uid)).size,'گفتگوی خصوصی'],[waiting.size,'منتظر پاسخ'],[ai,'پیام‌های دستیار هوشمند']].forEach(([n,l])=>kpis.append(h('div',{class:'sise-support-kpi'},h('b',{},fa(n)),h('span',{},l))));
+  [[new Set(messages.filter(x=>x.channel==='management').map(x=>x.uid)).size,'گفتگوی خصوصی','comment'],[waiting.size,'منتظر پاسخ','clock'],[ai,'پیام‌های دستیار هوشمند','sparkles']].forEach(([n,l,ico])=>kpis.append(h('div',{class:'sise-support-kpi'},h('span',{class:'sise-support-kpi-icon'},I(ico,20)),h('div',{class:'sise-support-kpi-copy'},h('b',{},fa(n)),h('span',{},l)))));
  };
  const drawList=()=>{
   list.innerHTML='';
@@ -2066,9 +2156,9 @@ support(){
  };
  search.addEventListener('input',()=>{query=search.value;drawList()});
  quickReplies.forEach(t=>quick.append(h('button',{class:'btn sec',type:'button',onclick:()=>{reply.value=t;reply.focus()}},t.slice(0,22)+'…')));
- box.append(h('div',{class:'sise-support-hero'},h('div',{},h('h2',{},'مرکز پشتیبانی SISE'),h('p',{},'مدیریت گفتگوها، مشتریان و پیگیری سفارش‌ها در یک فضای یکپارچه')),h('button',{class:'btn sec',onclick:load},I('refresh-cw',16),'بروزرسانی')),
+ box.append(h('div',{class:'sise-support-hero'},h('div',{class:'sise-support-hero-brand'},h('span',{class:'sise-support-hero-icon'},I('headset',28)),h('div',{},h('span',{class:'sise-support-eyebrow'},'SISE · CLIENT CARE'),h('h2',{},'مرکز پشتیبانی'),h('p',{},'میز پاسخ‌گویی اختصاصی مشتریان؛ از پیام اول تا پیگیری سفارش')),h('span',{class:'sise-support-live'},h('i',{}),'مرکز پاسخ‌گویی')),h('button',{class:'btn sec sise-support-refresh',onclick:load},I('refresh-cw',16),'بروزرسانی')),
   kpis,
-  card('صندوق ورودی',h('div',{class:'row'},h('button',{class:'btn sec',onclick:()=>{channel='management';selected='';drawList();drawThread()}},'چت خصوصی'),h('button',{class:'btn sec',onclick:()=>{channel='ai';selected='';drawList();drawThread()}},'گفتگوی هوش مصنوعی')),search,
+  card('صندوق ورودی',h('div',{class:'sise-support-channel-switch'},h('button',{class:'btn sec is-active',onclick:e=>{channel='management';e.currentTarget.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('is-active',b===e.currentTarget));selected='';drawList();drawThread();drawDetail()}},I('comment',16),'چت خصوصی'),h('button',{class:'btn sec',onclick:e=>{channel='ai';e.currentTarget.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('is-active',b===e.currentTarget));selected='';drawList();drawThread();drawDetail()}},I('sparkles',16),'گفتگوی هوش مصنوعی')),search,
    h('div',{class:'sise-support-layout'},list,card('مکالمه انتخاب‌شده',thread,reply,h('div',{class:'row'},h('button',{class:'btn',onclick:send},I('send',16),'ارسال پاسخ'),h('button',{class:'btn sec',onclick:makeSuggestion},I('sparkles',16),'پیشنهاد پاسخ هوشمند')))) ),
   card('پروفایل مشتری و سفارش‌ها',detail,h('button',{class:'btn sec',onclick:()=>ADM.go('users')},'مدیریت کامل کاربران و سفارش‌ها')),
   card('پاسخ‌های آماده',h('p',{},'برای درج پاسخ آماده، روی هر عبارت بزنید؛ سپس می‌توانید متن را ویرایش و ارسال کنید.'),quick),
@@ -2131,7 +2221,7 @@ products(){const catCard=card('دسته‌بندی‌ها',listEd(S.categories,c
   ()=>({id:uid(),title:'محصول جدید',desc:'',price:0,oldPrice:0,badge:'',cat:S.categories[0]?.id||'',stock:10,images:[],colors:[]}),{title:p=>p.title,addLabel:'افزودن محصول',thumb:p=>p.images[0]||'',collapse:true})),catCard]},
 nav(){return[card('منوی پایین صفحه',h('p',{},'ترتیب از راست به چپ نمایش داده می‌شود. آیکون تب فعال داخل حباب شناور می‌نشیند و با تغییر تب، حباب به تب بعدی می‌رود.'),
   listEd(S.nav,n=>g2(fld('عنوان',tx(n,'label')),fld('آیکون',pick(n,'icon',ICON_OPTS)),fld('صفحه',pick(n,'view',[['home','خانه'],['categories','دسته‌بندی'],['cart','سبد خرید'],['track','پیگیری خرید'],['pay','پرداخت'],['chat','گفتگوی همگانی']]))),()=>({}),{title:n=>n.label,fixed:true}))]},
-chat(){let rows=[],err='',pimg='',editId=null;const box=h('div',{class:'lst'});
+chat(){let rows=[],err='',pimg='',editId=null;const box=h('div',{class:'lst'}),stats=h('div',{class:'sise-chat-stats'});
  const inp=h('textarea',{class:'in',rows:2,maxlength:'500',placeholder:'پیام ادمین برای گفتگوی همگانی…'}),file=h('input',{type:'file',accept:'image/*','aria-label':'انتخاب عکس'}),pv=h('div',{class:'ch-pv',hidden:true});
  const drawPv=()=>{pv.innerHTML='';pv.hidden=!pimg;if(pimg)add(pv,[h('img',{src:pimg,alt:''}),h('span',{},'عکس آماده ارسال است'),h('button',{type:'button',class:'sb dg','aria-label':'حذف عکس',html:ic('close',16),onclick:()=>{pimg='';drawPv()}})])};
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
@@ -2140,8 +2230,9 @@ chat(){let rows=[],err='',pimg='',editId=null;const box=h('div',{class:'lst'});
  const startRep=c=>{rep=c;drawRp();inp.focus();inp.scrollIntoView({block:'center',behavior:'smooth'})};
  const delRow=(c,b)=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='برای حذف دوباره بزنید';return}sbFetch('/rest/v1/chat_messages?id=eq.'+c.id,{method:'DELETE',auth:true,headers:{Prefer:'return=minimal'}}).then(()=>{rows=rows.filter(x=>x!==c);CH.msgs=CH.msgs.filter(x=>x.id!==c.id);draw();toast('حذف شد')}).catch(er=>toast('حذف نشد: '+er.message))};
  const saveRow=(c,v)=>{const t=v.trim().slice(0,500);if(!t&&!c.image)return toast('متن نمی‌تواند خالی باشد');sbFetch('/rest/v1/chat_messages?id=eq.'+c.id,{method:'PATCH',auth:true,headers:{Prefer:'return=minimal'},body:{text:t,edited:true}}).then(()=>{c.text=t;c.edited=true;editId=null;draw();toast('ذخیره شد')}).catch(er=>toast('ذخیره نشد: '+er.message))};
- const draw=()=>{box.innerHTML='';if(err){box.append(h('div',{class:'li'},h('p',{style:{margin:0}},'بارگیری گفتگو ممکن نشد ('+err+')')));return}
-  add(box,rows.length?rows.map(c=>{const isSt=String(c.text||'').startsWith('::st::'),ta=h('textarea',{class:'in',rows:3,maxlength:'500',value:c.text||''});
+ const drawStats=()=>{stats.innerHTML='';const customers=new Set(rows.filter(x=>!x.is_admin).map(x=>x.uid).filter(Boolean)).size;[[rows.length,'پیام‌های بارگذاری‌شده','comment'],[customers,'کاربران این فهرست','users'],[rows.filter(x=>x.is_admin).length,'پیام‌های مدیر','shield-check']].forEach(([n,l,ico])=>stats.append(h('div',{class:'sise-chat-stat'},h('span',{class:'sise-chat-stat-icon'},I(ico,19)),h('div',{},h('b',{},fa(n)),h('small',{},l)))))};
+ const draw=()=>{box.innerHTML='';if(err){box.append(h('div',{class:'li'},h('p',{style:{margin:0}},'بارگیری گفتگو ممکن نشد ('+err+')')));drawStats();return}
+  drawStats();add(box,rows.length?rows.map(c=>{const isSt=String(c.text||'').startsWith('::st::'),ta=h('textarea',{class:'in',rows:3,maxlength:'500',value:c.text||''});
    return h('div',{class:'li'},h('div',{class:'li-h'},h('span',{},cmAvatar(c),h('b',{},c.is_admin?admName():c.name),c.is_admin?h('span',{class:'adb'},'ادمین'):null),h('small',{class:'fh'},new Date(c.created_at).toLocaleString('fa-IR')+(c.edited?' · ویرایش‌شده':''))),
     rqEl(c,null),c.image?h('img',{class:'chi',src:c.image,alt:''}):null,
     editId===c.id?[ta,h('div',{class:'row'},h('button',{class:'btn',onclick:()=>saveRow(c,ta.value)},'ذخیره'),h('button',{class:'btn sec',onclick:()=>{editId=null;draw()}},'لغو'))]:(c.text?h('p',{style:{margin:'4px 0'}},isSt?'استیکر '+String(c.text).slice(6):c.text):null),
@@ -2152,7 +2243,7 @@ chat(){let rows=[],err='',pimg='',editId=null;const box=h('div',{class:'lst'});
    await sbFetch('/rest/v1/chat_messages',{method:'POST',auth:true,headers:{Prefer:'return=minimal'},body:Object.assign({uid:'admin',name:admName(),avatar:(lg&&/^https?:/.test(lg)&&lg.length<400)?lg:null,text:t,image:url,is_admin:true},CH_V2&&rep?{reply_to:rep.id,rname:rep.name,rtext:rqSnip(rep)}:{})});
    inp.value='';pimg='';drawPv();rep=null;drawRp();toast('پیام ارسال شد');load()}catch(e){toast('ارسال نشد: '+e.message)}};
  box.append(h('div',{class:'empty'},'در حال بارگیری…'));load();
- return[card('پروفایل مدیر در گفتگو',h('p',{},'این نام و عکس کنار پیام‌های مدیر در گفتگوی همگانی، نظرات استوری و چت خصوصی نمایش داده می‌شود؛ حتی برای پیام‌های قبلی. برچسب «ادمین» هم حفظ می‌شود. تغییرات پس از انتخاب عکس یا ویرایش نام، به‌صورت خودکار روی سرور ذخیره می‌شوند.'),g2(fld('نام نمایشی مدیر',tx(S.store,'adminName',{ph:'sisé'})),fld('عکس پروفایل مدیر',imgField(S.store,'adminAvatar',{max:240,alpha:false,clearable:true})))),card('ارسال پیام به‌عنوان ادمین',h('p',{},'پیام شما با برچسب «ادمین» و ظاهر متفاوت در گفتگوی همگانی نمایش داده می‌شود.'),rp,inp,pv,h('div',{class:'row'},h('span',{class:'btn sec up'},I('image',18),'افزودن عکس',file),h('button',{class:'btn',onclick:post},I('comment',18),'ارسال'))),
+ return[h('div',{class:'sise-chat-hero'},h('div',{class:'sise-chat-hero-copy'},h('span',{class:'sise-chat-hero-icon'},I('comment',30)),h('div',{},h('span',{class:'sise-chat-eyebrow'},'SISE · COMMUNITY'),h('h2',{},'گفتگوی همگانی'),h('p',{},'فضای گفت‌وگوی زنده مشتریان؛ پیام‌ها، پاسخ‌ها و مشارکت‌ها را یکجا مدیریت کنید.'))),h('span',{class:'sise-chat-live'},h('i',{}),'مدیریت پیام‌های عمومی')),stats,card('پروفایل مدیر در گفتگو',h('p',{},'این نام و عکس کنار پیام‌های مدیر در گفتگوی همگانی، نظرات استوری و چت خصوصی نمایش داده می‌شود؛ حتی برای پیام‌های قبلی. برچسب «ادمین» هم حفظ می‌شود. تغییرات پس از انتخاب عکس یا ویرایش نام، به‌صورت خودکار روی سرور ذخیره می‌شوند.'),g2(fld('نام نمایشی مدیر',tx(S.store,'adminName',{ph:'sisé'})),fld('عکس پروفایل مدیر',imgField(S.store,'adminAvatar',{max:240,alpha:false,clearable:true})))),card('ارسال پیام به‌عنوان ادمین',h('p',{},'پیام شما با برچسب «ادمین» و ظاهر متفاوت در گفتگوی همگانی نمایش داده می‌شود.'),rp,inp,pv,h('div',{class:'row'},h('span',{class:'btn sec up'},I('image',18),'افزودن عکس',file),h('button',{class:'btn',onclick:post},I('comment',18),'ارسال'))),
   h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('chat')},'بروزرسانی'),card('پیام‌های گفتگوی همگانی',box)]},
 pm(){let rows=[],err='',open=null,pimg='',loaded=false;const box=h('div',{class:'lst'});
  const load=()=>sbFetch('/rest/v1/pm?select=*&channel=eq.management&order=id.desc&limit=800',{auth:true}).then(r=>{rows=r||[];err='';loaded=true;markPmRead(rows);draw()}).catch(e=>{err=e.message||'خطا';loaded=true;draw()});
