@@ -1788,12 +1788,13 @@ draw(){const D=S.draw,okSt=['paid','processing','shipped','delivered'];let entri
    h('div',{class:'row'},h('button',{class:'btn sec',onclick:load},'بارگیری شرکت‌کننده‌ها'),h('button',{class:'btn',onclick:pickW},I('gift',18),'انتخاب برنده')),res,list),
   ]},
 support(){
- let messages=[],users=[],orders=[],loading=true,error='',selected='',channel='management',query='',suggestion='';
+ let messages=[],users=[],orders=[],pmAccounts=[],loading=true,error='',selected='',channel='management',query='',suggestion='';
  const box=h('div',{class:'sise-support'}),list=h('div',{class:'sise-support-list'}),thread=h('div',{class:'sise-support-chat'}),reply=h('textarea',{class:'in',rows:3,maxlength:'1000',placeholder:'پاسخ به مشتری را بنویسید…'}),search=h('input',{class:'in',placeholder:'جست‌وجوی نام، شناسه یا متن گفتگو…'});
  const kpis=h('div',{class:'sise-support-kpis'}),detail=h('div',{class:'lst'}),quick=h('div',{class:'sise-support-tools'});
  const quickReplies=['سلام، وقت شما بخیر 🌷 چطور می‌توانیم کمکتان کنیم؟','سفارش شما در حال بررسی است؛ نتیجه را همین‌جا اطلاع می‌دهیم.','لطفاً شماره سفارش را ارسال کنید تا دقیق‌تر بررسی کنیم.','ممنون از شکیبایی شما ❤️'];
- const userName=uid=>{const u=users.find(x=>x.id===uid||x.pm_uid===uid);const m=u?.user_metadata||{};return m.full_name||m.name||u?.email||'مشتری SISE'};
- const userInfo=uid=>users.find(x=>x.id===uid||x.pm_uid===uid)||null;
+ const accountFor=uid=>pmAccounts.find(x=>x.pm_uid===uid)||null;
+ const userInfo=uid=>{const a=accountFor(uid);return users.find(x=>x.id===uid||x.id===a?.auth_user_id)||null};
+ const userName=uid=>{const u=userInfo(uid);const m=u?.user_metadata||{};return m.full_name||m.name||u?.email||'مشتری SISE'};
  const date=v=>v?new Date(v).toLocaleString('fa-IR',{dateStyle:'short',timeStyle:'short'}):'';
  const current=()=>messages.filter(x=>x.uid===selected&&(x.channel||'management')===channel).slice().sort((a,b)=>(+a.id)-(+b.id));
  const drawKpis=()=>{
@@ -1842,7 +1843,7 @@ support(){
     fetch(SB.url+'/functions/v1/sise-otpy-auth',{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+await sbToken(),'Content-Type':'application/json'},body:JSON.stringify({action:'list_users'})}).then(async r=>{const p=await r.json();if(!r.ok)throw new Error(p.error||'users');return p}),
     sbFetch('/rest/v1/orders?select=code,data,created_at&order=created_at.desc&limit=1000',{auth:true})
    ]);
-   messages=[...(pm||[]),...(ai||[])];users=ur.users||[];orders=or||[];loading=false;drawKpis();drawList();drawThread();drawDetail();
+   messages=[...(pm||[]),...(ai||[])];users=ur.users||[];pmAccounts=ur.pm_accounts||[];orders=or||[];loading=false;drawKpis();drawList();drawThread();drawDetail();
   }catch(e){loading=false;error=e.message;drawList();thread.append(h('div',{class:'empty'},'بارگیری اطلاعات ناموفق بود: '+error))}
  };
  search.addEventListener('input',()=>{query=search.value;drawList()});
@@ -1850,10 +1851,10 @@ support(){
  box.append(h('div',{class:'sise-support-hero'},h('div',{},h('h2',{},'مرکز پشتیبانی SISE'),h('p',{},'مدیریت گفتگوها، مشتریان و پیگیری سفارش‌ها در یک فضای یکپارچه')),h('button',{class:'btn sec',onclick:load},I('refresh-cw',16),'بروزرسانی')),
   kpis,
   card('صندوق ورودی',h('div',{class:'row'},h('button',{class:'btn sec',onclick:()=>{channel='management';selected='';drawList();drawThread()}},'چت خصوصی'),h('button',{class:'btn sec',onclick:()=>{channel='ai';selected='';drawList();drawThread()}},'گفتگوی هوش مصنوعی')),search,
-   h('div',{class:'sise-support-layout'},list,card('مکالمه انتخاب‌شده',thread,reply,quick,h('div',{class:'row'},h('button',{class:'btn',onclick:send},I('send',16),'ارسال پاسخ'),h('button',{class:'btn sec',onclick:makeSuggestion},I('sparkles',16),'پیشنهاد پاسخ هوشمند')))) ),
+   h('div',{class:'sise-support-layout'},list,card('مکالمه انتخاب‌شده',thread,reply,h('div',{class:'row'},h('button',{class:'btn',onclick:send},I('send',16),'ارسال پاسخ'),h('button',{class:'btn sec',onclick:makeSuggestion},I('sparkles',16),'پیشنهاد پاسخ هوشمند')))) ),
   card('پروفایل مشتری و سفارش‌ها',detail,h('button',{class:'btn sec',onclick:()=>ADM.go('users')},'مدیریت کامل کاربران و سفارش‌ها')),
   card('پاسخ‌های آماده',h('p',{},'برای درج پاسخ آماده، روی هر عبارت بزنید؛ سپس می‌توانید متن را ویرایش و ارسال کنید.'),quick),
-  card('تنظیمات پشتیبانی و گزارش عملکرد',h('p',{},'گزارش‌ها بر اساس پیام‌های ثبت‌شده در سامانه محاسبه می‌شوند. تنظیمات خودکار در نسخه بعدی پس از اتصال به منطق سرور فعال می‌شوند.'),h('div',{class:'sise-support-kpis'},h('div',{class:'sise-support-kpi'},h('b',{},fa(messages.length)),h('span',{},'کل پیام‌های پشتیبانی')),h('div',{class:'sise-support-kpi'},h('b',{},fa(new Set(messages.map(x=>x.uid)).size)),h('span',{},'مشتری یکتا')),h('div',{class:'sise-support-kpi'},h('b',{},fa(messages.filter(x=>x.from_admin).length)),h('span',{},'پاسخ‌های مدیر'))),
+  card('تنظیمات پشتیبانی و گزارش عملکرد',h('p',{},'آمار از داده‌های واقعی گفتگوها محاسبه می‌شود. ترجیحات زیر ذخیره می‌شوند؛ اجرای خودکار پیام‌ها و مسدودسازی سراسری نیازمند اتصال امن سمت سرور است.'),g2(tog(S.store,'supportGreetingEnabled','نمایش پیام خوشامدگویی پیشنهادی'),tog(S.store,'supportAfterHoursEnabled','فعال‌سازی وضعیت خارج از ساعات کاری')),h('div',{class:'sise-support-kpis'},h('div',{class:'sise-support-kpi'},h('b',{},fa(messages.length)),h('span',{},'کل پیام‌های پشتیبانی')),h('div',{class:'sise-support-kpi'},h('b',{},fa(new Set(messages.map(x=>x.uid)).size)),h('span',{},'مشتری یکتا')),h('div',{class:'sise-support-kpi'},h('b',{},fa(messages.filter(x=>x.from_admin).length)),h('span',{},'پاسخ‌های مدیر'))),
    h('div',{class:'sise-support-note'},'پاسخ خودکار، مسدودسازی سراسری کاربران و اعلان‌های Push به تنظیمات امن سمت سرور و سیاست دسترسی نیاز دارند؛ این موارد بدون افزودن زیرساخت لازم فعال نمی‌شوند.')));
  load();return[box]
 },
