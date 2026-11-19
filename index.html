@@ -1686,7 +1686,6 @@ function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearIn
   if(err){add(list,h('div',{class:'empty'},pmAuthErr({message:err})?'برای ادامه، دوباره با حساب جیمیل وارد شوید.':pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
   add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},channel==='ai'?'هنوز پیامی نیست؛ هر سؤالی درباره کیف‌ها و خدمات SISE دارید بپرسید.':'هنوز پیامی نیست؛ پیام شما مستقیماً برای مدیریت فروشگاه ارسال می‌شود.'));
   if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
- CH.redraw=draw;
  const load=async first=>{try{const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const r=await custFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},token,timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
@@ -1729,6 +1728,7 @@ function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);P
     if(bs.length)acts=h('div',{class:'act'},bs);
     return chMsgEl(m,{me:mine,acts})}):h('div',{class:'empty'},'هنوز پیامی نیست؛ اولین نفر باشید 👋'));
   if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
+ CH.redraw=draw;
  const saveEdit=async t=>{const m=editing,uu=curUser();if(!m||!uu)return;if(!t&&!m.image)return toast('متن پیام نمی‌تواند خالی باشد');
   try{const ok=await sbFetch('/rest/v1/rpc/chat_edit',{method:'POST',body:{p_id:m.id,p_uid:uu.id,p_tok:chTok(uu),p_text:t.slice(0,500)}});
    if(ok===false)return toast('اجازه ویرایش این پیام را ندارید');
