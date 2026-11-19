@@ -1,0 +1,50 @@
+name: Validate SISE static pages
+
+on:
+  push:
+    branches:
+      - feature/sise-chat-luxury-production
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check inline JavaScript syntax
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const os = require('node:os');
+          const path = require('node:path');
+          const { spawnSync } = require('node:child_process');
+
+          for (const file of ['index.html', 'admin.html']) {
+            const html = fs.readFileSync(file, 'utf8');
+            const re = /<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi;
+            let match, count = 0;
+            while ((match = re.exec(html))) {
+              const attrs = match[1] || '';
+              const source = match[2] || '';
+              if (!source.trim() || /\\bsrc\\s*=/i.test(attrs)) continue;
+              const typeMatch = attrs.match(/\\btype\\s*=\\s*["']([^"']+)["']/i);
+              const type = typeMatch ? typeMatch[1].toLowerCase() : 'text/javascript';
+              if (!['text/javascript', 'application/javascript', 'module'].includes(type)) continue;
+              const ext = type === 'module' ? 'mjs' : 'js';
+              const temp = path.join(os.tmpdir(), file + '-' + count + '.' + ext);
+              fs.writeFileSync(temp, source);
+              const result = spawnSync(process.execPath, ['--check', temp], { encoding: 'utf8' });
+              if (result.status !== 0) {
+                process.stderr.write(file + ' inline script #' + count + '\\n' + result.stderr);
+                process.exit(result.status || 1);
+              }
+              count++;
+            }
+            console.log(file + ': ' + count + ' inline JavaScript blocks passed');
+          }
+          NODE
