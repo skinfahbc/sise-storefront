@@ -2022,7 +2022,7 @@ support(){
  };
  search.addEventListener('input',()=>{query=search.value;drawList()});
  quickReplies.forEach(t=>quick.append(h('button',{class:'btn sec',type:'button',onclick:()=>{reply.value=t;reply.focus()}},t.slice(0,22)+'…')));
- box.append(h('div',{class:'sise-support-hero'},h('div',{},h('h2',{},'مرکز پشتیبانی SISE'),h('p',{},'مدیریت گفتگوها، مشتریان و پیگیری سفارش‌ها در یک فضای یکپارچه')),h('button',{class:'btn sec',onclick:load},I('undo',16),'بروزرسانی')),
+ box.append(h('div',{class:'sise-support-hero'},h('div',{},h('h2',{},'مرکز پشتیبانی SISE'),h('p',{},'مدیریت گفتگوها، مشتریان و پیگیری سفارش‌ها در یک فضای یکپارچه')),h('button',{class:'btn sec',onclick:load},I('refresh-cw',16),'بروزرسانی')),
   kpis,
   card('صندوق ورودی',h('div',{class:'row'},h('button',{class:'btn sec',onclick:()=>{channel='management';selected='';drawList();drawThread()}},'چت خصوصی'),h('button',{class:'btn sec',onclick:()=>{channel='ai';selected='';drawList();drawThread()}},'گفتگوی هوش مصنوعی')),search,
    h('div',{class:'sise-support-layout'},list,card('مکالمه انتخاب‌شده',thread,reply,h('div',{class:'row'},h('button',{class:'btn',onclick:send},I('send',16),'ارسال پاسخ'),h('button',{class:'btn sec',onclick:makeSuggestion},I('sparkles',16),'پیشنهاد پاسخ هوشمند')))) ),
