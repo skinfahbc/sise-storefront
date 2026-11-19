@@ -1885,7 +1885,7 @@ function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);P
  draw(true);chLoad(true).then(async()=>{await chLoadExtras();draw(true);await chMarkReads(list)});
  chStartRealtime(root,onlineEl,typingEl,inp,u,me,adm);
  CH.timer=setInterval(async()=>{if(cur!=='chat'||!root.isConnected){clearInterval(CH.timer);CH.timer=0;chStopRealtime();return}if(document.hidden)return;
-  const nu=curUser();if((nu?nu.id:null)!==me){chStopRealtime();renderMain();return}const changed=await chLoad(false);await chLoadExtras();draw(false);await chMarkReads(list)},4000);
+  const nu=curUser();if((nu?nu.id:null)!==me){chStopRealtime();renderMain();return}const beforeExtras=JSON.stringify([CH.reactions,CH.reads]),beforeErr=CH.err;const changed=await chLoad(false);await chLoadExtras();const extrasChanged=beforeExtras!==JSON.stringify([CH.reactions,CH.reads]);if(changed||extrasChanged||beforeErr!==CH.err)draw(false);await chMarkReads(list)},4000);
  return root}
 /* ---------- stories viewer ---------- */
 function openStory(start){const list=S.stories;if(!list.length)return;let i=start,prog=0,last=0,paused=false,raf=0,vid=null,hold=0,hx=0,sheetOpen=false;
@@ -2373,7 +2373,7 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
  .sise-chat-brand{direction:ltr;text-align:center;line-height:1;min-width:0}
  .sise-chat-brand b{display:block;font:600 31px/1 Georgia,'Times New Roman',serif;letter-spacing:.20em;padding-left:.20em;color:#8e704b}
  .sise-chat-brand small{display:block;margin-top:5px;font-size:9px;letter-spacing:.30em;color:#b18e60;font-weight:700}
- .sise-chat-actions{display:flex;align-items:center;gap:7px}
+ .sise-chat-actions{display:flex;align-items:center;justify-self:end!important;justify-content:flex-end!important;gap:7px}
  .sise-chat-actions button{width:52px;height:52px}
  .sise-chat-actions button.active{background:linear-gradient(145deg,#c7a36e,#a98551);color:#fff;border-color:rgba(255,255,255,.68);box-shadow:0 5px 14px rgba(128,91,48,.18),inset 0 1px 0 rgba(255,255,255,.35)}
  .sise-chat-tabs{direction:rtl;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0;border:0;border-radius:0;background:transparent;overflow:visible}
@@ -2419,7 +2419,7 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
  @media(max-width:390px){.sise-chat-head{grid-template-columns:35px minmax(0,1fr) 111px!important}.sise-chat-head>button,.sise-chat-actions button{width:31px!important;height:31px!important}.sise-chat-menu{width:33px!important;height:33px!important}.sise-chat-brand b{font-size:19px!important}.sise-chat-brand small{font-size:6px!important}.sise-chat-tabs .cht{font-size:9.5px!important;min-height:50px!important}}
  
  /* User refinement: truly centered wordmark, shorter header and compact single-line tabs */
- .sise-chat-head{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;min-height:42px!important;height:42px!important;padding:0 0 2px!important;gap:2px!important}
+ .sise-chat-head{width:100%!important;grid-template-columns:36px minmax(0,1fr) 112px!important;min-height:42px!important;height:42px!important;padding:0 0 2px!important;gap:2px!important}
  .sise-chat-menu{justify-self:start!important;width:29px!important;height:29px!important;border-radius:10px!important}
  .sise-chat-actions{justify-self:end!important;gap:3px!important}
  .sise-chat-actions button{width:29px!important;height:29px!important;border-radius:10px!important}
@@ -2519,7 +2519,7 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
   );
   const close=openModal(panel,'sise-menu-overlay');
  }
- const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('menu',22),onclick:openChatMenu});
+ const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('list',22),onclick:openChatMenu});
   const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISÉ'),h('small',{},'MESSENGER'));
   const actions=h('div',{class:'sise-chat-actions'},
    h('button',{type:'button','aria-label':'جستجو',title:'جستجو',html:ic('search',22),onclick:()=>openSearch()}),
