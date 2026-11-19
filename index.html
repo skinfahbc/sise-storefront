@@ -867,6 +867,14 @@ html{overflow-x:hidden;max-width:100%}
 .sq-n.p{inset-inline-end:max(12px,env(safe-area-inset-right,0px))}.sq-n.n{inset-inline-start:max(12px,env(safe-area-inset-left,0px))}
 @media (max-width:520px){.sq-n{top:auto;bottom:calc(30px + env(safe-area-inset-bottom,0px))}}
 @media (prefers-reduced-motion:reduce){.sq,.sq-g{animation:none!important}}
+
+/* AI typing indicator appears as an incoming chat bubble */
+body.chat-lock #app .sise-chat-screen .sise-ai-typing{align-self:flex-start;display:flex;align-items:flex-end;gap:9px;max-width:min(88%,560px)}
+body.chat-lock #app .sise-chat-screen .sise-ai-typing .chb{min-width:58px;display:flex;flex-direction:column;gap:7px}
+.sise-typing-dots{display:inline-flex;align-items:center;gap:4px;height:12px}
+.sise-typing-dots i{display:block;width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.45;animation:siseTypingPulse 1.1s infinite ease-in-out}
+.sise-typing-dots i:nth-child(2){animation-delay:.16s}.sise-typing-dots i:nth-child(3){animation-delay:.32s}
+@keyframes siseTypingPulse{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-4px);opacity:1}}
 </style>
 
 <style id="sise-drawer-scroll-fix">
@@ -1810,31 +1818,31 @@ function syncAiFab(){let f=document.getElementById('aiFab');const show=cur==='ho
  AIF.t=setTimeout(show1,1800)}
 function chTabs(){const t=(k,l,ico)=>h('button',{type:'button',class:'cht'+(CH.tab===k?' on':''),onclick:()=>{if(CH.tab!==k){CH.tab=k;renderMain()}}},h('span',{class:'cht-ic',html:ic(ico,16)}),h('span',{class:'cht-label'},l));return h('div',{class:'ch-tabs'},t('pub','چت عمومی','messages-square'),t('pm','چت با مدیریت','lock-keyhole'),t('ai','چت با هوش مصنوعی','sparkles'))}
 function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;const u=curUser(),root=h('div',{class:'ch'}),list=h('div',{class:'ch-list'});
- const typingEl=h('small',{class:'sise-typing-live',hidden:true},'IS TAYPING...');
+
  root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic(channel==='ai'?'sparkles':'lock',22)}),h('div',{},h('b',{},channel==='ai'?'چت با هوش مصنوعی':'چت با مدیریت'),h('small',{},channel==='ai'?'پاسخ‌گویی هوشمند درباره محصولات و خدمات SISE':'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'))),list);
  if(!u){add(list,h('div',{class:'empty'},channel==='ai'?'برای استفاده از دستیار هوشمند ابتدا وارد شوید.':'برای چت خصوصی با مدیریت ابتدا وارد شوید.'));root.append(chTabs(),h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'ورود یا ثبت‌نام')));return root}
- let pimg='',sending=false,err='',sig='';const inp=h('input',{class:'in',placeholder:channel==='ai'?'پیام خود را برای هوش مصنوعی بنویسید…':'پیام خود را بنویسید',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
+ let pimg='',sending=false,aiThinking=false,err='',sig='';const inp=h('input',{class:'in',placeholder:channel==='ai'?'پیام خود را برای هوش مصنوعی بنویسید…':'پیام خود را بنویسید',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
  const drawPv=()=>{pv.innerHTML='';pv.hidden=!pimg;if(pimg)add(pv,[h('img',{src:pimg,alt:''}),h('span',{},'عکس آماده ارسال است'),h('button',{type:'button',class:'sb dg','aria-label':'حذف عکس',html:ic('close',16),onclick:()=>{pimg='';drawPv()}})])};
- inp.addEventListener('input',()=>{typingEl.hidden=!inp.value.trim();});
- inp.addEventListener('blur',()=>{typingEl.hidden=true});
+
  const near=()=>list.scrollHeight-list.scrollTop-list.clientHeight<220;
  const draw=stick=>{const keep=stick||near();list.innerHTML='';
   if(err){add(list,h('div',{class:'empty'},pmAuthErr({message:err})?'برای ادامه، دوباره با حساب جیمیل وارد شوید.':pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
   add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},channel==='ai'?'هنوز پیامی نیست؛ هر سؤالی درباره کیف‌ها و خدمات SISE دارید بپرسید.':'هنوز پیامی نیست؛ پیام شما مستقیماً برای مدیریت فروشگاه ارسال می‌شود.'));
+  if(channel==='ai'&&aiThinking)add(list,h('div',{class:'chm isai sise-ai-typing'},cmAvatar({is_admin:true,ai_generated:true}),h('div',{class:'chb'},h('b',{},'دستیار هوشمند SISE'),h('span',{class:'sise-typing-dots','aria-label':'در حال نوشتن'},h('i'),h('i'),h('i')))));
   if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
  const load=async first=>{try{const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const r=await custFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},token,timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
- const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;typingEl.hidden=false;
+ const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
    const tmp={id:'t'+uid(),uid:u.id,text:t,image:url,from_admin:false,created_at:new Date().toISOString()};PM.rows=PM.rows.concat([tmp]);inp.value='';pimg='';drawPv();err='';draw(true);
    try{
     const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const pmId=await custFetch('/rest/v1/rpc/pm_send_auth',{method:'POST',body:{p_name:uName(u),p_text:t,p_image:url,p_channel:channel},token,timeout:10000});
     buzz(12);
-    if(channel==='ai'){try{const access=await custToken();const response=await fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key,Authorization:'Bearer '+access},body:JSON.stringify({message_id:Number(pmId),channel:'ai'})});if(!response.ok){let detail={};try{detail=await response.json()}catch(e){}toast(detail.error==='assistant_not_configured'?'دستیار هوشمند هنوز فعال نشده است':'پیام ثبت شد؛ پاسخ هوشمند موقتاً در دسترس نیست')}}catch(e){toast('پیام ثبت شد؛ اتصال دستیار هوشمند برقرار نشد')}}
+    if(channel==='ai'){aiThinking=true;draw(true);try{const access=await custToken();const response=await fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key,Authorization:'Bearer '+access},body:JSON.stringify({message_id:Number(pmId),channel:'ai'})});if(!response.ok){let detail={};try{detail=await response.json()}catch(e){}toast(detail.error==='assistant_not_configured'?'دستیار هوشمند هنوز فعال نشده است':'پیام ثبت شد؛ پاسخ هوشمند موقتاً در دسترس نیست')}}catch(e){toast('پیام ثبت شد؛ اتصال دستیار هوشمند برقرار نشد')}finally{aiThinking=false;draw(true)}}
    }
    catch(e){PM.rows=PM.rows.filter(x=>x!==tmp);draw();toast(pmSetup(e)?'این بخش هنوز راه‌اندازی نشده است':'ارسال نشد: '+e.message)}}
-  finally{sending=false;typingEl.hidden=true;sig='';load(false)}};
+  finally{sending=false;sig='';load(false)}};
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
- root.append(chTabs(),h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},pv,typingEl,h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>file.click()}),inp,file,h('button',{class:'btn',type:'submit','aria-label':'ارسال'},'ارسال')));
+ root.append(chTabs(),h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},pv,h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>file.click()}),inp,file,h('button',{class:'btn',type:'submit','aria-label':'ارسال'},'ارسال')));
  PM.rows=[];draw(true);load(true);
  PM.timer=setInterval(()=>{if(cur!=='chat'||CH.tab!==channelToTab(channel)||!root.isConnected){clearInterval(PM.timer);PM.timer=0;return}if(!document.hidden)load(false)},5000);
  return root}
