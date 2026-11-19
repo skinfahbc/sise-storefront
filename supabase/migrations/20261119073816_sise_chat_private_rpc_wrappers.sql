@@ -100,5 +100,6 @@ $$;
 revoke all on function public.chat_react(bigint, text, text, text) from public;
 revoke all on function public.chat_mark_read(bigint[], text, text) from public;
 grant execute on function public.chat_react(bigint, text, text, text) to anon, authenticated;
+grant execute on function public.chat_mark_read(bigint[], text, text) to anon, authenticated;
 
 commit;
