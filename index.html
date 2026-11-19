@@ -890,6 +890,10 @@ body.chat-lock #app .sise-chat-screen .sise-ai-typing .chb{min-width:58px;displa
  text-shadow:none;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 5px 14px rgba(0,0,0,.18)!important;
 }
+
+/* Actual chat tab buttons: dark theme contrast */
+:root[data-theme="dark"] .ch-tabs .cht{color:#f4dcae!important;background:rgba(24,18,12,.58)!important;border:1px solid rgba(244,220,174,.42)!important;text-shadow:0 1px 3px rgba(0,0,0,.55)}
+:root[data-theme="dark"] .ch-tabs .cht.on{color:#2a1c08!important;background:linear-gradient(135deg,#f4dcae,#e0b374)!important;border-color:rgba(255,239,205,.9)!important;text-shadow:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 5px 14px rgba(0,0,0,.18)!important}
 </style>
 
 <style id="sise-drawer-scroll-fix">
@@ -1855,7 +1859,7 @@ function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearIn
     if(channel==='ai'){aiThinking=true;draw(true);try{const access=await custToken();const response=await fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key,Authorization:'Bearer '+access},body:JSON.stringify({message_id:Number(pmId),channel:'ai'})});if(!response.ok){aiThinking=false;let detail={};try{detail=await response.json()}catch(e){}toast(detail.error==='assistant_not_configured'?'دستیار هوشمند هنوز فعال نشده است':'پیام ثبت شد؛ پاسخ هوشمند موقتاً در دسترس نیست')}}catch(e){aiThinking=false;toast('پیام ثبت شد؛ اتصال دستیار هوشمند برقرار نشد')}}
    }
    catch(e){PM.rows=PM.rows.filter(x=>x!==tmp);draw();toast(pmSetup(e)?'این بخش هنوز راه‌اندازی نشده است':'ارسال نشد: '+e.message)}}
-  finally{sending=false;sig='';load(false)}};
+  finally{sending=false;load(false)}};
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
  root.append(chTabs(),h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},pv,h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>file.click()}),inp,file,h('button',{class:'btn',type:'submit','aria-label':'ارسال'},'ارسال')));
  PM.rows=[];draw(true);load(true);
