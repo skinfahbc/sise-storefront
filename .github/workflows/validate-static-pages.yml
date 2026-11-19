@@ -26,13 +26,13 @@ jobs:
 
           for (const file of ['index.html', 'admin.html']) {
             const html = fs.readFileSync(file, 'utf8');
-            const re = /<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi;
+            const re = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
             let match, count = 0;
             while ((match = re.exec(html))) {
               const attrs = match[1] || '';
               const source = match[2] || '';
-              if (!source.trim() || /\\bsrc\\s*=/i.test(attrs)) continue;
-              const typeMatch = attrs.match(/\\btype\\s*=\\s*["']([^"']+)["']/i);
+              if (!source.trim() || /\bsrc\s*=/i.test(attrs)) continue;
+              const typeMatch = attrs.match(/\btype\s*=\s*["']([^"']+)["']/i);
               const type = typeMatch ? typeMatch[1].toLowerCase() : 'text/javascript';
               if (!['text/javascript', 'application/javascript', 'module'].includes(type)) continue;
               const ext = type === 'module' ? 'mjs' : 'js';
@@ -40,7 +40,7 @@ jobs:
               fs.writeFileSync(temp, source);
               const result = spawnSync(process.execPath, ['--check', temp], { encoding: 'utf8' });
               if (result.status !== 0) {
-                process.stderr.write(file + ' inline script #' + count + '\\n' + result.stderr);
+                process.stderr.write(file + ' inline script #' + count + '\n' + result.stderr);
                 process.exit(result.status || 1);
               }
               count++;
