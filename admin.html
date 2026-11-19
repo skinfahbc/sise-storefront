@@ -293,6 +293,33 @@ select.in option{color:#222}
 @keyframes tin{from{transform:translate(-50%,20px);opacity:0}}
 .skel{min-height:70vh;display:grid;place-items:center;color:var(--muted)}
 
+/* SISE support center — same store palette, refined layout */
+.sise-support{display:grid;gap:16px}
+.sise-support-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px;border:1px solid var(--gb);border-radius:22px;background:linear-gradient(135deg,var(--sheet),var(--field));box-shadow:var(--shadow)}
+.sise-support-hero h2{margin:0 0 5px;font-size:22px;font-family:var(--disp);font-weight:500}
+.sise-support-hero p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}
+.sise-support-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.sise-support-kpi{padding:14px;border:1px solid var(--gb);border-radius:18px;background:var(--field);min-width:0}
+.sise-support-kpi b{display:block;font-size:22px;font-weight:800;line-height:1.3}
+.sise-support-kpi span{font-size:11px;color:var(--muted)}
+.sise-support-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:14px;align-items:start}
+.sise-support-list{display:flex;flex-direction:column;gap:8px;max-height:620px;overflow:auto}
+.sise-support-thread{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border:1px solid var(--gb);border-radius:16px;background:var(--field);text-align:right;color:var(--fg)}
+.sise-support-thread.active{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.sise-support-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--sheet);border:1px solid var(--gb);font-weight:800;color:var(--accent2)}
+.sise-support-thread main{min-width:0;flex:1}
+.sise-support-thread b,.sise-support-thread small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sise-support-thread small{font-size:11px;color:var(--muted);margin-top:4px}
+.sise-support-pill{font-size:10px;padding:4px 8px;border-radius:30px;background:var(--sheet);border:1px solid var(--gb);white-space:nowrap}
+.sise-support-chat{display:flex;flex-direction:column;gap:10px;min-height:300px}
+.sise-support-msg{max-width:92%;padding:10px 12px;border:1px solid var(--gb);border-radius:15px;background:var(--field);font-size:13px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.sise-support-msg.mine{align-self:flex-start;background:var(--sheet);border-color:var(--accent)}
+.sise-support-msg small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.sise-support-tools{display:flex;flex-wrap:wrap;gap:7px}
+.sise-support-tools button{font-size:12px}
+.sise-support-note{font-size:11px;color:var(--muted);line-height:1.8}
+@media(max-width:700px){.sise-support-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.sise-support-layout{grid-template-columns:1fr}.sise-support-list{max-height:360px}.sise-support-hero h2{font-size:19px}}
+
 /* admin */
 .adm{position:fixed;inset:0;z-index:100;background:var(--bg);overflow-y:auto;color:var(--fg);direction:rtl;padding-bottom:60px}
 .adm::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(60vmax 40vmax at 90% -10%,var(--blob1),transparent),radial-gradient(50vmax 40vmax at 0% 20%,var(--blob2),transparent)}
@@ -1586,7 +1613,7 @@ function stockF(p){const inp=h('input',{class:'in',type:'text',inputmode:'numeri
  sbFetch('/rest/v1/stock?pid=eq.'+encodeURIComponent(p.id)+'&select=qty',{auth:true}).then(r=>{if(r&&r[0]){inp.value=r[0].qty;st.textContent='موجودی فعلی روی سرور'}else{inp.value=+p.stock||0;st.textContent='هنوز در انبار ثبت نشده؛ با «ذخیره موجودی» ثبت می‌شود'}}).catch(e=>{inp.value=+p.stock||0;st.textContent='خطا: '+e.message});
  return h('div',{style:{display:'grid',gap:'6px'}},h('div',{class:'row',style:{flexWrap:'wrap'}},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn',type:'button',onclick:save},'ذخیره موجودی')),st)}
 function lifeF(s){const info=h('small',{class:'fh'},stLeft(s)),sel=h('select',{class:'in',onchange:()=>{s.life=+sel.value;s.created=Date.now();commit();info.textContent=stLeft(s)}},[[24,'۲۴ ساعت'],[72,'۳ روز'],[168,'یک هفته'],[720,'یک ماه'],[0,'بدون انقضا']].map(([v,l])=>h('option',{value:String(v)},l)));sel.value=String(+s.life||0);return h('div',{style:{display:'grid',gap:'6px'}},sel,info,h('small',{class:'fh'},'شمارش از لحظه ثبت یا تغییر مدت شروع می‌شود و بعد از اتمام، استوری در سایت دیده نمی‌شود و با انتشار بعدی از سرور پاک می‌شود.'))}
-const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['users','کاربران','users'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['chat','گفتگوی همگانی','users'],['pm','چت خصوصی با مشتری','lock'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
+const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['users','کاربران','users'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['support','مرکز پشتیبانی','headset'],['chat','گفتگوی همگانی','users'],['pm','چت خصوصی با مشتری','lock'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
 const ADM={open:false,pmUnread:0,pmPeople:0,chatCount:0,chatUnread:0,badgeTimer:0,drawTabs:null};
 const PM_READ_KEY='sise_admin_pm_last_read';
 function markPmRead(rows){
@@ -1760,6 +1787,76 @@ draw(){const D=S.draw,okSt=['paid','processing','shipped','delivered'];let entri
   card('شرکت‌کننده‌ها و انتخاب برنده',h('p',{},'اول «بارگیری» را بزنید تا ثبت‌نام‌ها و سفارش‌ها از سرور بیاید. انتخاب برنده تصادفی است و فقط بین کسانی انجام می‌شود که خرید دارند. بعد از انتخاب، «ذخیره و اعلام» نتیجه را با نام و شماره‌ی نیمه‌پنهان روی برچسب نشان می‌دهد.'),sel,
    h('div',{class:'row'},h('button',{class:'btn sec',onclick:load},'بارگیری شرکت‌کننده‌ها'),h('button',{class:'btn',onclick:pickW},I('gift',18),'انتخاب برنده')),res,list),
   ]},
+support(){
+ let messages=[],users=[],orders=[],loading=true,error='',selected='',channel='management',query='',suggestion='';
+ const box=h('div',{class:'sise-support'}),list=h('div',{class:'sise-support-list'}),thread=h('div',{class:'sise-support-chat'}),reply=h('textarea',{class:'in',rows:3,maxlength:'1000',placeholder:'پاسخ به مشتری را بنویسید…'}),search=h('input',{class:'in',placeholder:'جست‌وجوی نام، شناسه یا متن گفتگو…'});
+ const kpis=h('div',{class:'sise-support-kpis'}),detail=h('div',{class:'lst'}),quick=h('div',{class:'sise-support-tools'});
+ const quickReplies=['سلام، وقت شما بخیر 🌷 چطور می‌توانیم کمکتان کنیم؟','سفارش شما در حال بررسی است؛ نتیجه را همین‌جا اطلاع می‌دهیم.','لطفاً شماره سفارش را ارسال کنید تا دقیق‌تر بررسی کنیم.','ممنون از شکیبایی شما ❤️'];
+ const userName=uid=>{const u=users.find(x=>x.id===uid||x.pm_uid===uid);const m=u?.user_metadata||{};return m.full_name||m.name||u?.email||'مشتری SISE'};
+ const userInfo=uid=>users.find(x=>x.id===uid||x.pm_uid===uid)||null;
+ const date=v=>v?new Date(v).toLocaleString('fa-IR',{dateStyle:'short',timeStyle:'short'}):'';
+ const current=()=>messages.filter(x=>x.uid===selected&&(x.channel||'management')===channel).slice().sort((a,b)=>(+a.id)-(+b.id));
+ const drawKpis=()=>{
+  const incoming=messages.filter(x=>!x.from_admin&&x.channel!=='ai');
+  const waiting=new Set(incoming.filter(x=>{const later=messages.some(y=>y.uid===x.uid&&!y.from_admin===false&&y.channel==='management'&&(+y.id)>(+x.id));return !later}).map(x=>x.uid));
+  const ai=messages.filter(x=>x.channel==='ai').length;
+  kpis.innerHTML='';
+  [[new Set(messages.filter(x=>x.channel==='management').map(x=>x.uid)).size,'گفتگوی خصوصی'],[waiting.size,'منتظر پاسخ'],[ai,'پیام‌های دستیار هوشمند']].forEach(([n,l])=>kpis.append(h('div',{class:'sise-support-kpi'},h('b',{},fa(n)),h('span',{},l))));
+ };
+ const drawList=()=>{
+  list.innerHTML='';
+  const groups=new Map();
+  messages.filter(x=>(x.channel||'management')===channel).forEach(x=>{const old=groups.get(x.uid);if(!old||(+x.id)>(+old.id))groups.set(x.uid,x)});
+  const arr=[...groups.entries()].sort((a,b)=>(+b[1].id)-(+a[1].id)).filter(([uid,last])=>(userName(uid)+' '+(last.text||'')).toLowerCase().includes(query.toLowerCase()));
+  if(!arr.length){list.append(h('div',{class:'empty'},loading?'در حال بارگیری گفتگوها…':'گفتگویی پیدا نشد.'));return}
+  arr.forEach(([uid,last])=>list.append(h('button',{type:'button',class:'sise-support-thread'+(selected===uid?' active':''),onclick:()=>{selected=uid;suggestion='';drawThread();drawList();drawDetail()}},
+   h('span',{class:'sise-support-avatar'},userName(uid).slice(0,1)),h('main',{},h('b',{},userName(uid)),h('small',{},last.text||'📷 تصویر'),h('small',{},date(last.created_at))),h('span',{class:'sise-support-pill'},last.from_admin?'پاسخ داده شده':'جدید'))));
+ };
+ const drawDetail=()=>{
+  detail.innerHTML='';const u=userInfo(selected),meta=u?.user_metadata||{},phone=u?.phone||meta.profile_phone||'ثبت نشده';
+  const matched=orders.filter(o=>{const d=o.data||o;return (phone!=='ثبت نشده'&&String(d.phone||'').replace(/\\D/g,'')===String(phone).replace(/\\D/g,''))||(u?.email&&String(d.email||'').toLowerCase()===u.email.toLowerCase())});
+  detail.append(h('b',{},userName(selected)),h('small',{class:'fh'},u?.email||'شناسه مشتری: '+selected),h('div',{},'موبایل: '+phone),h('div',{},'سفارش‌های مرتبط: '+fa(matched.length)));
+  matched.slice(0,4).forEach(o=>{const d=o.data||o;detail.append(h('div',{class:'sise-support-note'},'سفارش '+(d.code||o.code||'—')+' · '+(d.status||'در انتظار بررسی')+' · '+money(d.total||0)))});
+  if(!u)detail.append(h('small',{class:'fh'},'پروفایل کامل در بخش «کاربران» قابل مشاهده است.'));
+ };
+ const makeSuggestion=()=>{
+  const last=current().filter(x=>!x.from_admin).slice(-1)[0];const t=String(last?.text||'').toLowerCase();
+  suggestion=/ارسال|پست|تحویل/.test(t)?'سلام و وقت بخیر 🌷 سفارش شما را از نظر وضعیت ارسال بررسی می‌کنیم. لطفاً شماره سفارش را بفرمایید.':/قیمت|موجود/.test(t)?'سلام 🌷 ممنون از پیامتان. لطفاً محصول موردنظرتان را مشخص کنید تا موجودی و قیمت دقیق را بررسی کنیم.':/مرجوع|تعویض|خراب/.test(t)?'سلام، متأسفیم که چنین تجربه‌ای داشتید. لطفاً شماره سفارش و توضیح مشکل را بفرستید تا پیگیری کنیم.':'سلام و وقت بخیر 🌷 پیام شما دریافت شد. لطفاً کمی بیشتر توضیح دهید تا بهتر راهنمایی‌تان کنیم.';
+  reply.value=suggestion;
+ };
+ const drawThread=()=>{
+  thread.innerHTML='';if(!selected){thread.append(h('div',{class:'empty'},'برای مشاهده گفتگو، یک مشتری را انتخاب کنید.'));return}
+  const rows=current();rows.forEach(m=>thread.append(h('div',{class:'sise-support-msg'+(m.from_admin?' mine':'' )},m.image?h('a',{href:m.image,target:'_blank'},'مشاهده تصویر'):null,m.text||'پیام تصویری',h('small',{},(m.from_admin?'مدیر':'مشتری')+' · '+date(m.created_at)))));
+  if(!rows.length)thread.append(h('div',{class:'empty'},'پیامی در این گفتگو نیست.'));
+ };
+ const send=async()=>{
+  const textValue=reply.value.trim();if(!selected)return toast('ابتدا یک گفتگو را انتخاب کنید');if(!textValue)return toast('متن پاسخ را بنویسید');
+  try{await sbFetch('/rest/v1/pm',{method:'POST',auth:true,headers:{Prefer:'return=minimal'},body:{uid:selected,name:admName(),text:textValue,from_admin:true,channel}});reply.value='';suggestion='';await load();toast('پاسخ ارسال شد')}catch(e){toast('ارسال نشد: '+e.message)}
+ };
+ const load=async()=>{
+  loading=true;error='';drawList();
+  try{
+   const [pm,ai,ur,or]=await Promise.all([
+    sbFetch('/rest/v1/pm?select=*&channel=eq.management&order=id.desc&limit=1500',{auth:true}),
+    sbFetch('/rest/v1/pm?select=*&channel=eq.ai&order=id.desc&limit=1500',{auth:true}),
+    fetch(SB.url+'/functions/v1/sise-otpy-auth',{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+await sbToken(),'Content-Type':'application/json'},body:JSON.stringify({action:'list_users'})}).then(async r=>{const p=await r.json();if(!r.ok)throw new Error(p.error||'users');return p}),
+    sbFetch('/rest/v1/orders?select=code,data,created_at&order=created_at.desc&limit=1000',{auth:true})
+   ]);
+   messages=[...(pm||[]),...(ai||[])];users=ur.users||[];orders=or||[];loading=false;drawKpis();drawList();drawThread();drawDetail();
+  }catch(e){loading=false;error=e.message;drawList();thread.append(h('div',{class:'empty'},'بارگیری اطلاعات ناموفق بود: '+error))}
+ };
+ search.addEventListener('input',()=>{query=search.value;drawList()});
+ quickReplies.forEach(t=>quick.append(h('button',{class:'btn sec',type:'button',onclick:()=>{reply.value=t;reply.focus()}},t.slice(0,22)+'…')));
+ box.append(h('div',{class:'sise-support-hero'},h('div',{},h('h2',{},'مرکز پشتیبانی SISE'),h('p',{},'مدیریت گفتگوها، مشتریان و پیگیری سفارش‌ها در یک فضای یکپارچه')),h('button',{class:'btn sec',onclick:load},I('refresh-cw',16),'بروزرسانی')),
+  kpis,
+  card('صندوق ورودی',h('div',{class:'row'},h('button',{class:'btn sec',onclick:()=>{channel='management';selected='';drawList();drawThread()}},'چت خصوصی'),h('button',{class:'btn sec',onclick:()=>{channel='ai';selected='';drawList();drawThread()}},'گفتگوی هوش مصنوعی')),search,
+   h('div',{class:'sise-support-layout'},list,card('مکالمه انتخاب‌شده',thread,reply,quick,h('div',{class:'row'},h('button',{class:'btn',onclick:send},I('send',16),'ارسال پاسخ'),h('button',{class:'btn sec',onclick:makeSuggestion},I('sparkles',16),'پیشنهاد پاسخ هوشمند')))) ),
+  card('پروفایل مشتری و سفارش‌ها',detail,h('button',{class:'btn sec',onclick:()=>ADM.go('users')},'مدیریت کامل کاربران و سفارش‌ها')),
+  card('پاسخ‌های آماده',h('p',{},'برای درج پاسخ آماده، روی هر عبارت بزنید؛ سپس می‌توانید متن را ویرایش و ارسال کنید.'),quick),
+  card('تنظیمات پشتیبانی و گزارش عملکرد',h('p',{},'گزارش‌ها بر اساس پیام‌های ثبت‌شده در سامانه محاسبه می‌شوند. تنظیمات خودکار در نسخه بعدی پس از اتصال به منطق سرور فعال می‌شوند.'),h('div',{class:'sise-support-kpis'},h('div',{class:'sise-support-kpi'},h('b',{},fa(messages.length)),h('span',{},'کل پیام‌های پشتیبانی')),h('div',{class:'sise-support-kpi'},h('b',{},fa(new Set(messages.map(x=>x.uid)).size)),h('span',{},'مشتری یکتا')),h('div',{class:'sise-support-kpi'},h('b',{},fa(messages.filter(x=>x.from_admin).length)),h('span',{},'پاسخ‌های مدیر'))),
+   h('div',{class:'sise-support-note'},'پاسخ خودکار، مسدودسازی سراسری کاربران و اعلان‌های Push به تنظیمات امن سمت سرور و سیاست دسترسی نیاز دارند؛ این موارد بدون افزودن زیرساخت لازم فعال نمی‌شوند.')));
+ load();return[box]
+},
 dash(){const rev=S.orders.filter(o=>['paid','processing','shipped','delivered'].includes(o.status)).reduce((a,o)=>a+o.total,0);
  return[card('خوش آمدید',h('p',{},'همه بخش‌های سایت از همین‌جا قابل تغییر است. تغییرات بلافاصله ذخیره و روی سایت اعمال می‌شود.'),
   h('div',{class:'stat'},[[S.products.length,'محصول'],[S.stories.length,'استوری'],[S.orders.length,'سفارش'],[S.orders.filter(o=>o.status==='new'||o.status==='paid').length,'سفارش نیازمند بررسی'],[S.users.length,'کاربر ثبت‌نام‌شده'],[money(rev),'فروش تأییدشده']].map(([n,l])=>h('div',{},h('b',{},typeof n==='number'?fa(n):n),h('span',{},l))))),
