@@ -984,6 +984,50 @@ html{overflow-x:hidden;max-width:100%}
 .adm .settings-fatal{padding:24px;border:1px solid #e8b7b7;background:#fff8f8;color:#7e2929}
 @media(max-width:760px){.adm .adm-b{padding:14px 12px 34px;gap:14px}.adm .lux-welcome{padding:22px;min-height:155px}.adm .lux-welcome-mark{width:66px;height:66px;border-radius:20px}.adm .lux-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.adm .lux-metric{padding:14px;gap:9px}.adm .lux-main-grid{grid-template-columns:1fr}.adm .settings-intro{padding:20px}.adm .settings-fields-grid{grid-template-columns:1fr}.adm .settings-card{padding:16px}}
 
+
+/* SISE admin: unify every management section with the overview's two-tone blue palette */
+.adm{
+ --accent:#52799e!important;--accent2:#a9c7df!important;--on-accent:#102b43!important;
+ --bg:#edf3f8!important;--bg2:#e3edf5!important;--fg:#19364f!important;
+ --muted:#637d94!important;--faint:#8da1b3!important;
+ --gb:rgba(76,112,145,.19)!important;--sheet:rgba(255,255,255,.96)!important;
+ --field:rgba(235,242,248,.92)!important;--shadow:0 12px 30px rgba(35,66,92,.075)!important;
+ --blob1:rgba(105,145,180,.17)!important;--blob2:rgba(145,180,208,.15)!important;--blob3:rgba(190,211,229,.12)!important;
+ color:var(--fg)!important;background:var(--bg)!important;color-scheme:light;
+}
+.adm::before{background:radial-gradient(65vmax 45vmax at 92% -12%,rgba(110,151,188,.18),transparent),radial-gradient(55vmax 42vmax at 0% 18%,rgba(169,199,223,.22),transparent)!important}
+.adm .adm-top{background:rgba(248,251,254,.92)!important;border-bottom:1px solid #d9e5ef!important;box-shadow:0 5px 20px rgba(31,62,88,.045)}
+.adm .adm-t h2,.adm .ac h3,.adm .li-h,.adm .fl{color:#19364f}
+.adm .tb{background:linear-gradient(145deg,#fff,#f1f6fa)!important;border:1px solid #d7e3ed!important;color:#496780!important;box-shadow:0 2px 7px rgba(35,66,92,.035)}
+.adm .tb.on{background:linear-gradient(120deg,#183a57 0%,#52799e 100%)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 5px 13px rgba(45,82,113,.2)}
+.adm .glass,.adm .ac,.adm .li,.adm .tgl,.adm .mini .pre,.adm .sharel a,.adm .sharel button{
+ background:linear-gradient(145deg,#fff 0%,#f3f7fb 100%)!important;
+ border:1px solid #dce6ef!important;color:#19364f!important;
+ box-shadow:0 8px 24px rgba(34,65,91,.055),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+.adm .ac{border-radius:20px!important}
+.adm .ac>p,.adm .fh,.adm .fl,.adm .sise-support-note{color:#687f94!important}
+.adm .in,.adm input:not([type=checkbox]):not([type=radio]):not([type=color]),.adm textarea,.adm select{
+ background:#f7fafd!important;border:1px solid #d6e2ec!important;color:#19364f!important;
+}
+.adm .in:focus,.adm input:focus,.adm textarea:focus,.adm select:focus{border-color:#6d93b5!important;box-shadow:0 0 0 3px rgba(82,121,158,.14)!important}
+.adm .btn{background:linear-gradient(120deg,#183a57 0%,#52799e 100%)!important;color:#fff!important;border:1px solid transparent!important;box-shadow:0 5px 13px rgba(45,82,113,.16)}
+.adm .btn.sec,.adm .btn.add{background:linear-gradient(145deg,#edf4f9,#dce9f3)!important;color:#315a7b!important;border:1px solid #cbdce9!important;box-shadow:none}
+.adm .btn.dg{background:linear-gradient(145deg,#fff1f0,#fce5e3)!important;color:#a74440!important;border:1px solid #f0cecb!important}
+.adm .sb{background:linear-gradient(145deg,#edf4f9,#dce9f3)!important;border:1px solid #cbdce9!important;color:#315a7b!important}
+.adm .rg{accent-color:#52799e!important}
+.adm .cp input[type=color]{border-color:#cbdce9!important;background:#f3f7fb!important}
+.adm .li{border-radius:17px!important}
+.adm .li:hover{border-color:#aac3d8!important}
+.adm .sise-support-hero,.adm .settings-intro{background:linear-gradient(115deg,#183a57 0%,#315f83 58%,#6d91b2 100%)!important;color:#fff!important;border:1px solid rgba(255,255,255,.2)!important}
+.adm .sise-support-hero h2,.adm .sise-support-hero p,.adm .settings-intro h2,.adm .settings-intro p{color:#fff!important}
+.adm .sise-support-kpi,.adm .sise-support-list,.adm .sise-support-thread,.adm .sise-support-detail{background:linear-gradient(145deg,#fff,#f3f7fb)!important;border-color:#dce6ef!important;color:#19364f!important}
+.adm .badge,.adm .pill,.adm .tag{border-color:#d4e2ed}
+.adm .btn:not(.dg):hover,.adm .tb:hover{filter:brightness(1.035);transform:translateY(-1px)}
+.adm :focus-visible{outline-color:#52799e}
+.adm .settings-card{background:linear-gradient(145deg,#fff,#f3f7fb)!important}
+@media(max-width:700px){.adm .adm-top{padding-inline:12px}.adm .adm-b{padding-inline:12px}}
+
 </style>
 </head>
 <body>
