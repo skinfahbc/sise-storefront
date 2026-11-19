@@ -1810,16 +1810,19 @@ function syncAiFab(){let f=document.getElementById('aiFab');const show=cur==='ho
  AIF.t=setTimeout(show1,1800)}
 function chTabs(){const t=(k,l,ico)=>h('button',{type:'button',class:'cht'+(CH.tab===k?' on':''),onclick:()=>{if(CH.tab!==k){CH.tab=k;renderMain()}}},h('span',{class:'cht-ic',html:ic(ico,16)}),h('span',{class:'cht-label'},l));return h('div',{class:'ch-tabs'},t('pub','چت عمومی','messages-square'),t('pm','چت با مدیریت','lock-keyhole'),t('ai','چت با هوش مصنوعی','sparkles'))}
 function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;const u=curUser(),root=h('div',{class:'ch'}),list=h('div',{class:'ch-list'});
- root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic(channel==='ai'?'sparkles':'lock',22)}),h('div',{},h('b',{},channel==='ai'?'چت با هوش مصنوعی':'چت با مدیریت'),h('small',{},channel==='ai'?'پاسخ‌گویی هوشمند درباره محصولات و خدمات SISE':'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'))),list);
+ const typingEl=h('small',{class:'sise-typing-live',hidden:true},'IS TYPING');
+ root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic(channel==='ai'?'sparkles':'lock',22)}),h('div',{},h('b',{},channel==='ai'?'چت با هوش مصنوعی':'چت با مدیریت'),h('small',{},channel==='ai'?'پاسخ‌گویی هوشمند درباره محصولات و خدمات SISE':'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'),typingEl)),list);
  if(!u){add(list,h('div',{class:'empty'},channel==='ai'?'برای استفاده از دستیار هوشمند ابتدا وارد شوید.':'برای چت خصوصی با مدیریت ابتدا وارد شوید.'));root.append(chTabs(),h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'ورود یا ثبت‌نام')));return root}
  let pimg='',sending=false,err='',sig='';const inp=h('input',{class:'in',placeholder:channel==='ai'?'پیام خود را برای هوش مصنوعی بنویسید…':'پیام خود را بنویسید',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
  const drawPv=()=>{pv.innerHTML='';pv.hidden=!pimg;if(pimg)add(pv,[h('img',{src:pimg,alt:''}),h('span',{},'عکس آماده ارسال است'),h('button',{type:'button',class:'sb dg','aria-label':'حذف عکس',html:ic('close',16),onclick:()=>{pimg='';drawPv()}})])};
+ inp.addEventListener('input',()=>{typingEl.hidden=!inp.value.trim();});
+ inp.addEventListener('blur',()=>{typingEl.hidden=true});
  const near=()=>list.scrollHeight-list.scrollTop-list.clientHeight<220;
  const draw=stick=>{const keep=stick||near();list.innerHTML='';
   if(err){add(list,h('div',{class:'empty'},pmAuthErr({message:err})?'برای ادامه، دوباره با حساب جیمیل وارد شوید.':pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
   add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},channel==='ai'?'هنوز پیامی نیست؛ هر سؤالی درباره کیف‌ها و خدمات SISE دارید بپرسید.':'هنوز پیامی نیست؛ پیام شما مستقیماً برای مدیریت فروشگاه ارسال می‌شود.'));
   if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
- const load=async first=>{try{const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const r=await custFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},token,timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
+ const load=async first=>{try{const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const r=await custFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},token,timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
    const tmp={id:'t'+uid(),uid:u.id,text:t,image:url,from_admin:false,created_at:new Date().toISOString()};PM.rows=PM.rows.concat([tmp]);inp.value='';pimg='';drawPv();err='';draw(true);
@@ -2425,6 +2428,17 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
  .sise-chat-actions button{width:29px!important;height:29px!important;border-radius:10px!important}
  .sise-chat-actions button svg{width:14px!important;height:14px!important}
  .sise-chat-brand{grid-column:2!important;grid-row:1!important;justify-self:center!important;align-self:center!important;text-align:center!important;white-space:nowrap!important}
+ /* Pin the wordmark to the true geometric center, independent of side controls */
+ .sise-chat-head{position:relative!important;display:grid!important;grid-template-columns:36px minmax(0,1fr) 112px!important}
+ .sise-chat-brand{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;grid-column:auto!important;grid-row:auto!important;width:max-content!important;max-width:calc(100% - 160px)!important;pointer-events:none!important}
+ @media(max-width:390px){.sise-chat-brand{max-width:calc(100% - 145px)!important}}
+ /* Refined animated typing indicator shared by all chat modes */
+ .sise-chat-screen .ch-typing,.sise-chat-screen .sise-typing-live{display:inline-flex!important;align-items:center;gap:7px;margin-top:3px!important;padding:3px 9px!important;border:1px solid rgba(190,153,101,.28)!important;border-radius:999px!important;background:linear-gradient(120deg,rgba(255,255,255,.42),rgba(222,190,145,.16))!important;color:#9b774b!important;font:600 9px/1.5 Georgia,'Times New Roman',serif!important;letter-spacing:.14em!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 3px 10px rgba(126,94,54,.06)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
+ .sise-chat-screen .ch-typing[hidden],.sise-chat-screen .sise-typing-live[hidden]{display:none!important}
+ .sise-chat-screen .ch-typing:after,.sise-chat-screen .sise-typing-live:after{content:'•••';display:inline-block;letter-spacing:3px;color:#c29b65;animation:siseTypingDots 1.15s ease-in-out infinite}
+ @keyframes siseTypingDots{0%,20%{opacity:.28;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}80%,100%{opacity:.42;transform:translateY(0)}}
+ .sise-chat-screen .sise-typing-live{align-self:flex-start;margin:0 5px 4px!important}
+ @media(prefers-reduced-motion:reduce){.sise-chat-screen .ch-typing:after,.sise-chat-screen .sise-typing-live:after{animation:none}}
  .sise-chat-brand b{display:block!important;font-size:19px!important;letter-spacing:.12em!important;padding-left:.12em!important;line-height:1!important}
  .sise-chat-brand small{font-size:6px!important;margin-top:2px!important;line-height:1!important}
  .sise-chat-top{gap:4px!important;padding:7px 9px 8px!important}
