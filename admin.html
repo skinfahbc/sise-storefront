@@ -948,6 +948,42 @@ html{overflow-x:hidden;max-width:100%}
 @keyframes luxCardIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes luxMarkFloat{from{transform:rotate(-7deg) translateY(0)}to{transform:rotate(-3deg) translateY(-5px)}}
 @media(prefers-reduced-motion:reduce){.adm .luxdash,.adm .lux-metric,.adm .lux-shortcut,.adm .lux-bar,.adm .lux-welcome-mark,.adm .lux-panel{animation:none!important;transition:none!important}}
+
+/* SISE admin visual refresh v45 */
+.adm .adm-b{max-width:1280px;padding:22px 22px 44px;gap:20px}
+.adm .luxdash{gap:20px}
+.adm .lux-welcome{background:linear-gradient(118deg,#142b45 0%,#1e4567 58%,#315f83 100%);border:1px solid rgba(160,195,224,.3);color:#fff;min-height:190px;padding:30px 34px;box-shadow:0 18px 42px rgba(16,43,68,.2)}
+.adm .lux-welcome h2{color:#fff;font-size:clamp(23px,3vw,31px)}
+.adm .lux-welcome p,.adm .lux-welcome-meta{color:#d5e3ef}
+.adm .lux-eyebrow{color:#a9c9e3!important}
+.adm .lux-welcome-mark{color:#e4f0fa;border-color:rgba(220,239,255,.32);background:rgba(255,255,255,.12)}
+.adm .lux-metrics{gap:15px}
+.adm .lux-metric{background:linear-gradient(145deg,#fff,#f5f8fb);border:1px solid #dce6ef;border-radius:20px;padding:19px;box-shadow:0 9px 24px rgba(28,57,82,.075)}
+.adm .lux-metric:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#3e6f98,#8eb5d4)}
+.adm .lux-metric-ico,.adm .lux-shortcut-icon{background:#e8f1f8;border:1px solid #d2e2ef;color:#315f83}
+.adm .lux-metric-copy b{color:#18344d}
+.adm .lux-panel{border:1px solid #dce6ef;border-radius:22px;box-shadow:0 10px 28px rgba(28,57,82,.065)}
+.adm .lux-shortcut-grid{gap:11px}
+.adm .lux-shortcut{border:1px solid #e0e8ef;border-radius:17px;background:linear-gradient(145deg,#fff,#f7f9fb);padding:15px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.adm .lux-shortcut:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(35,74,105,.1);border-color:#9dbbd2;background:#fff}
+.adm .settings-pro{display:grid;gap:17px;animation:luxDashIn .35s ease both}
+.adm .settings-intro{padding:24px 26px;border-radius:22px;background:linear-gradient(115deg,#142b45,#2d5b7e);color:#fff;box-shadow:0 14px 30px rgba(20,43,69,.16)}
+.adm .settings-kicker{font-size:10px;letter-spacing:1.8px;color:#b7d2e7;font-weight:800}
+.adm .settings-intro h2{font-size:24px;margin:8px 0}
+.adm .settings-intro p{margin:0;color:#d8e6f1;font-size:13px;line-height:1.9}
+.adm .settings-card{padding:21px;border:1px solid #dce6ef;border-radius:20px;background:#fff;box-shadow:0 8px 24px rgba(25,54,78,.055);gap:15px}
+.adm .settings-card-head{display:flex;align-items:center;gap:12px;padding-bottom:13px;border-bottom:1px solid #e9eff4}
+.adm .settings-card-head h3{margin:0 0 4px;font-size:15px;color:#18344d}
+.adm .settings-card-head small,.adm .settings-help{color:#718397;font-size:12px;line-height:1.8}
+.adm .settings-card-icon{width:42px;height:42px;border-radius:14px;background:#eaf2f8;color:#315f83;display:grid;place-items:center;flex:none}
+.adm .settings-fields-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.adm .settings-field{min-width:0}
+.adm .settings-actions{display:flex;gap:9px;flex-wrap:wrap}
+.adm .settings-card .in{background:#f8fafc;border-color:#dce5ed;color:#18344d}
+.adm .settings-card .in:focus{border-color:#6489a8;box-shadow:0 0 0 3px rgba(100,137,168,.13)}
+.adm .settings-fatal{padding:24px;border:1px solid #e8b7b7;background:#fff8f8;color:#7e2929}
+@media(max-width:760px){.adm .adm-b{padding:14px 12px 34px;gap:14px}.adm .lux-welcome{padding:22px;min-height:155px}.adm .lux-welcome-mark{width:66px;height:66px;border-radius:20px}.adm .lux-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.adm .lux-metric{padding:14px;gap:9px}.adm .lux-main-grid{grid-template-columns:1fr}.adm .settings-intro{padding:20px}.adm .settings-fields-grid{grid-template-columns:1fr}.adm .settings-card{padding:16px}}
+
 </style>
 </head>
 <body>
@@ -2203,14 +2239,39 @@ users(){
   fld('وضعیت',pick(o,'status',STATUSES,()=>sbSaveOrder(o))),h('button',{class:'btn dg',style:{alignSelf:'flex-start'},onclick:e=>{const b=e.currentTarget;if(b.dataset.s){sbFetch('/rest/v1/orders?code=eq.'+encodeURIComponent(o.code),{method:'DELETE',auth:true}).then(()=>{S.orders=S.orders.filter(x=>x!==o);persist();document.querySelector('.tb.on').click()}).catch(er=>toast('حذف نشد: '+er.message))}else{b.dataset.s=1;b.textContent='برای حذف دوباره بزنید'}}},I('trash',16),'حذف سفارش')))):h('div',{class:'empty'},'هنوز سفارشی ثبت نشده است.')),
   card('کاربران ثبت‌نام‌شده',h('small',{class:'fh'},'حساب مشتری‌ها فعلاً روی دستگاه خودشان نگهداری می‌شود؛ نام و تلفن و آدرس هر مشتری داخل سفارش‌هایش هست.'))]},
 _users_old(){return[card('',S.users.length?h('div',{class:'lst'},S.users.map(u=>h('div',{class:'cmt'},h('span',{},`${uName(u)} · ${u.phone}${u.landline?' · ثابت: '+u.landline:''}${u.postal?' · کدپستی: '+u.postal:''}`),h('small',{},new Date(u.created).toLocaleDateString('fa-IR'))))):h('small',{class:'fh'},'کاربری ثبت‌نام نکرده است.'))]},
-settings(){S.pay=S.pay&&typeof S.pay==='object'?S.pay:{card:'',owner:'',bank:'',note:'',gateway:''};S.rack=S.rack&&typeof S.rack==='object'?S.rack:{title:'منتخب‌های SISE',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن کیف کلیک کنید',limit:10,items:[]};const P=S.pay,R=S.rack; if(!Array.isArray(R.items))R.items=[]; if(!('title'in R))R.title='منتخب‌های SISE';if(!('hint'in R))R.hint='انگشت یا موس را روی کیف‌ها بکشید · برای دیدن کیف کلیک کنید';if(!('limit'in R))R.limit=10;const box=h('textarea',{class:'in ta',id:'bk',rows:5,'aria-label':'پشتیبان‌گیری'}),imp=h('textarea',{class:'in ta',id:'bk-in',rows:4,placeholder:'متن پشتیبان را اینجا جایگذاری کنید',style:{minHeight:'90px'}}),pw=h('input',{class:'in',id:'np',placeholder:'رمز جدید (حداقل ۴ کاراکتر)',style:{direction:'ltr'}});
- return[card('تنظیمات سریع رگال',h('p',{},'عنوان، متن راهنما و تعداد کیف‌های رگال را از این بخش هم می‌توانید مدیریت کنید؛ ویرایش عکس‌ها و جزئیات هر کیف در تب «مدیریت رگال» انجام می‌شود.'),fld('عنوان رگال',tx(R,'title')),fld('متن راهنمای رگال',tx(R,'hint',{area:true,rows:2})),fld('تعداد کیف‌های قابل نمایش (۳ تا ۱۰)',tx(R,'limit',{num:true}))),
-  card('اطلاعات پرداخت',g2(fld('شماره کارت',tx(P,'card')),fld('نام صاحب کارت',tx(P,'owner')),fld('بانک',tx(P,'bank')),fld('لینک درگاه پرداخت (اختیاری)',tx(P,'gateway',{ph:'https://…'}))),fld('توضیح برای مشتری',tx(P,'note',{area:true,rows:2}))),
-  card('اتصال به سرور',h('p',{},'حساب مدیر: '+(sbSess()?.email||'—')+'. تغییرات به‌طور خودکار روی سرور ذخیره می‌شوند و برای همه‌ی بازدیدکننده‌ها نمایش داده می‌شوند. رمز مدیر از پنل Supabase ← Authentication ← Users عوض می‌شود.'),h('div',{class:'row'},h('button',{class:'btn',onclick:()=>{sbPush()}},'انتشار همین الان'),h('button',{class:'btn sec',onclick:async()=>{try{const r=await sbPull(10000);if(r){S._ts='';applyRemote(r);refreshStore();document.querySelector('.tb.on').click();toast('از سرور بارگیری شد')}else toast('هنوز چیزی روی سرور نیست')}catch(e){toast(e.message)}}},'بارگیری از سرور'),h('button',{class:'btn sec',onclick:()=>ADM.go('dash')},'بازگشت به داشبورد'))),
-  card('پشتیبان‌گیری و بازگردانی',h('p',{},'داده‌ها فقط در همین مرورگر ذخیره می‌شوند. برای انتقال به مرورگر یا دستگاه دیگر، متن پشتیبان را کپی و در آنجا جایگذاری کنید.'),
-   h('div',{class:'row'},h('button',{class:'btn sec',onclick:()=>{const t=JSON.stringify(S);box.value=t;toast(`متن پشتیبان آماده شد (${fa(Math.round(t.length/1024))} کیلوبایت)`)}},'ساخت متن پشتیبان'),h('button',{class:'btn sec',onclick:()=>{box.value&&copyText(box.value)}},'کپی')),box,
-   fld('بازگردانی از پشتیبان',imp),h('button',{class:'btn',style:{alignSelf:'flex-start'},onclick:()=>{try{const d=JSON.parse(imp.value);if(!d||d.v!==1||!d.products)throw 0;S=d;persist();refreshStore();toast('بازگردانی شد');document.querySelector('.tb.on').click()}catch(e){toast('متن پشتیبان معتبر نیست')}}},'بازگردانی')),
-  card('بازنشانی',h('p',{},'همه‌چیز به داده‌های نمونه برمی‌گردد و تغییرات شما پاک می‌شود.'),h('button',{class:'btn dg',style:{alignSelf:'flex-start'},onclick:e=>{const b=e.currentTarget;if(b.dataset.s){S=seed();V.cart=[];V.orders=[];V.seen={};saveV();persist();refreshStore();toast('بازنشانی شد');document.querySelector('.tb.on').click()}else{b.dataset.s=1;b.textContent='مطمئنید؟ دوباره بزنید'}}},I('undo',16),'بازنشانی به نمونه'))]}
+settings(){
+ try{
+  if(!S||typeof S!=='object')throw new Error('داده‌های فروشگاه بارگذاری نشده‌اند');
+  if(!S.pay||typeof S.pay!=='object'||Array.isArray(S.pay))S.pay={card:'',owner:'',bank:'',note:'',gateway:''};
+  if(!S.rack||typeof S.rack!=='object'||Array.isArray(S.rack))S.rack={title:'منتخب‌های SISE',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن کیف کلیک کنید',limit:10,items:[]};
+  const P=S.pay,R=S.rack;
+  if(!Array.isArray(R.items))R.items=[];
+  if(typeof R.title!=='string')R.title='منتخب‌های SISE';
+  if(typeof R.hint!=='string')R.hint='انگشت یا موس را روی کیف‌ها بکشید · برای دیدن کیف کلیک کنید';
+  if(!Number.isFinite(+R.limit))R.limit=10;
+  const field=(label,obj,key,opt={})=>{
+   const el=h(opt.area?'textarea':'input',{class:'in',type:opt.area?null:(opt.num?'number':'text'),rows:opt.area?(opt.rows||3):null,value:obj[key]==null?'':String(obj[key]),placeholder:opt.ph||'',style:opt.area?{minHeight:'76px'}:null});
+   el.addEventListener('input',()=>{obj[key]=opt.num?(+el.value||0):el.value;commit()});
+   return h('label',{class:'f settings-field'},h('span',{class:'fl'},label),el);
+  };
+  const section=(title,icon,desc,...children)=>h('section',{class:'ac glass settings-card'},h('div',{class:'settings-card-head'},h('span',{class:'settings-card-icon'},I(icon,20)),h('div',{},h('h3',{},title),desc?h('small',{},desc):null)),...children);
+  const backup=h('textarea',{class:'in ta',rows:5,'aria-label':'متن پشتیبان',placeholder:'برای ساخت پشتیبان، دکمه زیر را بزنید…'});
+  const restore=h('textarea',{class:'in ta',rows:4,placeholder:'متن پشتیبان قبلی را اینجا جای‌گذاری کنید'});
+  const session=sbSess();
+  const serverText=h('p',{class:'settings-help'},'حساب مدیر: '+(session&&session.email?session.email:'—')+' · ذخیره تغییرات پس از ویرایش به‌صورت خودکار انجام می‌شود.');
+  const makeBackup=()=>{const raw=JSON.stringify(S);backup.value=raw;toast('نسخه پشتیبان آماده شد · '+fa(Math.round(raw.length/1024))+' کیلوبایت')};
+  const restoreBackup=()=>{try{const data=JSON.parse(restore.value);if(!data||data.v!==1||!Array.isArray(data.products))throw new Error();S=data;persist();refreshStore();toast('پشتیبان بازیابی شد');ADM.go('settings')}catch(e){toast('متن پشتیبان معتبر نیست')}};
+  const resetBtn=h('button',{class:'btn dg',type:'button',onclick:e=>{const b=e.currentTarget;if(b.dataset.confirmed==='yes'){if(!confirm('همه تنظیمات و داده‌های نمونه جایگزین شوند؟'))return;S=seed();V.cart=[];V.orders=[];V.seen={};saveV();persist();refreshStore();toast('داده‌های نمونه بازنشانی شدند');ADM.go('settings')}else{b.dataset.confirmed='yes';b.textContent='برای تأیید، دوباره بزنید'}}},I('undo',16),'بازنشانی داده‌ها');
+  return[h('div',{class:'settings-pro'},
+   h('header',{class:'settings-intro'},h('span',{class:'settings-kicker'},'SISE · CONTROL CENTER'),h('h2',{},'تنظیمات فروشگاه'),h('p',{},'اطلاعات پرداخت، رگال منتخب، همگام‌سازی و نسخه پشتیبان را از یکجا مدیریت کنید.')),
+   section('تنظیمات رگال','hanger','عنوان و راهنمای بخش کیف‌های منتخب',field('عنوان رگال',R,'title'),field('متن راهنما',R,'hint',{area:true,rows:2}),field('تعداد کیف‌های قابل نمایش',R,'limit',{num:true})),
+   section('اطلاعات پرداخت','credit-card','اطلاعاتی که هنگام پرداخت کارت‌به‌کارت به مشتری نمایش داده می‌شود',h('div',{class:'settings-fields-grid'},field('شماره کارت',P,'card'),field('نام صاحب کارت',P,'owner'),field('نام بانک',P,'bank'),field('لینک درگاه پرداخت',P,'gateway',{ph:'https://…'})),field('توضیح برای مشتری',P,'note',{area:true,rows:2})),
+   section('اتصال و همگام‌سازی','cloud','مدیریت ارتباط پنل با سرور',serverText,h('div',{class:'settings-actions'},h('button',{class:'btn',type:'button',onclick:()=>sbPush()},I('upload-cloud',16),'انتشار تغییرات'),h('button',{class:'btn sec',type:'button',onclick:async()=>{try{const row=await sbPull(10000);if(row){S._ts='';applyRemote(row);refreshStore();toast('اطلاعات از سرور دریافت شد');ADM.go('settings')}else toast('داده‌ای روی سرور پیدا نشد')}catch(e){toast('خطا در دریافت: '+e.message)}}},I('download-cloud',16),'دریافت از سرور'))),
+   section('پشتیبان‌گیری و بازیابی','database','برای انتقال امن اطلاعات بین مرورگرها',h('div',{class:'settings-actions'},h('button',{class:'btn sec',type:'button',onclick:makeBackup},I('file-down',16),'ساخت نسخه پشتیبان'),h('button',{class:'btn sec',type:'button',onclick:()=>backup.value&&copyText(backup.value)},I('copy',16),'کپی متن')),backup,field('بازیابی از نسخه پشتیبان', {value:restore.value},'value',{area:true,rows:1}),restore,h('button',{class:'btn',type:'button',onclick:restoreBackup},I('refresh-cw',16),'بازیابی اطلاعات')),
+   section('بازنشانی','alert-triangle','این کار داده‌های فعلی را با اطلاعات نمونه جایگزین می‌کند',resetBtn)
+  )];
+ }catch(err){console.error('SISE settings render failed',err);return[h('section',{class:'ac glass settings-fatal'},h('h2',{},'تنظیمات بارگذاری نشد'),h('p',{},'خطای داخلی: '+String(err&&err.message||err)),h('button',{class:'btn',onclick:()=>ADM.go('dash')},'بازگشت به داشبورد'))]}
+}
 };
 window.ADMIN_PAGE=true;window.OPEN_ADMIN=true;boot();
 </script>
