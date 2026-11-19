@@ -909,6 +909,24 @@ body.chat-lock #app .sise-chat-screen .sise-ai-typing .chb{min-width:58px;displa
  backdrop-filter:none!important;
  overflow:visible!important;
 }
+
+/* Final override: remove the inherited tray behind chat mode buttons */
+.sise-chat-top .ch-tabs.sise-chat-tabs{
+ display:flex!important;gap:5px!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;overflow:visible!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+:root[data-theme="dark"] .sise-chat-top .ch-tabs.sise-chat-tabs .cht{
+ color:#f4dcae!important;background:rgba(35,25,16,.82)!important;
+ border:1px solid rgba(244,220,174,.5)!important;
+ text-shadow:0 1px 3px rgba(0,0,0,.6)!important;
+}
+:root[data-theme="dark"] .sise-chat-top .ch-tabs.sise-chat-tabs .cht.on{
+ color:#2a1c08!important;background:linear-gradient(135deg,#f7e1b9,#d9ad70)!important;
+ border-color:rgba(255,244,220,.95)!important;text-shadow:none!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 5px 14px rgba(0,0,0,.2)!important;
+}
 </style>
 
 <style id="sise-drawer-scroll-fix">
