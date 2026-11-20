@@ -1540,6 +1540,18 @@ function cartView(){const lines=V.cart.map(l=>({l,i:lineInfo(l)})).filter(x=>x.i
    h('h3',{style:{margin:0}},'اطلاعات ارسال'),name,phone,addr,note,h('button',{class:'pbtn',type:'submit'},I('check',20),'ثبت سفارش'))]}
 const myOrders=()=>S.orders.filter(o=>V.orders.includes(o.code));
 const stName=k=>(STATUSES.find(s=>s[0]===k)||[0,k])[1];
+function orderDisplayCode(o){
+ const all=[...S.orders].sort((a,b)=>(a.created||0)-(b.created||0)),used=new Set();
+ for(const x of all){
+  const raw=String(x.code||'');
+  let n=/^K\\d{6}$/.test(raw)?raw.slice(1):raw.replace(/\\D/g,'').slice(-6).padStart(6,'0');
+  let code='K'+n;
+  while(used.has(code))code='K'+String((+code.slice(1)+1)%1000000).padStart(6,'0');
+  used.add(code);
+  if(x===o)return code;
+ }
+ return 'K000000';
+}
 function orderCard(o){const steps=STATUSES.slice(0,5),idx=steps.findIndex(s=>s[0]===o.status);
  return h('div',{class:'oc glass'},h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px'}},h('b',{style:{direction:'ltr'}},o.code),h('span',{class:'pill'},stName(o.status))),
   h('small',{style:{color:'var(--muted)'}},new Date(o.created).toLocaleDateString('fa-IR')+' · '+o.items.map(i=>`${i.title}${i.color?' ('+i.color+')':''} × ${fa(i.qty)}`).join('، ')),h('div',{class:'price'},money(o.total)),
@@ -2418,7 +2430,7 @@ users(){
  const summary=h('div',{class:'row',style:{justifyContent:'space-between'}},count,h('button',{class:'btn sec',onclick:load},'بروزرسانی'));
  load();
  return [card('پرونده مشتریان و گفتگوها',summary,search,list)];
-},orders(){const l=S.orders;return[h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:async()=>{try{await loadAdminOrders();document.querySelector('.tb.on').click();toast('بروزرسانی شد')}catch(e){toast(e.message)}}},'بروزرسانی سفارش‌ها از سرور'),card('سفارش‌ها',l.length?h('div',{class:'lst'},l.map(o=>h('div',{class:'li'},h('div',{class:'li-h'},h('b',{style:{direction:'ltr'}},o.code),h('span',{class:'pill'},stName(o.status))),
+},orders(){const l=S.orders;return[h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:async()=>{try{await loadAdminOrders();document.querySelector('.tb.on').click();toast('بروزرسانی شد')}catch(e){toast(e.message)}}},'بروزرسانی سفارش‌ها از سرور'),card('سفارش‌ها',l.length?h('div',{class:'lst'},l.map(o=>h('div',{class:'li'},h('div',{class:'li-h'},h('b',{style:{direction:'ltr'}},orderDisplayCode(o)),h('span',{class:'pill'},stName(o.status))),
   h('div',{style:{color:'var(--muted)',fontSize:'13px'}},`${o.name} · ${o.phone}`),h('div',{style:{fontSize:'13px'}},o.address),o.note?h('small',{class:'fh'},'توضیح: '+o.note):null,
   h('div',{},o.items.map(i=>h('div',{style:{fontSize:'13px'}},`${i.title}${i.color?' ('+i.color+')':''} × ${fa(i.qty)}`))),h('b',{style:{color:'var(--accent2)'}},money(o.total)),o.discount?h('small',{class:'fh'},'کد تخفیف: '+(o.coupon?o.coupon.code+' ('+fa(o.coupon.percent)+'٪)':'')+' · مقدار تخفیف: '+money(o.discount)):null,o.ship?h('small',{class:'fh'},'روش ارسال: '+o.ship.title+' · '+(o.ship.price?money(o.ship.price):(o.ship.courier?'هماهنگی با ادمین':'رایگان'))):null,o.payRef?h('small',{class:'fh'},'شماره پیگیری پرداخت: '+o.payRef):null,
   fld('وضعیت',pick(o,'status',STATUSES,()=>sbSaveOrder(o))),h('button',{class:'btn dg',style:{alignSelf:'flex-start'},onclick:e=>{const b=e.currentTarget;if(b.dataset.s){sbFetch('/rest/v1/orders?code=eq.'+encodeURIComponent(o.code),{method:'DELETE',auth:true}).then(()=>{S.orders=S.orders.filter(x=>x!==o);persist();document.querySelector('.tb.on').click()}).catch(er=>toast('حذف نشد: '+er.message))}else{b.dataset.s=1;b.textContent='برای حذف دوباره بزنید'}}},I('trash',16),'حذف سفارش')))):h('div',{class:'empty'},'هنوز سفارشی ثبت نشده است.')),
