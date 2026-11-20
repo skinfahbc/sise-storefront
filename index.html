@@ -1249,7 +1249,7 @@ function openPage(id,obj){const p=obj||(S.pages||[]).find(x=>x.id===id)||(S.page
  card.addEventListener('touchend',e=>{if(y0-e.changedTouches[0].clientY>70&&body.scrollTop<=0||y0-e.changedTouches[0].clientY>70&&body.scrollHeight<=body.clientHeight)cl()},{passive:true});
  requestAnimationFrame(()=>requestAnimationFrame(()=>ov.classList.add('in')))}
 function callSupport(){const n=normNum(S.store.phone);if(!n){toast('شماره پشتیبانی هنوز ثبت نشده');return}location.href='tel:'+n}
-function fixup(s){nmFix(s);s.store=s.store||{};if(s.store.name==='\u0627\u0644\u0627\u06cc'||s.store.name==='ال آی')s.store.name='SISE';Object.assign(s.store,{loadingLogo:s.store.loadingLogo||'',loadingTitle:s.store.loadingTitle||'SISE',loadingText:s.store.loadingText||'DISCOVER YOUR STYLE',loadingBg:(s.store.loadingBg==='#17110b'?'#efe2d2':(s.store.loadingBg||'#efe2d2')),loadingAccent:(s.store.loadingAccent==='#e0b374'?'#68442e':(s.store.loadingAccent||'#68442e')),loadingDuration:s.store.loadingDuration==null?1500:s.store.loadingDuration,loadingEnabled:s.store.loadingEnabled!==false});if(!Array.isArray(s.pages)||!s.pages.length)s.pages=DEF_PAGES();(s.links||[]).forEach(l=>{if(l.target==='about')l.target='page:about';else if(/^url:https?:\/\/example\.com\/?$/.test(l.target||'')&&/قوانین/.test(l.label||''))l.target='page:rules';else if(l.target==='contact')l.target='call'});(s.stories||[]).forEach(x=>{if(!x.created)x.created=Date.now();if(x.life==null)x.life=0});purgeSt(s);s.luxury=Object.assign({enabled:true,logo:'',kicker:'A LITTLE MORE YOU',edition:'026 / AUTUMN EDIT',title:'استایل تو،',highlight:'قانون خودش',after:'را دارد.',description:'برای ترکیب کردن، دوباره پوشیدن و ساختن استایلی که فقط شبیه خودت باشد.',button:'کشف کالکشن لوکس',everyday:'THE ART OF EVERYDAY',items:[]},s.luxury||{});if(!Array.isArray(s.luxury.items))s.luxury.items=[];s.rack=Object.assign({title:'تخفیف‌خورده‌ها',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید',limit:10},s.rack||{});delete s.adminOpen;s.fx=Object.assign({reveal:true,skeleton:true,lift:true,haptic:true,fly:true},s.fx||{});s.store.logoH=s.store.logoH||52;s.orders=s.orders||[];s.users=s.users||[];s.admin=s.admin||{pass:'1234'};s.coupons=Array.isArray(s.coupons)?s.coupons:[];s.ship=Object.assign({phone:'',courierText:'هماهنگی ارسال با ادمین فروشگاه',methods:[{id:'post',title:'پست',price:60000,desc:'ارسال با پست معمولی (۵ تا ۱۰ روز کاری)',on:true},{id:'express',title:'پست پیشتاز',price:90000,desc:'ارسال سریع‌تر (۲ تا ۴ روز کاری)',on:true},{id:'courier',title:'پیک / اسنپ',price:0,desc:'هزینه طبق تعرفه، هماهنگی با ادمین فروشگاه',on:true,courier:true}]},s.ship||{});s.draw=Object.assign({enabled:false,id:uid(),rev:0,title:'قرعه‌کشی ویژه مشتریان',text:'با ثبت‌نام و خرید از فروشگاه در قرعه‌کشی شرکت کنید و برنده جایزه شوید.',prize:'',date:'',btn:'ثبت در قرعه‌کشی',cancel:'فعلاً نه',winners:1,result:[]},s.draw||{});
+function fixup(s){nmFix(s);s.store=s.store||{};if(s.store.name==='\u0627\u0644\u0627\u06cc'||s.store.name==='ال آی')s.store.name='SISE';Object.assign(s.store,{loadingLogo:s.store.loadingLogo||'',loadingTitle:s.store.loadingTitle||'SISE',loadingText:s.store.loadingText||'DISCOVER YOUR STYLE',loadingBg:(s.store.loadingBg==='#17110b'?'#efe2d2':(s.store.loadingBg||'#efe2d2')),loadingAccent:(s.store.loadingAccent==='#e0b374'?'#68442e':(s.store.loadingAccent||'#68442e')),loadingDuration:s.store.loadingDuration==null?1500:s.store.loadingDuration,loadingEnabled:s.store.loadingEnabled!==false});if(!Array.isArray(s.pages)||!s.pages.length)s.pages=DEF_PAGES();(s.links||[]).forEach(l=>{if(l.target==='about')l.target='page:about';else if(/^url:https?:\/\/example\.com\/?$/.test(l.target||'')&&/قوانین/.test(l.label||''))l.target='page:rules';else if(l.target==='contact')l.target='call'});(s.stories||[]).forEach(x=>{if(!x.created)x.created=Date.now();if(x.life==null)x.life=0});purgeSt(s);s.luxury=Object.assign({enabled:true,logo:'',kicker:'',edition:'',title:'',highlight:'',after:'',description:'',button:'',everyday:'',items:[]},s.luxury||{});[['kicker','A LITTLE MORE YOU'],['edition','026 / AUTUMN EDIT'],['title','استایل تو،'],['highlight','قانون خودش'],['after','را دارد.'],['description','برای ترکیب کردن، دوباره پوشیدن و ساختن استایلی که فقط شبیه خودت باشد.'],['button','کشف کالکشن لوکس'],['everyday','THE ART OF EVERYDAY']].forEach(([k,v])=>{if(s.luxury[k]===v)s.luxury[k]=''});if(!Array.isArray(s.luxury.items))s.luxury.items=[];s.rack=Object.assign({title:'تخفیف‌خورده‌ها',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید',limit:10},s.rack||{});delete s.adminOpen;s.fx=Object.assign({reveal:true,skeleton:true,lift:true,haptic:true,fly:true},s.fx||{});s.store.logoH=s.store.logoH||52;s.orders=s.orders||[];s.users=s.users||[];s.admin=s.admin||{pass:'1234'};s.coupons=Array.isArray(s.coupons)?s.coupons:[];s.ship=Object.assign({phone:'',courierText:'هماهنگی ارسال با ادمین فروشگاه',methods:[{id:'post',title:'پست',price:60000,desc:'ارسال با پست معمولی (۵ تا ۱۰ روز کاری)',on:true},{id:'express',title:'پست پیشتاز',price:90000,desc:'ارسال سریع‌تر (۲ تا ۴ روز کاری)',on:true},{id:'courier',title:'پیک / اسنپ',price:0,desc:'هزینه طبق تعرفه، هماهنگی با ادمین فروشگاه',on:true,courier:true}]},s.ship||{});s.draw=Object.assign({enabled:false,id:uid(),rev:0,title:'قرعه‌کشی ویژه مشتریان',text:'با ثبت‌نام و خرید از فروشگاه در قرعه‌کشی شرکت کنید و برنده جایزه شوید.',prize:'',date:'',btn:'ثبت در قرعه‌کشی',cancel:'فعلاً نه',winners:1,result:[]},s.draw||{});
  if(!s.navChat){s.navChat=1;if(Array.isArray(s.nav)&&!s.nav.some(n=>n.view==='chat')){const i=s.nav.findIndex(n=>n.view==='pay');if(i>=0)s.nav[i]={id:s.nav[i].id,label:'گفتگو',icon:'comment',view:'chat'}}}
  return s}
 async function loadState(){let s=null;try{s=await Promise.race([dbGet(),new Promise(resolve=>setTimeout(()=>resolve(null),2500))])}catch(e){}HAD_CACHE=!!(s&&s.v===1);if(!s||s.v!==1)s=seed();if(s.mv!==2){s.theme.mode='light';s.mv=2}fixup(s);S=s;persist()}
@@ -1559,27 +1559,46 @@ function saleRail(){
 function luxurySpotlight(){
  const L=S.luxury||{};
  if(L.enabled===false)return null;
- const items=(L.items||[]).filter(it=>it&&it.active!==false&&prod(it.productId));
+ const items=(L.items||[]).filter(it=>it&&it.active!==false&&(it.image||it.productId||it.title));
  const logo=L.logo||S.store.logo;
- const goFirst=()=>{const p=items.length?prod(items[0].productId):null;if(p)openProduct(p.id);else go('categories')};
- const cards=items.slice(0,5).map(it=>{
-  const p=prod(it.productId),src=it.image||(p.images&&p.images[0])||p.rackImage||'';
+ const cards=items.slice(0,8).map(it=>{
+  const p=it.productId?prod(it.productId):null;
+  const src=it.image||(p&&(p.images&&p.images[0]||p.rackImage))||'';
   if(!src)return null;
-  const name=p.title||it.title||'کیف منتخب';
-  return h('button',{class:'lux-item',type:'button',onclick:()=>openProduct(p.id),'aria-label':'مشاهده '+name},
-   h('img',{src:src,alt:name,loading:'lazy'}),
-   h('span',{class:'lux-item-info'},h('b',{},name),h('small',{},money(p.price)+' '+(S.store.currency||'تومان')))
+  const name=it.title||p&&p.title||'';
+  const price=Number(it.price)>0?Number(it.price):p&&Number(p.price)||0;
+  const oldPrice=Number(it.oldPrice)>0?Number(it.oldPrice):p&&Number(p.oldPrice)||0;
+  const desc=it.description||p&&(p.desc||p.description)||'';
+  const details=[it.color,it.material,it.dimensions].filter(Boolean).join(' · ');
+  const open=()=>{
+   if(p)return openProduct(p.id);
+   let close=()=>{};
+   close=openModal(h('div',{class:'ac glass',style:{maxWidth:'560px',margin:'auto',padding:'20px',maxHeight:'85vh',overflow:'auto'}},
+    h('button',{class:'btn sec',type:'button',onclick:()=>close()},'بستن'),
+    h('img',{src,alt:name,style:{width:'100%',maxHeight:'360px',objectFit:'contain',borderRadius:'18px',background:'#fff',marginTop:'12px'}}),
+    name?h('h2',{},name):null,
+    desc?h('p',{style:{lineHeight:'2'}},desc):null,
+    details?h('small',{},details):null,
+    price?h('div',{style:{fontWeight:'900',fontSize:'20px',margin:'14px 0'}},money(price)):null,
+    oldPrice>price?h('del',{},money(oldPrice)):null,
+    h('button',{class:'btn',type:'button',style:{width:'100%',marginTop:'14px'},onclick:()=>{close();openContact()}},'درخواست سفارش / تماس با فروشگاه')
+   ));
+  };
+  return h('button',{class:'lux-item',type:'button',onclick:open,'aria-label':'مشاهده '+name},
+   h('img',{src,alt:name,loading:'lazy'}),
+   h('span',{class:'lux-item-info'},name?h('b',{},name):null,price?h('small',{},money(price)):null)
   );
  }).filter(Boolean);
- const gallery=cards.length?cards:h('div',{class:'lux-empty'},h('b',{},'کالکشن لوکس به‌زودی'),h('span',{},'کیف‌های منتخب را از پنل مدیریت اضافه کنید.'));
+ const gallery=cards.length?cards:h('div',{class:'lux-empty'},h('b',{},'کالکشن هنوز محصولی ندارد'),h('span',{},'از پنل مدیریت کیف‌ها را اضافه و منتشر کنید.'));
+ const hasHeading=!!(L.kicker||L.edition||L.title||L.highlight||L.after||L.description||L.button);
  return h('section',{class:'lux-spot'},
-  h('div',{class:'lux-logo-notch'},logo?h('img',{src:logo,alt:'لوگوی کالکشن'}):h('span',{class:'lux-logo-fallback'},'S')),
-  h('div',{class:'lux-kicker'},L.kicker||'A LITTLE MORE YOU'),
-  h('div',{class:'lux-edition'},L.edition||'026 / AUTUMN EDIT'),
-  h('h2',{class:'lux-title'},h('span',{},L.title||'استایل تو، '),h('mark',{},L.highlight||'قانون خودش'),h('span',{},L.after||' را دارد.')),
-  h('p',{class:'lux-desc'},L.description||''),
-  h('button',{class:'lux-cta',type:'button',onclick:goFirst},h('span',{},L.button||'کشف کالکشن لوکس'),h('span',{class:'lux-arrow'},'↗')),
-  h('div',{class:'lux-gallery'},gallery,h('span',{class:'lux-everyday'},L.everyday||'THE ART OF EVERYDAY'))
+  logo?h('div',{class:'lux-logo-notch'},h('img',{src:logo,alt:'لوگوی کالکشن'})):null,
+  L.kicker?h('div',{class:'lux-kicker'},L.kicker):null,
+  L.edition?h('div',{class:'lux-edition'},L.edition):null,
+  (L.title||L.highlight||L.after)?h('h2',{class:'lux-title'},L.title?h('span',{},L.title):null,L.highlight?h('mark',{},L.highlight):null,L.after?h('span',{},L.after):null):null,
+  L.description?h('p',{class:'lux-desc'},L.description):null,
+  L.button?h('button',{class:'lux-cta',type:'button',onclick:()=>{const it=items.find(x=>x.productId&&prod(x.productId));if(it)openProduct(it.productId);else if(items[0]){const el=document.querySelector('.lux-item');el&&el.click()}else go('categories')}},h('span',{},L.button),h('span',{class:'lux-arrow'},'↗')):null,
+  h('div',{class:'lux-gallery'},gallery,L.everyday?h('span',{class:'lux-everyday'},L.everyday):null)
  );
 }
 function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;return[
