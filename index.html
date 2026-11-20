@@ -1570,15 +1570,16 @@ function luxurySpotlight(){
  let n=0,closeDetail;const photo=h('img',{src:items[0]?.src||'',alt:items[0]?.name||'',draggable:false,loading:'eager'});
  const frame=h('button',{class:'lux-reference-photo',type:'button',onclick:detail,'aria-label':'برای مشاهده قیمت و مشخصات لمس کنید'},photo,h('span',{class:'lux-reference-outline'}),h('span',{class:'lux-reference-ribbon'},L.everyday||'THE ART OF EVERYDAY'),h('span',{class:'lux-reference-touch'},'لمس برای مشاهده جزئیات'));
  const stage=h('div',{class:'lux-reference-stage'},frame);
+ const controls=h('div',{class:'lux-reference-controls'},h('button',{type:'button',class:'lux-reference-nav',onclick:()=>show(n-1),'aria-label':'عکس قبلی'},'‹'),h('span',{class:'lux-reference-count','aria-live':'polite'},'1 / '+items.length),h('button',{type:'button',class:'lux-reference-nav',onclick:()=>show(n+1),'aria-label':'عکس بعدی'},'›'));
  const dots=h('div',{class:'lux-reference-dots','aria-label':'موقعیت تصویر'}); 
- function show(i){if(!items.length)return;n=(i+items.length)%items.length;const x=items[n];photo.classList.remove('lux-reference-enter');photo.src=x.src;photo.alt=x.name;void photo.offsetWidth;photo.classList.add('lux-reference-enter');[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===n))}
+ function show(i){if(!items.length)return;n=(i+items.length)%items.length;const x=items[n];photo.classList.remove('lux-reference-enter');photo.src=x.src;photo.alt=x.name;void photo.offsetWidth;photo.classList.add('lux-reference-enter');[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===n));const count=controls.querySelector('.lux-reference-count');if(count)count.textContent=(n+1)+' / '+items.length;}
  items.forEach((x,i)=>dots.append(h('button',{type:'button',class:'lux-reference-dot'+(i===0?' on':''),onclick:()=>show(i),'aria-label':'نمایش تصویر '+(i+1)})));
  function detail(){if(!items.length)return;const x=items[n],linked=!!x.p;const body=h('div',{class:'lux-detail-body'},h('div',{class:'lux-detail-top'},'جزئیات محصول',h('button',{class:'lux-detail-close',onclick:()=>closeDetail()},'×')),h('img',{src:x.src,alt:x.name,style:{width:'100%',aspectRatio:'1/1',objectFit:'contain',borderRadius:'18px',background:'#f7f3ed'}}),h('h2',{},x.name),x.price?h('div',{class:'lux-detail-price'},money(x.price),x.old>x.price?h('del',{},money(x.old)):null):null,x.desc?h('p',{class:'lux-detail-desc'},x.desc):null,x.spec?h('div',{class:'lux-detail-spec'},x.spec):null,linked?h('div',{class:'lux-detail-actions'},h('button',{class:'btn lux-detail-add',onclick:()=>{const p=x.p,defaultColor=p.colors&&p.colors[0]?p.colors[0].id:'';if(addCart(p.id,defaultColor,1)===false)return;closeDetail();toast('به سبد خرید اضافه شد');go('cart')}},'افزودن به سبد خرید'),h('button',{class:'btn sec',onclick:()=>{closeDetail();openProduct(x.p.id)}},'مشاهده محصول و انتخاب رنگ')):h('div',{class:'lux-link-note'},'این کیف هنوز به محصول قابل خرید فروشگاه متصل نیست.',h('button',{class:'btn sec',onclick:()=>{closeDetail();openContact()}},'تماس با فروشگاه')));closeDetail=openModal(h('div',{class:'lux-detail-sheet'},body))}
  let touchX=0,touchY=0;frame.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});frame.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2)show(n+(dx<0?1:-1))},{passive:true});
  let down=false,startX=0;frame.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){down=true;startX=e.clientX}});frame.addEventListener('pointerup',e=>{if(down){const dx=e.clientX-startX;down=false;if(Math.abs(dx)>45)show(n+(dx<0?1:-1))}});frame.addEventListener('pointerleave',()=>down=false);
  if(items.length)show(0);
- const copy=h('div',{class:'lux-reference-copy'},L.kicker?h('div',{class:'lux-kicker'},L.kicker):null,L.edition?h('div',{class:'lux-edition'},L.edition):null,(L.title||L.highlight||L.after)?h('h2',{class:'lux-title'},L.title?h('span',{},L.title):null,L.highlight?h('mark',{},L.highlight):null,L.after?h('span',{},L.after):null):null,L.description?h('p',{class:'lux-desc'},L.description):null,L.button?h('button',{class:'lux-reference-cta',onclick:()=>items.length?detail():go('categories')},h('span',{class:'lux-reference-cta-icon'},'↗'),h('span',{},L.button)):null);
- const gallery=h('div',{class:'lux-reference-gallery'},items.length?[stage,dots]:h('div',{class:'lux-empty'},'کالکشن هنوز محصولی ندارد'));
+ const copy=h('div',{class:'lux-reference-copy'},L.kicker?h('div',{class:'lux-kicker'},L.kicker):null,L.edition?h('div',{class:'lux-edition'},L.edition):null,(L.title||L.highlight||L.after)?h('h2',{class:'lux-title lux-reference-title'},L.title?h('span',{class:'lux-reference-title-lead'},L.title):null,(L.highlight||L.after)?h('mark',{class:'lux-reference-title-mark'},h('span',{},[L.highlight,L.after].filter(Boolean).join(' '))):null):null,L.description?h('p',{class:'lux-desc'},L.description):null,L.button?h('button',{class:'lux-reference-cta',onclick:()=>items.length?detail():go('categories')},h('span',{class:'lux-reference-cta-icon'},'↗'),h('span',{},L.button)):null);
+ const gallery=h('div',{class:'lux-reference-gallery'},items.length?[stage,controls,dots]:h('div',{class:'lux-empty'},'کالکشن هنوز محصولی ندارد'));
  return h('section',{class:'lux-reference-editorial'},copy,gallery)
 }
 function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;return[
@@ -2944,6 +2945,26 @@ boot();
  .lux-reference-ribbon{min-height:155px;padding:14px 9px;font-size:8px;letter-spacing:2.2px;border-radius:15px 0 0 15px}
  .lux-reference-touch{opacity:1;transform:none;left:10px;bottom:10px;font-size:10px;padding:7px 11px}
  .lux-reference-dots{margin-top:20px}
+}
+</style>
+
+<style id="sise-luxury-navigation-type-v7">
+/* Typography: intentional two-line Persian editorial headline */
+.lux-reference-editorial .lux-reference-title{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;width:100%!important;max-width:100%!important;line-height:1.55!important;overflow:visible!important}
+.lux-reference-editorial .lux-reference-title-lead{display:block!important;white-space:normal!important;max-width:100%!important}
+.lux-reference-editorial .lux-reference-title-mark{display:inline-flex!important;align-items:center!important;align-self:flex-start!important;max-width:100%!important;width:max-content!important;white-space:normal!important;padding:2px 15px 7px!important;margin:0!important;border-radius:28px 18px 30px 16px!important;background:#dfc7b2!important;color:#854c37!important;line-height:1.55!important;box-shadow:none!important;transform:rotate(-1.5deg)!important;transform-origin:right center!important;overflow-wrap:anywhere!important}
+.lux-reference-editorial .lux-reference-title-mark>span{display:block!important;transform:rotate(1.5deg)!important}
+.lux-reference-editorial .lux-reference-controls{display:flex!important;align-items:center!important;justify-content:center!important;gap:22px!important;width:100%!important;margin:20px auto 0!important;direction:ltr!important}
+.lux-reference-editorial .lux-reference-nav{display:grid!important;place-items:center!important;width:46px!important;height:46px!important;min-width:46px!important;padding:0!important;border:1px solid #bca58e!important;border-radius:50%!important;background:#f8f1e8!important;color:#51392c!important;font-family:Georgia,serif!important;font-size:30px!important;line-height:1!important;box-shadow:0 5px 14px rgba(67,48,31,.10)!important;cursor:pointer!important;transition:transform .2s,background .2s,box-shadow .2s!important}
+.lux-reference-editorial .lux-reference-nav:active{transform:scale(.92)!important;background:#e8d7c3!important}
+.lux-reference-editorial .lux-reference-count{min-width:48px!important;text-align:center!important;color:#927a65!important;font:500 11px/1.4 Arial,sans-serif!important;letter-spacing:1.5px!important}
+.lux-reference-editorial .lux-reference-ribbon{right:-4px!important;transform:translateY(-50%) rotate(-5deg)!important;border:1px solid rgba(255,244,229,.48)!important;border-radius:17px 5px 17px 5px!important;box-shadow:0 9px 18px rgba(48,31,22,.20),inset 0 0 0 2px rgba(255,255,255,.07)!important}
+@media(max-width:700px){
+ .lux-reference-editorial .lux-reference-title{font-size:clamp(28px,7.3vw,37px)!important;gap:4px!important;line-height:1.58!important}
+ .lux-reference-editorial .lux-reference-title-mark{padding:1px 12px 5px!important;border-radius:23px 15px 25px 13px!important}
+ .lux-reference-editorial .lux-reference-controls{gap:20px!important;margin-top:18px!important}
+ .lux-reference-editorial .lux-reference-nav{width:42px!important;height:42px!important;min-width:42px!important;font-size:28px!important}
+ .lux-reference-editorial .lux-reference-ribbon{right:-3px!important;transform:translateY(-50%) rotate(-5deg)!important;min-height:145px!important}
 }
 </style>
 </body>
