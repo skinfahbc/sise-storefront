@@ -1566,24 +1566,20 @@ function saleRail(){
  return h('section',{class:'srl srs'},secHead(R.title||'تخفیف‌خورده‌ها',h('button',{onclick:()=>go('categories')},'مشاهده همه')),stage,h('p',{class:'sr-hint'},R.hint||'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید'))}
 function luxurySpotlight(){
  const L=S.luxury||{};if(L.enabled===false)return null;
- const items=(L.items||[]).filter(x=>x&&x.active!==false&&(x.image||x.productId||x.title)).map(it=>{const key=it.productId??it.product_id??it.product??'';const p=(key!==''?(prod(key)||S.products.find(q=>String(q.id)===String(key)||String(q.sku||q.code||'')===String(key))):null)||S.products.find(q=>String(q.title||'').trim().toLowerCase()===String(it.title||'').trim().toLowerCase());const src=it.image||(p&&(p.images&&p.images[0]||p.rackImage))||'';return src?{p,src,name:it.title||p&&p.title||'کیف منتخب',price:+it.price||p&&+p.price||0,old:+it.oldPrice||p&&+p.oldPrice||0,desc:it.description||p&&(p.desc||p.description)||'',color:it.color||'',material:it.material||'',dimensions:it.dimensions||'',spec:[it.color,it.material,it.dimensions].filter(Boolean).join(' · ')}:null}).filter(Boolean);
+ const items=(L.items||[]).filter(x=>x&&x.active!==false&&(x.image||x.productId||x.title)).map(it=>{const key=it.productId??it.product_id??it.product??'';const p=(key!==''?(prod(key)||S.products.find(q=>String(q.id)===String(key)||String(q.sku||q.code||'')===String(key))):null)||S.products.find(q=>String(q.title||'').trim().toLowerCase()===String(it.title||'').trim().toLowerCase());const src=it.image||(p&&(p.images&&p.images[0]||p.rackImage))||'';return src?{p,src,name:it.title||p&&p.title||'کیف منتخب',price:+it.price||p&&+p.price||0,old:+it.oldPrice||p&&+p.oldPrice||0,desc:it.description||p&&(p.desc||p.description)||'',spec:[it.color,it.material,it.dimensions].filter(Boolean).join(' · ')}:null}).filter(Boolean);
  let n=0,closeDetail;const photo=h('img',{src:items[0]?.src||'',alt:items[0]?.name||'',draggable:false,loading:'eager'});
- const frame=h('button',{class:'lux-frame lux-photo-only',type:'button',onclick:detail,'aria-label':'برای مشاهده قیمت و مشخصات لمس کنید'},photo,h('span',{class:'lux-tap-hint'},h('span',{class:'lux-tap-icon'},'⌕'),h('span',{},'لمس برای مشاهده جزئیات')));
- const thumbs=h('div',{class:'lux-thumbnails','aria-label':'انتخاب کیف',tabindex:'0'});
- const prev=h('button',{class:'lux-arrow-btn prev',onclick:()=>show(n-1),'aria-label':'کیف قبلی'},'‹'),next=h('button',{class:'lux-arrow-btn next',onclick:()=>show(n+1),'aria-label':'کیف بعدی'},'›');
- const stage=h('div',{class:'lux-slider lux-showroom lux-photo-stage'},frame,prev,next);
- const progress=h('div',{class:'lux-scroll-progress'},h('span',{}));
- function show(i){if(!items.length)return;n=(i+items.length)%items.length;const x=items[n];photo.classList.remove('lux-photo-enter');photo.src=x.src;photo.alt=x.name;void photo.offsetWidth;photo.classList.add('lux-photo-enter');[...thumbs.children].forEach((b,k)=>{b.classList.toggle('on',k===n);b.setAttribute('aria-current',k===n?'true':'false')});const active=thumbs.children[n];active&&active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});progress.firstChild.style.width=((n+1)/items.length*100)+'%'}
- items.forEach((x,i)=>thumbs.append(h('button',{type:'button',class:'lux-thumb'+(i===0?' on':''),onclick:()=>show(i),'aria-label':'انتخاب '+x.name,'aria-current':i===0?'true':'false'},h('img',{src:x.src,alt:x.name,loading:'lazy'}))));
+ const frame=h('button',{class:'lux-reference-photo',type:'button',onclick:detail,'aria-label':'برای مشاهده قیمت و مشخصات لمس کنید'},photo,h('span',{class:'lux-reference-outline'}),h('span',{class:'lux-reference-ribbon'},L.everyday||'THE ART OF EVERYDAY'),h('span',{class:'lux-reference-touch'},'لمس برای مشاهده جزئیات'));
+ const stage=h('div',{class:'lux-reference-stage'},frame);
+ const dots=h('div',{class:'lux-reference-dots','aria-label':'موقعیت تصویر'}); 
+ function show(i){if(!items.length)return;n=(i+items.length)%items.length;const x=items[n];photo.classList.remove('lux-reference-enter');photo.src=x.src;photo.alt=x.name;void photo.offsetWidth;photo.classList.add('lux-reference-enter');[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===n))}
+ items.forEach((x,i)=>dots.append(h('button',{type:'button',class:'lux-reference-dot'+(i===0?' on':''),onclick:()=>show(i),'aria-label':'نمایش تصویر '+(i+1)})));
  function detail(){if(!items.length)return;const x=items[n],linked=!!x.p;const body=h('div',{class:'lux-detail-body'},h('div',{class:'lux-detail-top'},'جزئیات محصول',h('button',{class:'lux-detail-close',onclick:()=>closeDetail()},'×')),h('img',{src:x.src,alt:x.name,style:{width:'100%',aspectRatio:'1/1',objectFit:'contain',borderRadius:'18px',background:'#f7f3ed'}}),h('h2',{},x.name),x.price?h('div',{class:'lux-detail-price'},money(x.price),x.old>x.price?h('del',{},money(x.old)):null):null,x.desc?h('p',{class:'lux-detail-desc'},x.desc):null,x.spec?h('div',{class:'lux-detail-spec'},x.spec):null,linked?h('div',{class:'lux-detail-actions'},h('button',{class:'btn lux-detail-add',onclick:()=>{const p=x.p,defaultColor=p.colors&&p.colors[0]?p.colors[0].id:'';if(addCart(p.id,defaultColor,1)===false)return;closeDetail();toast('به سبد خرید اضافه شد');go('cart')}},'افزودن به سبد خرید'),h('button',{class:'btn sec',onclick:()=>{closeDetail();openProduct(x.p.id)}},'مشاهده محصول و انتخاب رنگ')):h('div',{class:'lux-link-note'},'این کیف هنوز به محصول قابل خرید فروشگاه متصل نیست.',h('button',{class:'btn sec',onclick:()=>{closeDetail();openContact()}},'تماس با فروشگاه')));closeDetail=openModal(h('div',{class:'lux-detail-sheet'},body))}
- let touchX=0,touchY=0;frame.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});frame.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25)show(n+(dx<0?1:-1))},{passive:true});
- stage.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)>Math.abs(e.deltaY)||e.shiftKey){e.preventDefault();if(Math.abs(e.deltaX||e.deltaY)>24)show(n+((e.deltaX||e.deltaY)>0?1:-1))}},{passive:false});
- let down=false,dragX=0,scrollStart=0;thumbs.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){down=true;dragX=e.clientX;scrollStart=thumbs.scrollLeft;thumbs.classList.add('dragging')}});window.addEventListener('pointerup',()=>{down=false;thumbs.classList.remove('dragging')});thumbs.addEventListener('pointermove',e=>{if(down){thumbs.scrollLeft=scrollStart-(e.clientX-dragX);e.preventDefault()}});
+ let touchX=0,touchY=0;frame.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});frame.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2)show(n+(dx<0?1:-1))},{passive:true});
+ let down=false,startX=0;frame.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){down=true;startX=e.clientX}});frame.addEventListener('pointerup',e=>{if(down){const dx=e.clientX-startX;down=false;if(Math.abs(dx)>45)show(n+(dx<0?1:-1))}});frame.addEventListener('pointerleave',()=>down=false);
  if(items.length)show(0);
- const everyday=L.everyday?h('div',{class:'lux-everyday lux-everyday-inline',style:{position:'static',inset:'auto',display:'block',alignSelf:'center',writingMode:'horizontal-tb',transform:'none',zIndex:'auto',width:'max-content',maxWidth:'100%',margin:'16px auto 0',padding:'10px 20px 0',border:'0',borderTop:'1px solid rgba(133,103,73,.35)',borderRadius:'0',background:'transparent',color:'#866b50',boxShadow:'none',font:'500 10px/1.5 Georgia,serif',letterSpacing:'3px',textAlign:'center',whiteSpace:'normal'}},L.everyday):null;
- const mast=h('div',{class:'lux-masthead',style:{position:'relative',display:'flex',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',minHeight:'0',gap:'0',padding:'12px clamp(8px,5vw,46px) 24px',margin:'0'}},h('div',{class:'lux-editorial-copy',style:{position:'relative',display:'flex',flexDirection:'column',alignItems:'flex-start',width:'100%',maxWidth:'680px',margin:'0 auto',textAlign:'right'}},L.kicker?h('div',{class:'lux-kicker'},L.kicker):null,L.edition?h('div',{class:'lux-edition'},L.edition):null,(L.title||L.highlight||L.after)?h('h2',{class:'lux-title',style:{position:'relative',zIndex:'1',maxWidth:'100%',lineHeight:'1.65',margin:'0 0 10px',overflowWrap:'anywhere'}},L.title?h('span',{},L.title):null,L.highlight?h('mark',{style:{position:'static',display:'inline',whiteSpace:'normal',transform:'none',boxShadow:'none'}},L.highlight):null,L.after?h('span',{},L.after):null):null,L.description?h('p',{class:'lux-desc',style:{position:'relative',zIndex:'1',maxWidth:'100%',margin:'0 0 14px'}},L.description):null,L.button?h('button',{class:'lux-cta',style:{position:'relative',zIndex:'1',alignSelf:'flex-start',margin:'2px 0 0'},onclick:()=>items.length?detail():go('categories')},h('span',{},L.button),h('span',{class:'lux-arrow'},'↗')):null,everyday));
- const gallery=h('div',{class:'lux-gallery lux-gallery-slider lux-showroom-wrap',style:{position:'relative',display:'block',width:'100%',minHeight:'0',margin:'12px 0 0',padding:'10px',borderRadius:'24px',background:'#e9dfd2',border:'1px solid #e9dfd2',boxShadow:'inset 0 1px 0 rgba(255,255,255,.95),0 12px 30px rgba(67,48,31,.09)'}},items.length?[stage,thumbs,progress]:h('div',{class:'lux-empty'},'کالکشن هنوز محصولی ندارد'));
- return h('section',{class:'lux-spot lux-editorial-showroom',style:{position:'relative',overflow:'hidden',margin:'22px 0 28px',padding:'24px 12px 16px',borderRadius:'26px',background:'#f2e9dd',border:'1px solid #dfd1c0',boxShadow:'0 16px 38px rgba(67,48,31,.10)',color:'#38271f',direction:'rtl'}},mast,gallery)
+ const copy=h('div',{class:'lux-reference-copy'},L.kicker?h('div',{class:'lux-kicker'},L.kicker):null,L.edition?h('div',{class:'lux-edition'},L.edition):null,(L.title||L.highlight||L.after)?h('h2',{class:'lux-title'},L.title?h('span',{},L.title):null,L.highlight?h('mark',{},L.highlight):null,L.after?h('span',{},L.after):null):null,L.description?h('p',{class:'lux-desc'},L.description):null,L.button?h('button',{class:'lux-reference-cta',onclick:()=>items.length?detail():go('categories')},h('span',{class:'lux-reference-cta-icon'},'↗'),h('span',{},L.button)):null);
+ const gallery=h('div',{class:'lux-reference-gallery'},items.length?[stage,dots]:h('div',{class:'lux-empty'},'کالکشن هنوز محصولی ندارد'));
+ return h('section',{class:'lux-reference-editorial'},copy,gallery)
 }
 function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;return[
  hn,!hn&&sh.stories&&storiesSec(false),
@@ -2903,6 +2899,52 @@ boot();
 .lux-detail-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:18px!important}
 .lux-detail-actions .lux-detail-add{background:#30251e!important;color:#f8e8d0!important;border:1px solid #b9966b!important}
 @media(max-width:700px){.lux-editorial-showroom{margin:16px 0 22px!important;padding:18px 9px 12px!important}.lux-editorial-showroom .lux-masthead{padding:8px 9px 16px!important}.lux-editorial-showroom .lux-title{font-size:clamp(25px,7vw,34px)!important;line-height:1.72!important}.lux-editorial-showroom .lux-everyday-inline{font-size:9px!important;letter-spacing:2px!important;margin-top:13px!important}.lux-editorial-showroom .lux-showroom-wrap{padding:7px!important;border-radius:19px!important}.lux-editorial-showroom .lux-photo-only{border-radius:15px!important}.lux-editorial-showroom .lux-photo-stage .lux-arrow-btn{width:35px!important;height:35px!important}}
+</style>
+
+<style id="sise-luxury-reference-editorial-v6">
+/* Editorial layout modeled on the user's exact reference: one quiet scroll gallery. */
+.lux-reference-editorial{direction:rtl;position:relative;display:flex;flex-direction:column;gap:26px;overflow:hidden;width:100%;margin:24px 0 30px;padding:clamp(28px,6vw,58px) clamp(18px,7vw,54px) 26px;border-radius:58px 18px 58px 18px;background:#eee4d7;border:0;box-shadow:none;color:#33251e}
+.lux-reference-copy{display:flex;flex-direction:column;align-items:flex-start;width:100%;max-width:680px;margin:0 auto;text-align:right}
+.lux-reference-copy .lux-kicker{display:flex;align-items:center;gap:14px;margin:0 0 22px;color:#785b48;font:700 11px/1.5 Arial,sans-serif;letter-spacing:3px}
+.lux-reference-copy .lux-kicker:after{content:"";width:42px;height:2px;background:#8b624a;border-radius:2px}
+.lux-reference-copy .lux-edition{margin:0 0 20px;color:#998775;font:500 11px/1.5 Arial,sans-serif;letter-spacing:3px}
+.lux-reference-copy .lux-title{margin:0 0 20px;color:#30231d;font-size:clamp(30px,5.5vw,48px);font-weight:850;line-height:1.75;max-width:100%;overflow-wrap:anywhere}
+.lux-reference-copy .lux-title mark{display:inline;padding:0 12px 4px;border-radius:999px;background:#dfc7b2;color:#8b4e36;white-space:normal}
+.lux-reference-copy .lux-desc{margin:0 0 24px;color:#887565;font-size:clamp(14px,2.2vw,17px);line-height:2.05;max-width:100%}
+.lux-reference-cta{display:inline-flex;align-items:center;gap:18px;min-height:70px;padding:8px 26px 8px 12px;border:0;border-radius:50px 12px 50px 50px;background:#442d23;color:#f8eee2;font-family:inherit;font-size:16px;font-weight:600;line-height:1.5;box-shadow:none;cursor:pointer;transition:transform .25s,background .25s}
+.lux-reference-cta:active{transform:scale(.98)}
+.lux-reference-cta-icon{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border-radius:50%;background:#f0dfc9;color:#51392c;font-size:23px}
+.lux-reference-gallery{position:relative;width:100%;max-width:680px;margin:0 auto}
+.lux-reference-stage{position:relative;width:100%;aspect-ratio:1/1.06;padding:0;border-radius:44% 12% 18% 18% / 22% 7% 9% 9%;background:#d9c2ad;box-shadow:0 18px 0 rgba(198,171,145,.26);overflow:visible}
+.lux-reference-photo{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;overflow:hidden;border:0;border-radius:inherit;background:#d9c2ad;cursor:pointer;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.lux-reference-photo>img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:transparent;padding:0;transform:none!important}
+.lux-reference-outline{position:absolute;inset:3.5%;border:1px solid rgba(255,250,242,.95);border-radius:44% 12% 18% 18% / 22% 7% 9% 9%;pointer-events:none}
+.lux-reference-ribbon{position:absolute;right:-1px;top:51%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;min-height:190px;padding:18px 12px;border-radius:18px 0 0 18px;background:#442d23;color:#f2e5d5;writing-mode:vertical-rl;transform-origin:center;font:500 9px/1.5 Georgia,serif;letter-spacing:2.8px;white-space:nowrap;pointer-events:none;box-shadow:0 7px 18px rgba(48,31,22,.12)}
+.lux-reference-touch{position:absolute;left:16px;bottom:16px;padding:9px 14px;border:1px solid rgba(255,255,255,.55);border-radius:30px;background:rgba(56,39,29,.72);color:#fff4e8;font-size:11px;opacity:0;transform:translateY(5px);transition:opacity .25s,transform .25s;pointer-events:none;backdrop-filter:blur(8px)}
+.lux-reference-photo:hover .lux-reference-touch,.lux-reference-photo:focus-visible .lux-reference-touch{opacity:1;transform:translateY(0)}
+.lux-reference-enter{animation:luxReferenceReveal .55s cubic-bezier(.2,.7,.2,1) both}
+@keyframes luxReferenceReveal{from{opacity:.55;transform:scale(.985);filter:blur(2px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+.lux-reference-dots{display:flex;justify-content:center;align-items:center;gap:8px;margin:25px auto 0}
+.lux-reference-dot{width:6px;height:6px;padding:0;border:0;border-radius:20px;background:#b9a28d;transition:width .35s,background .35s}
+.lux-reference-dot.on{width:26px;background:#604332}
+.lux-detail-body{background:#f8f4ed!important;color:#33271e!important;border:1px solid #e0d2c1!important;border-radius:24px!important}
+.lux-detail-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:18px!important}
+.lux-detail-actions .lux-detail-add{background:#442d23!important;color:#f8eee2!important;border:1px solid #b9966b!important}
+@media(max-width:700px){
+ .lux-reference-editorial{gap:22px;margin:16px 0 24px;padding:clamp(26px,7vw,44px) 7% 24px;border-radius:48px 14px 48px 14px}
+ .lux-reference-copy .lux-kicker{font-size:10px;letter-spacing:2.4px;margin-bottom:19px}
+ .lux-reference-copy .lux-edition{font-size:10px;letter-spacing:2.4px;margin-bottom:16px}
+ .lux-reference-copy .lux-title{font-size:clamp(29px,7.8vw,39px);line-height:1.8;margin-bottom:16px}
+ .lux-reference-copy .lux-desc{font-size:14px;line-height:2;margin-bottom:22px}
+ .lux-reference-cta{min-height:62px;gap:13px;padding:7px 19px 7px 9px;font-size:14px}
+ .lux-reference-cta-icon{flex-basis:48px;width:48px;height:48px;font-size:21px}
+ .lux-reference-gallery{width:100%}
+ .lux-reference-stage{aspect-ratio:1/1.04;border-radius:42% 12% 17% 17% / 19% 7% 9% 9%}
+ .lux-reference-outline{inset:3.5%}
+ .lux-reference-ribbon{min-height:155px;padding:14px 9px;font-size:8px;letter-spacing:2.2px;border-radius:15px 0 0 15px}
+ .lux-reference-touch{opacity:1;transform:none;left:10px;bottom:10px;font-size:10px;padding:7px 11px}
+ .lux-reference-dots{margin-top:20px}
+}
 </style>
 </body>
 </html>
