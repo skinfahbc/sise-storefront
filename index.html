@@ -579,6 +579,8 @@ body.lock .ai-fab{display:none}
 .chm.stk .chb,.chm.me.stk .chb{background:none;border:0;padding:0 4px;min-width:0}
 .chm.stk .chb p{font-size:64px;line-height:1.15}
 .chm.stk .chb b,.chm.stk .chb small,.chm.me.stk .chb b,.chm.me.stk .chb small{color:var(--muted);opacity:1}
+.ch-online,.ch-typing{display:block;font-size:11px;color:var(--muted);margin-top:3px}.ch-online{color:#4b9b70}.ch-typing{color:var(--accent)}
+.ch-rx{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.ch-rx-btn{border:1px solid var(--gb);background:rgba(255,255,255,.48);border-radius:999px;padding:2px 7px;font-size:12px;line-height:1.5;cursor:pointer}.ch-rx-btn.on{border-color:var(--accent);background:var(--accent2);color:var(--on-accent)}.ch-read{color:#5caa83;font-size:10px}
 
 /* ===== SISE luxury silk + glass splash ===== */
 #splash{
@@ -866,99 +868,140 @@ html{overflow-x:hidden;max-width:100%}
 @media (max-width:520px){.sq-n{top:auto;bottom:calc(30px + env(safe-area-inset-bottom,0px))}}
 @media (prefers-reduced-motion:reduce){.sq,.sq-g{animation:none!important}}
 
-/* SISE premium refresh — isolated overrides; preserve the original layout and logic */
-@media(max-width:600px){
-  #hd.hd{top:0;left:0;right:0;transform:none;width:100%;max-width:none;padding:0}
-  #hd .hd-in{width:100%;box-sizing:border-box;border-radius:0 0 24px 24px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;border-top:0}
-}
-@media(min-width:601px){
-  #hd.hd{top:0;left:50%;right:auto;transform:translateX(-50%);padding:0}
-  #hd .hd-in{border-radius:0 0 24px 24px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
-}
-.hero{border-radius:0 0 26px 26px;border-top:0}
-.hero .sl::after{background:linear-gradient(0deg,rgba(8,7,6,.78) 0%,rgba(8,7,6,.34) 36%,rgba(8,7,6,.04) 78%,transparent 100%)}
-.hero .tx{left:18px;right:18px;bottom:42px;align-items:flex-start;text-align:right;background:none!important;background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:0!important;width:auto;max-width:min(84%,440px)}
-.hero h2{font-size:clamp(32px,8.8vw,44px);font-weight:700;line-height:1.2}
-.hero p{font-size:14px;line-height:1.9;max-width:32ch}
-.hero .chip{background:rgba(255,255,255,.13);box-shadow:none}
-.btn-g{margin-top:8px}
-#stories-sec{gap:10px}
-.sise-stories-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 10px}
-.sise-stories-head .sise-st-title{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800}
-.sise-stories-head .sise-st-title svg{color:var(--accent2)}
-.sise-stories-head small{font-size:11.5px;color:var(--muted)}
-#stories-sec .st-h{display:none}
-#stories-sec .hint{width:100%;box-sizing:border-box;justify-content:space-between;gap:10px;padding:9px 12px;border:1px solid var(--gb);background:rgba(255,255,255,.045);border-radius:18px}
-#stories-sec .hint .bar{flex:0 0 54px}
-#stories-sec .hint>span:last-child{flex:1;text-align:right;font-size:12px}
-#stories-sec .hint .nb{width:32px;height:32px;border:1px solid var(--gb);background:rgba(255,255,255,.09)}
-.grid{gap:12px}
-.pc{position:relative;border-radius:23px;overflow:hidden;border:1px solid var(--gb);background:var(--sheet);box-shadow:0 10px 28px rgba(0,0,0,.075);transition:transform .22s,box-shadow .22s}
-.pc:active{transform:scale(.985)}
-.pc .im{aspect-ratio:1/1.12;background:var(--bg2)}
-.pc .im img{object-fit:cover}
-.pc .in{padding:10px 12px 13px;gap:4px}
-.pc h4{font-size:13.5px;line-height:1.65;min-height:2.8em;color:var(--fg)}
-.pc .price{font-size:15px}
-.pc .old{min-height:0}
-.pc .xrt{font-size:11px;color:var(--muted)}
-.pc .rb.fav{width:36px;height:36px;bottom:9px;right:9px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.5);box-shadow:0 5px 16px rgba(0,0,0,.12)}
-.sise-compare-card{position:absolute;z-index:4;top:9px;left:9px;display:flex;align-items:center;gap:4px;padding:7px 9px;border-radius:999px;background:rgba(18,18,18,.48);color:#fff;border:1px solid rgba(255,255,255,.36);font-size:10.5px;font-weight:700;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
-.sise-compare-card.on{background:rgba(170,130,74,.9);color:#fff}
-.sise-compare-dock{position:fixed;z-index:48;left:50%;bottom:calc(158px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(500px,calc(100% - 28px));display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:22px;background:rgba(28,25,22,.82);border:1px solid rgba(255,255,255,.2);color:#fff;box-shadow:0 16px 38px rgba(0,0,0,.28);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5)}
-.sise-compare-dock .sise-cmp-label{flex:1;font-size:12px;line-height:1.5}
-.sise-compare-dock button{border-radius:999px;padding:9px 13px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on-accent);font-size:12px;font-weight:800}
-.sise-compare-dock .sise-cmp-clear{background:rgba(255,255,255,.12);color:#fff}
-.sise-cmp-sheet{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
-.sise-cmp-scroll{overflow-x:auto;max-width:100%;border-radius:18px;border:1px solid var(--gb)}
-.sise-cmp-table{width:100%;min-width:520px;border-collapse:separate;border-spacing:0;font-size:12px}
-.sise-cmp-table th,.sise-cmp-table td{padding:11px 9px;text-align:center;border-bottom:1px solid var(--gb);vertical-align:middle;line-height:1.7}
-.sise-cmp-table th:first-child,.sise-cmp-table td:first-child{position:sticky;right:0;background:var(--sheet);font-weight:800;text-align:right;min-width:90px}
-.sise-cmp-table tr:last-child td{border-bottom:0}
-.sise-cmp-table img{width:88px;height:88px;object-fit:cover;border-radius:14px;display:block;margin:0 auto 6px}
-.sise-cmp-table .sise-cmp-remove{font-size:11px;color:var(--bad);text-decoration:underline}
-.sise-search-chips{display:flex;gap:7px;overflow-x:auto;padding:3px 1px 10px;scrollbar-width:none}
-.sise-search-chips button{flex:none;border:1px solid var(--gb);background:var(--field);border-radius:99px;padding:7px 12px;font-size:11.5px;color:var(--fg)}
-.sise-search-chips button.on{background:var(--accent);color:var(--on-accent);border-color:transparent}
-.sise-search-meta{font-size:11.5px;color:var(--muted);padding:2px 4px 10px}
-.search.sise-search-box{border-radius:20px;border:1px solid var(--gb);background:var(--sheet);box-shadow:0 8px 24px rgba(0,0,0,.06)}
-.ci.glass{border-radius:23px;padding:12px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));-webkit-backdrop-filter:blur(24px) saturate(1.45);backdrop-filter:blur(24px) saturate(1.45);border:1px solid var(--gb);box-shadow:0 10px 26px rgba(0,0,0,.07)}
-.ci img{border-radius:17px}
-.tot.glass,.shp.glass,.cpn.glass,.frm.glass{border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.035));-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);border:1px solid var(--gb);box-shadow:0 12px 28px rgba(0,0,0,.07)}
-.frm.glass{padding:18px}
-.sho{border-radius:17px!important;padding:12px!important}
-.oc.glass{border-radius:24px;border:1px solid var(--gb);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);box-shadow:0 10px 26px rgba(0,0,0,.06)}
-.tl{padding:10px 8px}
-.adm{background:var(--bg)}
-.adm-top{background:rgba(24,22,20,.76);-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6);border-bottom:1px solid var(--gb)}
-.adm-t h2{font-weight:800;letter-spacing:-.3px}
-.tb{border-radius:15px;padding:9px 13px}
-.tb.on{box-shadow:0 6px 18px rgba(0,0,0,.16)}
-.ac{border:1px solid var(--gb);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);box-shadow:0 12px 28px rgba(0,0,0,.055)}
-.ch-hd.glass{border-radius:22px;background:rgba(255,255,255,.055);border:1px solid var(--gb);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5)}
-.ch-tabs{display:flex;gap:7px;padding:4px;overflow-x:auto;scrollbar-width:none;border-radius:19px;background:rgba(255,255,255,.055);border:1px solid var(--gb)}
-.ch-tabs .cht{flex:1;white-space:nowrap;border-radius:14px;padding:10px 9px;font-size:12px;color:var(--muted);transition:.2s}
-.ch-tabs .cht.on{background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on-accent);font-weight:800;box-shadow:0 6px 18px rgba(0,0,0,.14)}
-.chm{max-width:min(92%,520px);gap:7px}
-.chm .chb{position:relative;min-width:110px;padding:11px 13px 10px;border-radius:20px 20px 20px 7px;background:rgba(255,255,255,.075);border:1px solid var(--gb);box-shadow:0 7px 20px rgba(0,0,0,.045);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
-.chm.me .chb{background:linear-gradient(145deg,color-mix(in srgb,var(--accent2) 88%,white 12%),var(--accent));border-radius:20px 20px 7px 20px;box-shadow:0 8px 22px rgba(0,0,0,.12)}
-.chm .chb p{font-size:14px;line-height:1.85}
-.chm .chb small{font-size:10px;opacity:.75}
-.chm .chb .act{display:none;flex-wrap:wrap;gap:10px;padding-top:8px;margin-top:7px;border-top:1px solid var(--gb)}
-.chm .chb .act.open{display:flex}
-.sise-msg-more{position:absolute;top:7px;left:7px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);color:inherit;border:1px solid var(--gb);opacity:.82}
-.chm .chb:has(.sise-msg-more){padding-left:38px}
-.chm .chb .act button{font-size:11px;text-decoration:none;padding:5px 8px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid var(--gb)}
-.ch-cp.glass{border-radius:25px;padding:8px;background:rgba(255,255,255,.075);border:1px solid var(--gb);box-shadow:0 12px 32px rgba(0,0,0,.11);-webkit-backdrop-filter:blur(28px) saturate(1.6);backdrop-filter:blur(28px) saturate(1.6)}
-.ch-cp .in{background:rgba(255,255,255,.055);border:1px solid var(--gb);padding:12px 14px}
-.ch-cp .btn{border-radius:17px}
-.ch-st{width:40px;height:40px;flex:none;border-radius:50%;background:rgba(255,255,255,.09);border:1px solid var(--gb)}
-.sise-ai-typing{display:flex;align-items:center;gap:8px;align-self:flex-start;padding:10px 14px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid var(--gb);color:var(--muted);font-size:12px}
-.sise-ai-typing i{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:siseTyping 1s infinite ease-in-out}
-.sise-ai-typing i:nth-child(2){animation-delay:.15s}.sise-ai-typing i:nth-child(3){animation-delay:.3s}
-@keyframes siseTyping{0%,70%,100%{transform:translateY(0);opacity:.35}35%{transform:translateY(-4px);opacity:1}}
-@media(max-width:380px){.sise-compare-dock{bottom:calc(150px + env(safe-area-inset-bottom,0px))}.sise-compare-dock .sise-cmp-label{font-size:11px}.ch-tabs .cht{font-size:10.5px;padding-inline:6px}}
+/* AI typing indicator appears as an incoming chat bubble */
+body.chat-lock #app .sise-chat-screen .sise-ai-typing{align-self:flex-start;display:flex;align-items:flex-end;gap:9px;max-width:min(88%,560px)}
+body.chat-lock #app .sise-chat-screen .sise-ai-typing .chb{min-width:58px;display:flex;flex-direction:column;gap:7px}
+.sise-typing-dots{display:inline-flex;align-items:center;gap:4px;height:12px}
+.sise-typing-dots i{display:block;width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.45;animation:siseTypingPulse 1.1s infinite ease-in-out}
+.sise-typing-dots i:nth-child(2){animation-delay:.16s}.sise-typing-dots i:nth-child(3){animation-delay:.32s}
+@keyframes siseTypingPulse{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-4px);opacity:1}}
 
+/* Dark-mode chat tabs: preserve contrast over the bright glass header */
+:root[data-theme="dark"] .sise-chat-top .ch-tabs.sise-chat-tabs .cht{
+ color:#f4dcae!important;
+ background:rgba(24,18,12,.58)!important;
+ border-color:rgba(244,220,174,.42)!important;
+ text-shadow:0 1px 3px rgba(0,0,0,.55);
+}
+:root[data-theme="dark"] .sise-chat-top .ch-tabs.sise-chat-tabs .cht.on{
+ color:#2a1c08!important;
+ background:linear-gradient(135deg,#f4dcae,#e0b374)!important;
+ border-color:rgba(255,239,205,.9)!important;
+ text-shadow:none;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 5px 14px rgba(0,0,0,.18)!important;
+}
+
+/* Actual chat tab buttons: dark theme contrast */
+:root[data-theme="dark"] .ch-tabs .cht{color:#f4dcae!important;background:rgba(24,18,12,.58)!important;border:1px solid rgba(244,220,174,.42)!important;text-shadow:0 1px 3px rgba(0,0,0,.55)}
+:root[data-theme="dark"] .ch-tabs .cht.on{color:#2a1c08!important;background:linear-gradient(135deg,#f4dcae,#e0b374)!important;border-color:rgba(255,239,205,.9)!important;text-shadow:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 5px 14px rgba(0,0,0,.18)!important}
+
+/* Remove inherited rectangular tab tray behind the three glass chat buttons */
+.sise-chat-top .sise-chat-tabs{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:6px!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ overflow:visible!important;
+}
+
+/* Final override: remove the inherited tray behind chat mode buttons */
+.sise-chat-top .ch-tabs.sise-chat-tabs{
+ display:flex!important;gap:5px!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;overflow:visible!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+:root[data-theme="dark"] .sise-chat-top .ch-tabs.sise-chat-tabs .cht{
+ color:#f4dcae!important;background:rgba(35,25,16,.82)!important;
+ border:1px solid rgba(244,220,174,.5)!important;
+ text-shadow:0 1px 3px rgba(0,0,0,.6)!important;
+}
+:root[data-theme="dark"] .sise-chat-top .ch-tabs.sise-chat-tabs .cht.on{
+ color:#2a1c08!important;background:linear-gradient(135deg,#f7e1b9,#d9ad70)!important;
+ border-color:rgba(255,244,220,.95)!important;text-shadow:none!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 5px 14px rgba(0,0,0,.2)!important;
+}
+
+/* ===== Luxury editorial collection ===== */
+.lux-spot{position:relative;overflow:hidden;margin:26px 0 30px;padding:34px 22px 18px;border-radius:38px 38px 38px 12px;background:#eee3d5;color:#38271f;isolation:isolate;box-shadow:0 18px 48px rgba(73,48,31,.10);direction:rtl}.lux-spot:after{content:"";position:absolute;inset:auto -12% -24% 18%;height:48%;border-radius:50%;background:rgba(193,153,119,.14);z-index:-1}
+.lux-logo-notch{position:absolute;top:0;left:17%;width:112px;height:58px;background:#eee3d5;border:1px solid rgba(112,82,60,.16);border-top:0;border-radius:0 0 58px 58px;display:grid;place-items:start center;z-index:2;box-shadow:0 5px 16px rgba(65,43,29,.07)}.lux-logo-notch img,.lux-logo-notch .lux-logo-fallback{width:62px;height:62px;border-radius:50%;object-fit:contain;background:#fff;padding:7px;box-shadow:0 5px 18px #5b3b2720;transform:translateY(12px)}.lux-logo-notch .lux-logo-fallback{display:grid;place-items:center;color:#684832;font-family:serif;font-size:19px;font-weight:800}
+.lux-kicker{display:flex;align-items:center;gap:12px;color:#79533d;font-size:11px;font-weight:900;letter-spacing:3px;margin:36px 0 22px}.lux-kicker:after{content:"";height:2px;width:42px;background:#79533d;border-radius:2px}.lux-edition{font-size:11px;letter-spacing:4px;color:#a38b78;margin-bottom:18px;text-align:right}
+.lux-title{font-size:clamp(28px,6vw,46px);line-height:1.55;font-weight:900;letter-spacing:-1.5px;margin:0 0 18px;color:#39271e}.lux-title span{display:inline}.lux-title mark{display:inline-block;background:#dfc5ad;color:#925b3e;padding:0 15px 3px;border-radius:40px 30px 36px 24px;transform:rotate(-1.5deg);margin:0 4px}.lux-desc{font-size:14px;line-height:2.1;color:#8b7563;max-width:620px;margin:0 0 24px}
+.lux-cta{border:0;border-radius:48px;background:#4a3024;color:#fff;padding:10px 12px 10px 22px;display:inline-flex;align-items:center;gap:16px;font:inherit;font-size:14px;cursor:pointer;box-shadow:0 8px 20px #4a30241c}.lux-cta .lux-arrow{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#eee0d0;color:#4a3024;font-size:23px}
+.lux-gallery{position:relative;margin:32px 0 0;padding:18px 12px 22px;border-radius:48% 48% 36px 36px / 18% 18% 34px 34px;background:linear-gradient(145deg,#ddc4ac,#cbb096);min-height:290px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:stretch}.lux-gallery:before{content:"";position:absolute;inset:12px 16px 14px;border:1px solid rgba(255,255,255,.8);border-radius:48% 48% 30px 30px / 18% 18% 30px 30px;pointer-events:none}
+.lux-item{position:relative;z-index:1;min-width:0;overflow:hidden;border:0;border-radius:24px;background:rgba(255,255,255,.22);padding:0;color:#39271e;text-align:right;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;min-height:210px}.lux-item:first-child{grid-row:span 2;min-height:430px}.lux-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}.lux-item:hover img{transform:scale(1.045)}.lux-item:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(35,22,15,.72))}.lux-item-info{position:relative;z-index:2;padding:14px;color:#fff;display:grid;gap:2px}.lux-item-info b{font-size:13px}.lux-item-info small{font-size:11px;opacity:.9}
+.lux-everyday{position:absolute;z-index:3;right:-1px;top:38%;writing-mode:vertical-rl;transform:rotate(180deg);background:#4a3024;color:#f2e5d8;border-radius:28px 0 0 28px;padding:18px 10px;font:800 9px/1.2 Arial,sans-serif;letter-spacing:3px;box-shadow:0 8px 20px #3b241d30}.lux-empty{grid-column:1/-1;display:grid;place-items:center;min-height:230px;color:#8b7563;text-align:center;padding:30px}
+@media(max-width:520px){.lux-spot{padding:27px 16px 14px;border-radius:30px 30px 30px 10px;margin:20px 0}.lux-logo-notch{left:14%;width:88px;height:48px}.lux-logo-notch img,.lux-logo-notch .lux-logo-fallback{width:52px;height:52px}.lux-kicker{margin-top:30px;margin-bottom:18px;font-size:10px}.lux-edition{font-size:10px}.lux-title{font-size:30px}.lux-desc{font-size:13px}.lux-gallery{grid-template-columns:repeat(2,minmax(0,1fr));min-height:230px;padding:14px 8px 18px;gap:7px}.lux-item{min-height:170px;border-radius:18px}.lux-item:first-child{min-height:347px}.lux-item-info{padding:10px}.lux-everyday{font-size:8px;padding:14px 8px}}
+.lux-logo-notch{left:22px!important;right:auto!important;width:108px!important;height:58px!important;border-radius:0 0 56px 56px!important;background:#eee3d5!important;border:1px solid rgba(112,82,60,.16)!important;border-top:0!important;box-shadow:0 5px 16px rgba(65,43,29,.07)}.lux-logo-notch img,.lux-logo-notch .lux-logo-fallback{width:62px!important;height:62px!important;transform:translateY(10px)!important;border:3px solid #f8f5f0;box-sizing:border-box}
+.lux-gallery-slider{display:block!important;position:relative!important;min-height:0!important;padding:16px!important;border-radius:34px!important;background:linear-gradient(145deg,#ddc4ac,#cbb096)!important}.lux-gallery-slider:before{display:none!important}
+.lux-slider{position:relative;width:min(100%,520px);margin:0 auto;padding-bottom:58px}.lux-frame{display:block;width:100%;aspect-ratio:1/1;min-height:0!important;overflow:hidden;border:1px solid rgba(255,255,255,.7);border-radius:24px;background:#f7f3ed;padding:0;cursor:pointer;touch-action:pan-y}.lux-frame img{display:block;width:100%;height:100%;object-fit:contain;transform:none!important;transition:none!important}
+.lux-arrow-btn{position:absolute;z-index:4;top:calc(50% - 29px);width:44px;height:44px;border:1px solid #ffffffcc;border-radius:50%;background:#fffffff0;color:#4a3024;font:32px/1 Georgia,serif;box-shadow:0 5px 18px #2d1e2024;cursor:pointer}.lux-arrow-btn.prev{left:12px}.lux-arrow-btn.next{right:12px}
+.lux-slide-meta{position:absolute;left:12px;right:12px;bottom:67px;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:15px;background:#fffffff0;color:#39271e;pointer-events:none}.lux-slide-meta>div{display:grid;gap:4px}.lux-slide-meta b{font-size:14px}.lux-slide-meta>div span{font-size:12px;color:#8b6348}.lux-count{font-size:11px;direction:ltr;white-space:nowrap;color:#79533d}
+.lux-dots{display:flex;justify-content:center;gap:7px;margin:12px auto 0}.lux-dots button{width:7px;height:7px;padding:0;border:0;border-radius:50%;background:#4a302440}.lux-dots button.on{width:22px;border-radius:9px;background:#4a3024}
+.lux-detail-sheet{width:min(100%,560px);max-height:88vh;overflow:auto;margin:auto;border-radius:26px;background:#fff;color:#30251e}.lux-detail-body{padding:16px;display:grid;gap:12px}.lux-detail-top{display:flex;align-items:center;justify-content:space-between;color:#8b705c;font-size:10px;letter-spacing:2px;font-weight:800}.lux-detail-close{width:36px;height:36px;border:0;border-radius:50%;background:#f2ece6;color:#4a3024;font-size:25px}.lux-detail-body h2{margin:2px 0;font-size:21px;color:#39271e}.lux-detail-price{font-size:20px;font-weight:900;color:#4a3024;display:flex;gap:12px;align-items:center}.lux-detail-price del{font-size:13px;color:#a18d7d}.lux-detail-desc{white-space:pre-line;line-height:2;color:#77675b;margin:0}.lux-detail-spec,.lux-link-note{padding:10px 12px;border-radius:12px;background:#f7f3ed;color:#795b45;font-size:12px;line-height:1.9}.lux-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.lux-detail-actions .btn{min-height:46px;border-radius:14px}
+@media(max-width:520px){.lux-gallery-slider{padding:10px 9px 14px!important;border-radius:25px!important}.lux-slider{width:100%;padding-bottom:54px}.lux-frame{border-radius:18px}.lux-arrow-btn{width:38px;height:38px;top:calc(50% - 26px);font-size:28px}.lux-slide-meta{bottom:62px;padding:9px 11px}.lux-slide-meta b{font-size:12px}.lux-detail-body{padding:13px}.lux-detail-actions{grid-template-columns:1fr}}
+</style>
+
+<style id="sise-drawer-scroll-fix">
+/* A dedicated scroll region prevents flex children from collapsing; admin stays reachable. */
+.ov.s{position:fixed!important;inset:0!important;display:block!important;height:100vh!important;height:100dvh!important;overflow:hidden!important;overscroll-behavior:none!important}
+.ov.s>.dr{position:absolute!important;top:0!important;bottom:0!important;inset-inline-start:0!important;width:min(88vw,400px)!important;height:100vh!important;height:100dvh!important;max-height:100vh!important;max-height:100dvh!important;min-height:0!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:0!important;gap:0!important}
+.ov.s>.dr>.dr-scroll{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;gap:16px!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;padding:calc(14px + env(safe-area-inset-top,0px)) 14px 18px!important;box-sizing:border-box!important}
+.ov.s>.dr>.dr-scroll>*{flex-shrink:0}
+.ov.s>.dr>.dr-footer{flex:0 0 auto!important;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px))!important;border-top:1px solid var(--gb)!important;background:var(--sheet)!important;display:flex!important;justify-content:center!important}
+.ov.s>.dr .tb{position:static!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:46px!important;margin:0!important}
+
+/* Keep the fixed bottom navigation out of modal, story, gallery and drawer layers. */
+body.lock #nv{display:none!important;pointer-events:none!important}
+
+/* SISE chat visual refresh — compact silk glass */
+.ch{gap:9px}
+.ch-hd{position:relative;min-height:54px;box-sizing:border-box;gap:10px;padding:8px 12px;border:1px solid rgba(184,151,112,.22);border-radius:17px;background:linear-gradient(125deg,rgba(255,255,255,.78),rgba(248,241,231,.55));box-shadow:0 7px 22px rgba(48,35,22,.055),inset 0 1px 0 rgba(255,255,255,.8);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.ch-hd .ci{width:36px;height:36px;border-radius:12px;background:linear-gradient(145deg,var(--accent2),var(--accent));box-shadow:0 4px 12px rgba(80,55,30,.12)}
+.ch-hd b{font-size:14px;line-height:1.45;letter-spacing:-.15px}
+.ch-hd small{font-size:10.5px;line-height:1.5}
+.ch-hd .ch-online,.ch-hd .ch-typing{margin-top:1px;font-size:10px}
+.ch-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:4px;border:1px solid rgba(184,151,112,.2);border-radius:15px;background:rgba(255,255,255,.42);box-shadow:inset 0 1px 5px rgba(50,35,20,.035);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.ch-tabs .cht{min-width:0;min-height:39px;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 3px;border:1px solid transparent;border-radius:11px;font-size:clamp(10px,2.8vw,12px);font-weight:700;line-height:1.2;white-space:nowrap;transition:background .2s,border-color .2s,box-shadow .2s}
+.ch-tabs .cht .cht-ic{width:17px;height:17px;display:inline-grid;place-items:center;flex:none;opacity:.88}
+.ch-tabs .cht .cht-ic svg{width:16px;height:16px}
+.ch-tabs .cht .cht-label{display:block;min-width:0;white-space:nowrap;letter-spacing:-.25px}
+.ch-tabs .cht.on{background:linear-gradient(135deg,var(--accent2),var(--accent));border-color:rgba(255,255,255,.48);box-shadow:0 3px 10px rgba(65,43,23,.12),inset 0 1px 0 rgba(255,255,255,.28)}
+.ch-list{gap:12px;padding:7px 5px 10px;border:1px solid rgba(184,151,112,.13);border-radius:19px;background:linear-gradient(160deg,rgba(255,255,255,.28),rgba(245,237,225,.18));}
+.chm{max-width:88%;gap:7px}
+.chm .av{width:30px;height:30px;flex:none}
+.chm .chb{padding:9px 12px;border:1px solid rgba(170,145,116,.19);border-radius:16px 16px 16px 5px;background:rgba(255,255,255,.78);box-shadow:0 3px 11px rgba(45,32,20,.045);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.chm .chb p{font-size:13.5px;line-height:1.75}
+.chm.me .chb{border-radius:16px 16px 5px 16px;background:linear-gradient(145deg,var(--accent2),var(--accent));box-shadow:0 4px 13px rgba(80,55,30,.12)}
+.ch-cp{gap:6px;padding:7px;border:1px solid rgba(184,151,112,.24);border-radius:19px;background:rgba(255,255,255,.78);box-shadow:0 7px 22px rgba(45,32,20,.07),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.ch-cp .in{min-width:0;min-height:40px;padding-inline:12px;border:1px solid rgba(170,145,116,.18);border-radius:14px;background:rgba(249,246,241,.72);font-size:13px}
+.ch-cp .ch-st{width:35px;height:35px;font-size:20px;border:1px solid rgba(170,145,116,.16);background:rgba(255,255,255,.52)}
+.ch-cp .btn{min-height:36px;padding:8px 13px;border-radius:13px;font-size:12px}
+.ch-pv{border-radius:13px}
+.ch-rx-btn{background:rgba(255,255,255,.72);border-color:rgba(170,145,116,.22)}
+@media(max-width:370px){
+ .ch-tabs{gap:3px;padding:3px}
+ .ch-tabs .cht{gap:3px;padding-inline:1px;font-size:10px}
+ .ch-tabs .cht .cht-ic{width:15px}
+ .ch-tabs .cht .cht-ic svg{width:14px;height:14px}
+ .ch-hd{padding-inline:9px}
+ .ch-cp{gap:4px}
+ .ch-cp .btn{padding-inline:10px}
+}
+@media(prefers-reduced-motion:no-preference){
+ .ch-tabs .cht{transition:transform .18s ease,background .2s ease,box-shadow .2s ease}
+ .ch-tabs .cht:active{transform:scale(.975)}
+}
+
+</style>
+
+<style id="sise-preview-chat-parity">
 /* SISE full-screen chat rebuild: replaces the old chat header/composer layout */
 body.chat-lock{position:fixed;inset:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
 body.chat-lock #hd,body.chat-lock #nv{display:none!important}
@@ -1004,83 +1047,51 @@ body.chat-lock #app .sise-chat-screen .ch-sp{position:absolute;bottom:calc(100% 
  body.chat-lock #app .sise-chat-screen>.ch-cp>.btn[type=submit]{width:40px;height:40px}
 }
 @media(max-width:350px){.sise-chat-top .ch-tabs .cht{font-size:9.5px;padding-inline:5px}.sise-chat-actions button{width:33px;height:33px}}
-</style>
-
-<style id="sise-drawer-scroll-fix">
-/* A dedicated scroll region prevents flex children from collapsing; admin stays reachable. */
-.ov.s{position:fixed!important;inset:0!important;display:block!important;height:100vh!important;height:100dvh!important;overflow:hidden!important;overscroll-behavior:none!important}
-.ov.s>.dr{position:absolute!important;top:0!important;bottom:0!important;inset-inline-start:0!important;width:min(88vw,400px)!important;height:100vh!important;height:100dvh!important;max-height:100vh!important;max-height:100dvh!important;min-height:0!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:0!important;gap:0!important}
-.ov.s>.dr>.dr-scroll{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;gap:16px!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;padding:calc(14px + env(safe-area-inset-top,0px)) 14px 18px!important;box-sizing:border-box!important}
-.ov.s>.dr>.dr-scroll>*{flex-shrink:0}
-.ov.s>.dr>.dr-footer{flex:0 0 auto!important;padding:10px 14px max(12px,env(safe-area-inset-bottom,0px))!important;border-top:1px solid var(--gb)!important;background:var(--sheet)!important;display:flex!important;justify-content:center!important}
-.ov.s>.dr .tb{position:static!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:46px!important;margin:0!important}
-
-/* Keep the fixed bottom navigation out of modal, story, gallery and drawer layers. */
-body.lock #nv{display:none!important;pointer-events:none!important}
-</style>
-<style id="sise-chat-polish">
-/* Refined transparent glass chat styling */
-body.chat-lock #app .sise-chat-screen{gap:12px}
-.sise-chat-top{background:rgba(255,255,255,.055)!important;border:1px solid rgba(255,255,255,.17)!important;border-radius:24px!important;box-shadow:0 12px 34px rgba(30,24,15,.09),inset 0 1px 0 rgba(255,255,255,.22)!important}
-.sise-chat-top .ch-tabs{background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.15)!important}
-.sise-chat-top .ch-tabs .cht.on{background:rgba(255,255,255,.19)!important;border-color:rgba(255,255,255,.28)!important;color:var(--fg)!important}
-body.chat-lock #app .sise-chat-screen .chm .chb{position:relative;min-width:112px;padding:12px 14px 10px;border-radius:21px 21px 21px 7px;background:rgba(255,255,255,.105)!important;border:1px solid rgba(255,255,255,.23)!important;box-shadow:0 9px 24px rgba(30,24,15,.075),inset 0 1px 0 rgba(255,255,255,.2);-webkit-backdrop-filter:blur(24px) saturate(1.55);backdrop-filter:blur(24px) saturate(1.55)}
-body.chat-lock #app .sise-chat-screen .chm.me .chb{border-radius:21px 21px 7px 21px;background:rgba(190,145,78,.16)!important;border-color:rgba(202,163,103,.28)!important}
-body.chat-lock #app .sise-chat-screen .chm .chb p{line-height:1.75}
-.sise-reactions{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:9px}
-.sise-reaction{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:43px;height:31px;padding:0 9px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:inherit;font:inherit;font-size:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);cursor:pointer}
-.sise-reaction span{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
-.sise-reaction.on{background:rgba(202,163,103,.23);border-color:rgba(202,163,103,.48);transform:translateY(-1px)}
-.sise-msg-more{width:29px;height:29px;border-radius:50%;background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.2)!important}
-.sise-msg-actions{z-index:5}
-.sise-ai-typing{margin:2px 0 5px 44px;padding:11px 15px;border-radius:18px;background:rgba(255,255,255,.105);border:1px solid rgba(255,255,255,.22);box-shadow:0 8px 22px rgba(30,24,15,.07);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5)}
-.sise-ai-typing span{font-size:12px;font-weight:650}
-body.chat-lock #app .sise-chat-screen>.ch-cp{background:rgba(255,255,255,.085)!important;border-color:rgba(255,255,255,.24)!important;box-shadow:0 12px 34px rgba(30,24,15,.11),inset 0 1px 0 rgba(255,255,255,.23)!important}
-body.chat-lock #app .sise-chat-screen>.ch-cp .in{background:rgba(255,255,255,.085)!important;border-color:rgba(255,255,255,.16)!important}
-@media(max-width:420px){.sise-chat-top{gap:6px;padding:6px!important}.sise-chat-top .ch-tabs .cht{padding:9px 7px!important;font-size:11px!important}.sise-chat-actions{gap:4px}.sise-chat-actions button{width:35px;height:37px}.sise-reaction{height:29px;min-width:39px;padding:0 7px}}
-
-/* SISE chat polish: compact guest state, stable scrolling and clearer glass surfaces */
-body.chat-lock #app.app.chatp{height:var(--vvh,100dvh)!important;min-height:0!important;max-height:var(--vvh,100dvh)!important;padding:calc(8px + env(safe-area-inset-top,0px)) 12px calc(10px + env(safe-area-inset-bottom,0px))!important;overflow:hidden!important}
-body.chat-lock #app .sise-chat-screen{flex:1 1 auto!important;min-height:0!important;height:100%!important;gap:10px!important}
-body.chat-lock #app .sise-chat-screen>.ch-list{flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:8px 3px 12px!important}
-body.chat-lock #app .sise-chat-screen>.ch-cp{flex:0 0 auto!important;position:relative!important;inset:auto!important;margin:0 0 env(safe-area-inset-bottom,0px)!important;border-radius:24px!important;gap:9px!important}
-body.chat-lock #app .sise-chat-screen>.ch-cp:has(.ch-login){justify-content:center!important;min-height:64px!important;padding:10px!important}
-body.chat-lock #app .sise-chat-screen>.ch-cp .ch-login{width:auto!important;min-width:170px!important;max-width:220px!important;min-height:44px!important;border-radius:16px!important}
-body.chat-lock #app .sise-chat-screen .ch-list>.empty{align-self:center;max-width: min(92%,420px);margin:auto;padding:18px 20px;border:1px solid rgba(255,255,255,.16);border-radius:22px;background:rgba(255,255,255,.055);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);text-align:center;line-height:1.9}
-body.chat-lock #app .sise-chat-top{flex:0 0 auto;min-height:54px;background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.17)!important;box-shadow:0 10px 30px rgba(20,18,14,.08),inset 0 1px 0 rgba(255,255,255,.12)!important}
-body.chat-lock #app .sise-chat-top .ch-tabs .cht.on{background:rgba(255,255,255,.16)!important;border-color:rgba(255,255,255,.24)!important}
-body.chat-lock #app .sise-chat-screen .chm .chb{position:relative;box-shadow:0 8px 24px rgba(20,18,14,.055),inset 0 1px 0 rgba(255,255,255,.13)}
-body.chat-lock #app .sise-chat-screen .sise-reactions{padding-top:2px}
-body.chat-lock #app .sise-chat-screen .sise-reaction{transition:transform .18s ease,background .18s ease,border-color .18s ease}
-body.chat-lock #app .sise-chat-screen .sise-reaction:active{transform:scale(.94)}
-body.chat-lock #app .sise-chat-screen .sise-ai-typing{align-self:flex-start;display:flex;align-items:center;gap:7px}
-@media(max-width:380px){body.chat-lock #app.app.chatp{padding-inline:8px!important}.sise-chat-top{min-height:50px}.sise-chat-top .ch-tabs .cht{font-size:10px!important;padding-inline:5px!important}}
 
 
-/* Private chat shell uses the same fixed glass layout as public chat */
-body.chat-lock #app .sise-chat-screen{width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;display:flex!important;flex-direction:column!important;gap:10px!important;overflow:hidden!important}
-body.chat-lock #app .sise-chat-screen>.ch-list{flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:8px 4px 12px!important}
-body.chat-lock #app .sise-chat-screen>.ch-cp{flex:0 0 auto!important;position:relative!important;inset:auto!important;margin:0 0 env(safe-area-inset-bottom,0px)!important;border-radius:24px!important}
-body.chat-lock #app .sise-chat-screen>.ch-cp:has(.ch-login){justify-content:center!important;min-height:62px!important;padding:9px!important}
-body.chat-lock #app .sise-chat-screen>.ch-cp .ch-login{width:auto!important;min-width:170px!important;max-width:220px!important;min-height:44px!important}
-
-
-/* Reference-matched SISE Messenger glass header: brand row + utility icons + channel tabs. */
-body.chat-lock #app .sise-chat-top{display:flex!important;flex:0 0 auto!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important;min-height:0!important;padding:12px 13px 10px!important;border-radius:26px!important;background:rgba(255,255,255,.075)!important;border:1px solid rgba(255,255,255,.25)!important;box-shadow:0 12px 34px rgba(35,27,15,.09),inset 0 1px 0 rgba(255,255,255,.3)!important;-webkit-backdrop-filter:blur(30px) saturate(1.55)!important;backdrop-filter:blur(30px) saturate(1.55)!important}
-.sise-chat-head{width:100%;min-height:56px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:8px;direction:ltr}
-.sise-chat-brand{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;direction:ltr;color:#9b7847;text-align:center;line-height:1}
-.sise-chat-brand b{font-family:Georgia,serif;font-size:25px;font-weight:700;letter-spacing:5px}
-.sise-chat-brand small{margin-top:4px;font-size:9px;font-weight:800;letter-spacing:3px}
-.sise-chat-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:15px;color:#987548;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.27);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
-.sise-chat-head>.sise-chat-icon{justify-self:start}
-.sise-chat-actions{display:flex!important;align-items:center;justify-content:flex-end;gap:7px;direction:rtl}
-.sise-chat-actions .sise-chat-icon{width:42px;height:42px}
-.sise-chat-tabs{width:100%;box-sizing:border-box;display:flex!important;gap:7px!important;padding:4px!important;border:0!important;border-radius:18px!important;background:transparent!important;overflow-x:auto;scrollbar-width:none}
-.sise-chat-tabs::-webkit-scrollbar{display:none}
-.sise-chat-tabs .cht{flex:1 0 0!important;min-width:0!important;min-height:57px;padding:7px 5px!important;white-space:normal!important;border:1px solid rgba(255,255,255,.25)!important;border-radius:20px!important;background:rgba(255,255,255,.09)!important;color:#9a7b51!important;font-size:12px!important;line-height:1.5!important}
-.sise-chat-tabs .cht.on{background:rgba(255,255,255,.2)!important;border-color:rgba(177,139,83,.48)!important;color:#80623b!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 5px 14px rgba(60,45,20,.06)!important}
-.sise-chat-help{padding:22px;border-radius:24px}
-@media(max-width:420px){body.chat-lock #app .sise-chat-top{padding:9px 9px 8px!important;gap:7px!important}.sise-chat-head{grid-template-columns:38px minmax(0,1fr) auto;gap:5px}.sise-chat-brand b{font-size:22px;letter-spacing:4px}.sise-chat-icon,.sise-chat-actions .sise-chat-icon{width:36px;height:36px;border-radius:13px}.sise-chat-actions{gap:5px}.sise-chat-tabs{gap:5px!important}.sise-chat-tabs .cht{min-height:53px;font-size:10.5px!important;padding:6px 3px!important}}
+/* SISE chat tabs: spaced card layout matching reference #2 */
+.sise-chat-top{gap:10px}
+.sise-chat-top .ch-tabs.sise-chat-tabs{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ align-items:stretch;
+ gap:9px!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ overflow:visible!important;
+}
+.sise-chat-top .ch-tabs.sise-chat-tabs .cht{
+ display:flex!important;
+ flex:initial!important;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:5px;
+ min-width:0!important;
+ min-height:66px;
+ padding:9px 5px!important;
+ border:1px solid rgba(255,255,255,.28)!important;
+ border-radius:20px!important;
+ background:rgba(255,255,255,.09)!important;
+ text-align:center;
+ white-space:normal!important;
+ line-height:1.45;
+ font-size:12px!important;
+}
+.sise-chat-top .ch-tabs.sise-chat-tabs .cht .sise-tab-ic{display:flex;align-items:center;justify-content:center;flex:none}
+.sise-chat-top .ch-tabs.sise-chat-tabs .cht .sise-tab-ic svg{width:19px;height:19px}
+.sise-chat-top .ch-tabs.sise-chat-tabs .cht.on{
+ border-color:rgba(255,255,255,.48)!important;
+ background:rgba(255,255,255,.23)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 5px 14px rgba(0,0,0,.08)!important;
+}
+@media(max-width:390px){
+ .sise-chat-top .ch-tabs.sise-chat-tabs{gap:7px!important}
+ .sise-chat-top .ch-tabs.sise-chat-tabs .cht{min-height:62px;padding:8px 3px!important;font-size:11px!important;border-radius:17px!important}
+ .sise-chat-top .ch-tabs.sise-chat-tabs .cht .sise-tab-ic svg{width:17px;height:17px}
+}
 </style>
 </head>
 <body>
@@ -1136,10 +1147,7 @@ const ICONS={sparkles:'M12 3l1.9 5.4L19.3 10l-5.4 1.9L12 17.3l-1.9-5.4L4.7 10l5.
  sparkle:'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z',
  edit:'M4 20h4L19 9l-4-4L4 16v4zM13 7l4 4',users:'M9 11a4 4 0 100-8 4 4 0 000 8zM2 21c0-4 3-6 7-6s7 2 7 6M17 4a4 4 0 010 7M19 15c2 .8 3 2.6 3 6',
  undo:'M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3',lock:'M6 11h12v10H6zM8 11V7a4 4 0 118 0v4',logout:'M10 4H5v16h5M16 8l4 4-4 4M20 12H9',wallet:'M3 7h16a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7zM3 7l12-3v3M17 14v.01',
- youtube:'M3 8a3 3 0 013-3h12a3 3 0 013 3v8a3 3 0 01-3 3H6a3 3 0 01-3-3V8zM10 9l5 3-5 3V9z',x:'M4 4l16 16M20 4L4 20',globe:'M12 21a9 9 0 100-18 9 9 0 000 18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
- 'circle-help':'M12 22a10 10 0 100-20 10 10 0 000 20zM9.1 9a3 3 0 015.8 1c0 2-3 3-3 3M12 17h.01',
- 'shield-check':'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM8.5 12.5l2.2 2.2 4.8-5',
- headset:'M3 13v-1a9 9 0 0118 0v1M3 13h4v7H5a2 2 0 01-2-2v-5zM21 13h-4v7h2a2 2 0 002-2v-5zM17 20c-1 1-2.5 1.5-5 1.5'
+ youtube:'M3 8a3 3 0 013-3h12a3 3 0 013 3v8a3 3 0 01-3 3H6a3 3 0 01-3-3V8zM10 9l5 3-5 3V9z',x:'M4 4l16 16M20 4L4 20',globe:'M12 21a9 9 0 100-18 9 9 0 000 18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18'
 };
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONS[n]||ICONS.star}"/></svg>`;
 const I=(n,s)=>h('span',{html:ic(n,s),style:{display:'inline-flex'}});
@@ -1249,7 +1257,7 @@ function openPage(id,obj){const p=obj||(S.pages||[]).find(x=>x.id===id)||(S.page
  card.addEventListener('touchend',e=>{if(y0-e.changedTouches[0].clientY>70&&body.scrollTop<=0||y0-e.changedTouches[0].clientY>70&&body.scrollHeight<=body.clientHeight)cl()},{passive:true});
  requestAnimationFrame(()=>requestAnimationFrame(()=>ov.classList.add('in')))}
 function callSupport(){const n=normNum(S.store.phone);if(!n){toast('شماره پشتیبانی هنوز ثبت نشده');return}location.href='tel:'+n}
-function fixup(s){nmFix(s);s.store=s.store||{};if(s.store.name==='\u0627\u0644\u0627\u06cc'||s.store.name==='ال آی')s.store.name='SISE';Object.assign(s.store,{loadingLogo:s.store.loadingLogo||'',loadingTitle:s.store.loadingTitle||'SISE',loadingText:s.store.loadingText||'DISCOVER YOUR STYLE',loadingBg:(s.store.loadingBg==='#17110b'?'#efe2d2':(s.store.loadingBg||'#efe2d2')),loadingAccent:(s.store.loadingAccent==='#e0b374'?'#68442e':(s.store.loadingAccent||'#68442e')),loadingDuration:s.store.loadingDuration==null?1500:s.store.loadingDuration,loadingEnabled:s.store.loadingEnabled!==false});if(!Array.isArray(s.pages)||!s.pages.length)s.pages=DEF_PAGES();(s.links||[]).forEach(l=>{if(l.target==='about')l.target='page:about';else if(/^url:https?:\/\/example\.com\/?$/.test(l.target||'')&&/قوانین/.test(l.label||''))l.target='page:rules';else if(l.target==='contact')l.target='call'});(s.stories||[]).forEach(x=>{if(!x.created)x.created=Date.now();if(x.life==null)x.life=0});purgeSt(s);s.rack=Object.assign({title:'تخفیف‌خورده‌ها',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید',limit:10},s.rack||{});delete s.adminOpen;s.fx=Object.assign({reveal:true,skeleton:true,lift:true,haptic:true,fly:true},s.fx||{});s.store.logoH=s.store.logoH||52;s.orders=s.orders||[];s.users=s.users||[];s.admin=s.admin||{pass:'1234'};s.coupons=Array.isArray(s.coupons)?s.coupons:[];s.ship=Object.assign({phone:'',courierText:'هماهنگی ارسال با ادمین فروشگاه',methods:[{id:'post',title:'پست',price:60000,desc:'ارسال با پست معمولی (۵ تا ۱۰ روز کاری)',on:true},{id:'express',title:'پست پیشتاز',price:90000,desc:'ارسال سریع‌تر (۲ تا ۴ روز کاری)',on:true},{id:'courier',title:'پیک / اسنپ',price:0,desc:'هزینه طبق تعرفه، هماهنگی با ادمین فروشگاه',on:true,courier:true}]},s.ship||{});s.draw=Object.assign({enabled:false,id:uid(),rev:0,title:'قرعه‌کشی ویژه مشتریان',text:'با ثبت‌نام و خرید از فروشگاه در قرعه‌کشی شرکت کنید و برنده جایزه شوید.',prize:'',date:'',btn:'ثبت در قرعه‌کشی',cancel:'فعلاً نه',winners:1,result:[]},s.draw||{});
+function fixup(s){nmFix(s);s.store=s.store||{};if(s.store.name==='\u0627\u0644\u0627\u06cc'||s.store.name==='ال آی')s.store.name='SISE';Object.assign(s.store,{loadingLogo:s.store.loadingLogo||'',loadingTitle:s.store.loadingTitle||'SISE',loadingText:s.store.loadingText||'DISCOVER YOUR STYLE',loadingBg:(s.store.loadingBg==='#17110b'?'#efe2d2':(s.store.loadingBg||'#efe2d2')),loadingAccent:(s.store.loadingAccent==='#e0b374'?'#68442e':(s.store.loadingAccent||'#68442e')),loadingDuration:s.store.loadingDuration==null?1500:s.store.loadingDuration,loadingEnabled:s.store.loadingEnabled!==false});if(!Array.isArray(s.pages)||!s.pages.length)s.pages=DEF_PAGES();(s.links||[]).forEach(l=>{if(l.target==='about')l.target='page:about';else if(/^url:https?:\/\/example\.com\/?$/.test(l.target||'')&&/قوانین/.test(l.label||''))l.target='page:rules';else if(l.target==='contact')l.target='call'});(s.stories||[]).forEach(x=>{if(!x.created)x.created=Date.now();if(x.life==null)x.life=0});purgeSt(s);s.luxury=Object.assign({enabled:true,logo:'',kicker:'A LITTLE MORE YOU',edition:'026 / AUTUMN EDIT',title:'استایل تو،',highlight:'قانون خودش',after:'را دارد.',description:'برای ترکیب کردن، دوباره پوشیدن و ساختن استایلی که فقط شبیه خودت باشد.',button:'کشف کالکشن لوکس',everyday:'THE ART OF EVERYDAY',items:[]},s.luxury||{});['kicker','edition','title','highlight','after','description','button','everyday'].forEach(k=>{if(!String(s.luxury[k]||'').trim())s.luxury[k]=({kicker:'A LITTLE MORE YOU',edition:'026 / AUTUMN EDIT',title:'استایل تو،',highlight:'قانون خودش',after:'را دارد.',description:'برای ترکیب کردن، دوباره پوشیدن و ساختن استایلی که فقط شبیه خودت باشد.',button:'کشف کالکشن لوکس',everyday:'THE ART OF EVERYDAY'})[k]});if(!Array.isArray(s.luxury.items))s.luxury.items=[];s.rack=Object.assign({title:'تخفیف‌خورده‌ها',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید',limit:10},s.rack||{});delete s.adminOpen;s.fx=Object.assign({reveal:true,skeleton:true,lift:true,haptic:true,fly:true},s.fx||{});s.store.logoH=s.store.logoH||52;s.orders=s.orders||[];s.users=s.users||[];s.admin=s.admin||{pass:'1234'};s.coupons=Array.isArray(s.coupons)?s.coupons:[];s.ship=Object.assign({phone:'',courierText:'هماهنگی ارسال با ادمین فروشگاه',methods:[{id:'post',title:'پست',price:60000,desc:'ارسال با پست معمولی (۵ تا ۱۰ روز کاری)',on:true},{id:'express',title:'پست پیشتاز',price:90000,desc:'ارسال سریع‌تر (۲ تا ۴ روز کاری)',on:true},{id:'courier',title:'پیک / اسنپ',price:0,desc:'هزینه طبق تعرفه، هماهنگی با ادمین فروشگاه',on:true,courier:true}]},s.ship||{});s.draw=Object.assign({enabled:false,id:uid(),rev:0,title:'قرعه‌کشی ویژه مشتریان',text:'با ثبت‌نام و خرید از فروشگاه در قرعه‌کشی شرکت کنید و برنده جایزه شوید.',prize:'',date:'',btn:'ثبت در قرعه‌کشی',cancel:'فعلاً نه',winners:1,result:[]},s.draw||{});
  if(!s.navChat){s.navChat=1;if(Array.isArray(s.nav)&&!s.nav.some(n=>n.view==='chat')){const i=s.nav.findIndex(n=>n.view==='pay');if(i>=0)s.nav[i]={id:s.nav[i].id,label:'گفتگو',icon:'comment',view:'chat'}}}
  return s}
 async function loadState(){let s=null;try{s=await Promise.race([dbGet(),new Promise(resolve=>setTimeout(()=>resolve(null),2500))])}catch(e){}HAD_CACHE=!!(s&&s.v===1);if(!s||s.v!==1)s=seed();if(s.mv!==2){s.theme.mode='light';s.mv=2}fixup(s);S=s;persist()}
@@ -1556,11 +1564,30 @@ function saleRail(){
    if(pend.touch)lp=setTimeout(()=>begin(e),320)})}
  liveSway(row);const stage=h('div',{class:'sr-stage'},h('span',{class:'sr-spot',style:{left:'18%'}}),h('span',{class:'sr-spot',style:{left:'50%'}}),h('span',{class:'sr-spot',style:{left:'82%'}}),row,toteEl());
  return h('section',{class:'srl srs'},secHead(R.title||'تخفیف‌خورده‌ها',h('button',{onclick:()=>go('categories')},'مشاهده همه')),stage,h('p',{class:'sr-hint'},R.hint||'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید'))}
+function luxurySpotlight(){
+ const L=S.luxury||{};if(L.enabled===false)return null;
+ const items=(L.items||[]).filter(x=>x&&x.active!==false&&(x.image||x.productId||x.title)).map(it=>{const key=it.productId??it.product_id??it.product??'';const p=(key!==''?(prod(key)||S.products.find(q=>String(q.id)===String(key)||String(q.sku||q.code||'')===String(key))):null)||S.products.find(q=>String(q.title||'').trim().toLowerCase()===String(it.title||'').trim().toLowerCase());const src=it.image||(p&&(p.images&&p.images[0]||p.rackImage))||'';return src?{p,src,name:it.title||p&&p.title||'کیف منتخب',price:+it.price||p&&+p.price||0,old:+it.oldPrice||p&&+p.oldPrice||0,desc:it.description||p&&(p.desc||p.description)||'',spec:[it.color,it.material,it.dimensions].filter(Boolean).join(' · ')}:null}).filter(Boolean);
+ let n=0,closeDetail;const photo=h('img',{src:items[0]?.src||'',alt:items[0]?.name||'',draggable:false,loading:'eager'});
+ const frame=h('button',{class:'lux-reference-photo',type:'button',onclick:detail,'aria-label':'برای مشاهده قیمت و مشخصات لمس کنید'},photo,h('span',{class:'lux-reference-outline'}),h('span',{class:'lux-reference-ribbon'},L.everyday||'THE ART OF EVERYDAY'),h('span',{class:'lux-reference-touch'},'لمس برای مشاهده جزئیات'));
+ const stage=h('div',{class:'lux-reference-stage'},frame);
+ const controls=h('div',{class:'lux-reference-controls'},h('button',{type:'button',class:'lux-reference-nav',onclick:()=>show(n-1),'aria-label':'عکس قبلی'},'‹'),h('span',{class:'lux-reference-count','aria-live':'polite'},'1 / '+items.length),h('button',{type:'button',class:'lux-reference-nav',onclick:()=>show(n+1),'aria-label':'عکس بعدی'},'›'));
+ const dots=h('div',{class:'lux-reference-dots','aria-label':'موقعیت تصویر'}); 
+ function show(i){if(!items.length)return;n=(i+items.length)%items.length;const x=items[n];photo.classList.remove('lux-reference-enter');photo.src=x.src;photo.alt=x.name;void photo.offsetWidth;photo.classList.add('lux-reference-enter');[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===n));const count=controls.querySelector('.lux-reference-count');if(count)count.textContent=(n+1)+' / '+items.length;}
+ items.forEach((x,i)=>dots.append(h('button',{type:'button',class:'lux-reference-dot'+(i===0?' on':''),onclick:()=>show(i),'aria-label':'نمایش تصویر '+(i+1)})));
+ function detail(){if(!items.length)return;const x=items[n],linked=!!x.p;const body=h('div',{class:'lux-detail-body'},h('div',{class:'lux-detail-top'},'جزئیات محصول',h('button',{class:'lux-detail-close',onclick:()=>closeDetail()},'×')),h('img',{src:x.src,alt:x.name,style:{width:'100%',aspectRatio:'1/1',objectFit:'contain',borderRadius:'18px',background:'#f7f3ed'}}),h('h2',{},x.name),x.price?h('div',{class:'lux-detail-price'},money(x.price),x.old>x.price?h('del',{},money(x.old)):null):null,x.desc?h('p',{class:'lux-detail-desc'},x.desc):null,x.spec?h('div',{class:'lux-detail-spec'},x.spec):null,linked?h('div',{class:'lux-detail-actions'},h('button',{class:'btn lux-detail-add',onclick:()=>{const p=x.p,defaultColor=p.colors&&p.colors[0]?p.colors[0].id:'';if(addCart(p.id,defaultColor,1)===false)return;closeDetail();toast('به سبد خرید اضافه شد');go('cart')}},'افزودن به سبد خرید'),h('button',{class:'btn sec',onclick:()=>{closeDetail();openProduct(x.p.id)}},'مشاهده محصول و انتخاب رنگ')):h('div',{class:'lux-detail-actions'},h('button',{class:'btn lux-detail-add',onclick:()=>toast('برای خرید آنلاین، ابتدا این کیف را در پنل مدیریت به یک محصول فروشگاه متصل کنید.')},'افزودن به سبد خرید'),h('p',{class:'lux-link-note'},'برای فعال شدن خرید و ثبت سفارش، این کیف باید به محصول فروشگاه متصل شود.')));closeDetail=openModal(h('div',{class:'lux-detail-sheet'},body))}
+ let touchX=0,touchY=0;frame.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});frame.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2)show(n+(dx<0?1:-1))},{passive:true});
+ let down=false,startX=0;frame.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){down=true;startX=e.clientX}});frame.addEventListener('pointerup',e=>{if(down){const dx=e.clientX-startX;down=false;if(Math.abs(dx)>45)show(n+(dx<0?1:-1))}});frame.addEventListener('pointerleave',()=>down=false);
+ if(items.length)show(0);
+ const copy=h('div',{class:'lux-reference-copy'},L.kicker?h('div',{class:'lux-kicker'},L.kicker):null,L.edition?h('div',{class:'lux-edition'},L.edition):null,(L.title||L.highlight||L.after)?h('h2',{class:'lux-title lux-reference-title'},L.title?h('span',{class:'lux-reference-title-lead'},L.title):null,L.highlight?h('mark',{class:'lux-reference-title-mark'},h('span',{},L.highlight)):null,L.after?h('span',{class:'lux-reference-title-after'},L.after):null):null,L.description?h('p',{class:'lux-desc'},L.description):null,L.button?h('button',{class:'lux-reference-cta',onclick:()=>items.length?detail():go('categories')},h('span',{class:'lux-reference-cta-icon'},'↗'),h('span',{},L.button)):null);
+ const gallery=h('div',{class:'lux-reference-gallery'},items.length?[stage,controls,dots]:h('div',{class:'lux-empty'},'کالکشن هنوز محصولی ندارد'));
+ return h('section',{class:'lux-reference-editorial'},copy,gallery)
+}
 function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;return[
  hn,!hn&&sh.stories&&storiesSec(false),
  sh.intro&&h('section',{class:'intro glass'},h('span',{class:'star',html:ic('star',34)}),h('span',{class:'k'},A.kicker),h('h3',{},A.introTitle),h('p',{},A.introText)),
  sh.products&&saleRail(),
  sh.products&&h('section',{},secHead('جدیدترین محصولات',h('button',{onclick:()=>go('categories')},'مشاهده همه')),(()=>{const sec=h('div',{});const newest=[...S.products].sort((a,b)=>(+b.createdAt||+b.created_at||0)-(+a.createdAt||+a.created_at||0));sec.append(pagedGrid(newest,()=>sec.parentElement));return sec})()),
+ luxurySpotlight(),
  sh.features&&h('section',{class:'feat'},S.features.map(f=>h('div',{class:'fc glass'},h('span',{class:'fi',html:ic(f.icon,26)}),h('b',{},f.title),h('span',{},f.text)))),
  sh.night&&h('button',{class:'night glass',onclick:toggleMode},h('span',{class:'ni',html:ic('moon',24)}),h('span',{class:'nt'},h('small',{},A.nightHint),h('b',{},A.nightTitle)),h('span',{class:'tg'+(isDark()?' on':'')})),
  sh.about&&h('section',{class:'about glass',id:'about'},h('h3',{},A.title),h('p',{},A.text),
@@ -1831,7 +1858,12 @@ const chV2Err=e=>/reply_to|rname|rtext/i.test((e&&e.message)||'');
 const rqSnip=m=>{const x=String(m.text||'');return x.startsWith('::st::')?x.slice(6):(x?x.replace(/\s+/g,' ').slice(0,80):(m.image?'📷 عکس':''))};
 const rqEl=(m,jump)=>m.reply_to?h('div',Object.assign({class:'rq'},jump?{onclick:()=>jump(m.reply_to)}:{}),h('b',{},m.rname||''),h('span',{},m.rtext||'')):null;
 const chJump=id=>{const e=document.querySelector('.chm[data-mid="'+id+'"]');if(e){e.scrollIntoView({block:'center',behavior:'smooth'});e.classList.add('flash');setTimeout(()=>e.classList.remove('flash'),1400)}else toast('پیام اصلی در لیست نیست')};
-const CH={msgs:[],timer:0,busy:false,err:'',sentAt:0,tab:'pub'};
+const CH={msgs:[],timer:0,busy:false,err:'',sentAt:0,tab:'pub',reactions:[],reads:[],rt:null,rtClient:null,rtReady:false,readMarked:new Set(),extraBusy:false,typingTimer:0,redraw:null};
+async function chLoadExtras(){if(CH.extraBusy)return false;const ids=CH.msgs.filter(m=>typeof m.id==='number').slice(-80).map(m=>m.id);if(!ids.length)return false;CH.extraBusy=true;try{const f='&message_id=in.('+ids.join(',')+')';const [rx,rd]=await Promise.all([sbFetch('/rest/v1/chat_reactions?select=message_id,uid,emoji'+f,{timeout:5000}),sbFetch('/rest/v1/chat_reads?select=message_id,uid'+f,{timeout:5000})]);CH.reactions=(rx||[]).sort((a,b)=>a.message_id-b.message_id||String(a.uid).localeCompare(String(b.uid))||String(a.emoji).localeCompare(String(b.emoji)));CH.reads=(rd||[]).sort((a,b)=>a.message_id-b.message_id||String(a.uid).localeCompare(String(b.uid)));return true}catch(e){return false}finally{CH.extraBusy=false}}
+async function chMarkReads(list){const u=curUser();if(!u||!u.id||!list)return;const lr=list.getBoundingClientRect(),visible=new Set([...list.querySelectorAll('.chm')].filter(el=>{const r=el.getBoundingClientRect();return r.top<lr.bottom&&r.bottom>lr.top}).map(el=>String(el.dataset.mid)));const ids=CH.msgs.filter(m=>typeof m.id==='number'&&m.uid!==u.id&&visible.has(String(m.id))&&!CH.readMarked.has(m.id)).map(m=>m.id);if(!ids.length)return;try{const n=await sbFetch('/rest/v1/rpc/chat_mark_read',{method:'POST',body:{p_ids:ids,p_uid:u.id,p_tok:chTok(u)},timeout:6000});if(Number(n)>=0)ids.forEach(id=>CH.readMarked.add(id))}catch(e){}}
+async function chReact(id,emoji){const u=curUser();if(!u){openAuth();return}try{const result=await sbFetch('/rest/v1/rpc/chat_react',{method:'POST',body:{p_id:id,p_uid:u.id,p_tok:chTok(u),p_emoji:emoji},timeout:6000});if(result==='invalid')return toast('برای واکنش، ابتدا یک پیام در گفتگو بفرستید');await chLoadExtras();if(CH.redraw)CH.redraw(false)}catch(e){toast('واکنش ثبت نشد: '+e.message)}}
+async function chStartRealtime(root,onlineEl,typingEl,inp,u,me,adm){try{const mod=await import('https://esm.sh/@supabase/supabase-js@2.57.0');if(!root.isConnected)return;const client=mod.createClient(SB.url,SB.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:5}}});const key=me||((adm?'admin-':'visitor-')+uid());const channel=client.channel('sise-public-chat',{config:{presence:{key}}});channel.on('presence',{event:'sync'},()=>{onlineEl.textContent='● '+Object.keys(channel.presenceState()).length+' نفر آنلاین'}).on('broadcast',{event:'typing'},({payload})=>{if(!payload||payload.uid===key||!payload.active)return;typingEl.textContent='IS TAYPING...';typingEl.hidden=false;clearTimeout(CH.typingTimer);CH.typingTimer=setTimeout(()=>{typingEl.hidden=true},2200)}).subscribe(async status=>{if(status==='SUBSCRIBED'){CH.rtReady=true;await channel.track({uid:key,name:u?uName(u):(adm?'مدیر فروشگاه':'مشتری')})}});CH.rtClient=client;CH.rt=channel;let last=0,idle=0;inp.addEventListener('input',()=>{if(!CH.rtReady||!CH.rt)return;const now=Date.now();if(now-last>900){last=now;CH.rt.send({type:'broadcast',event:'typing',payload:{uid:key,name:u?uName(u):(adm?'مدیر فروشگاه':'مشتری'),active:true}})}clearTimeout(idle);idle=setTimeout(()=>{if(CH.rtReady&&CH.rt)CH.rt.send({type:'broadcast',event:'typing',payload:{uid:key,active:false}})},1600)})}catch(e){onlineEl.textContent='اتصال آنلاین موقتاً در دسترس نیست'}}
+function chStopRealtime(){CH.rtReady=false;if(CH.rtClient&&CH.rt){try{CH.rtClient.removeChannel(CH.rt)}catch(e){}}CH.rt=null;CH.rtClient=null;clearTimeout(CH.typingTimer);}
 const chTmp=m=>String(m.id).startsWith('tmp');
 const chSha=async s=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return ''}};
 function chTok(u){if(!u.ctok){u.ctok=uid()+uid()+uid()+uid();persist()}return u.ctok}
@@ -1853,12 +1885,11 @@ async function chLoad(first){if(CH.busy)return false;CH.busy=true;let changed=fa
   if(CH.msgs.length>250)CH.msgs=CH.msgs.slice(-200)}
  catch(e){if(CH_V2&&chV2Err(e)){CH_V2=false;CH.busy=false;return chLoad(first)}CH.err=e.message||'خطا'}
  CH.busy=false;return changed}
-function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::'),ai=!!m.ai_generated;
- return h('div',{class:'chm'+(o.me?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':'')+(ai?' isai':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},ai?'دستیار هوشمند SISE':(m.is_admin?admName():m.name)),m.is_admin?h('span',{class:'adb'},ai?'هوش مصنوعی':'ادمین'):null,ai&&m.needs_admin?h('span',{class:'nb'},'نیازمند بررسی مدیر'):null,
-  rqEl(m,chJump),
-  m.image?h('img',{class:'chi',src:m.image,alt:'',loading:'lazy',onclick:()=>openLightbox([m.image],0)}):null,
-  m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
-  h('small',{},ago(Date.parse(m.created_at)||Date.now()),m.edited?h('span',{class:'ed'},'· ویرایش‌شده'):null),o.acts||null))}
+function chMsgEl(m,o={}){const st=String(m.text||'').startsWith('::st::'),ai=!!m.ai_generated,isPub=typeof m.id==='number',mine=!!o.me,rx=isPub?CH.reactions.filter(x=>x.message_id===m.id):[],rd=isPub&&mine?CH.reads.filter(x=>x.message_id===m.id&&x.uid!==m.uid).length:0,em=['❤️','😂','😍','👍','🔥','👏','😢','🎉'],me=curUser();
+ const chips=isPub?em.map(e=>{const n=rx.filter(x=>x.emoji===e).length;if(!n&&e!=='❤️'&&e!=='👍'&&e!=='😂')return null;const on=rx.some(x=>x.uid===(me&&me.id)&&x.emoji===e);return h('button',{type:'button',class:'ch-rx-btn'+(on?' on':''),'aria-label':'واکنش '+e,onclick:()=>chReact(m.id,e)},e,n?(' '+n):'')}).filter(Boolean):[];
+ return h('div',{class:'chm'+(mine?' me':'')+(st?' stk':'')+(m.is_admin?' isadm':'')+(ai?' isai':''),'data-mid':m.id},cmAvatar(m),h('div',{class:'chb'},h('b',{},ai?'دستیار هوشمند SISE':(m.is_admin?admName():m.name)),m.is_admin?h('span',{class:'adb'},ai?'هوش مصنوعی':'ادمین'):null,ai&&m.needs_admin?h('span',{class:'nb'},'نیازمند بررسی مدیر'):null,
+  rqEl(m,chJump),m.image?h('img',{class:'chi',src:m.image,alt:'',loading:'lazy',onclick:()=>openLightbox([m.image],0)}):null,m.text?h('p',{},String(m.text).replace(/^::st::/,'')):null,
+  h('small',{},ago(Date.parse(m.created_at)||Date.now()),m.edited?h('span',{class:'ed'},'· ویرایش‌شده'):null,rd?h('span',{class:'ch-read'},' · ✓✓ دیده‌شده'):null),h('div',{class:'ch-rx'},chips),o.acts||null))}
 /* ---------- private chat with the store manager (Supabase table pm + rpc pm_send / pm_list) ---------- */
 const admName=()=>((S.store&&S.store.adminName)||'').trim()||'sisé';
 const admAv=()=>(S.store&&S.store.adminAvatar)||'';
@@ -1875,35 +1906,38 @@ function syncAiFab(){let f=document.getElementById('aiFab');const show=cur==='ho
  document.body.append(f);
  const show1=()=>{if(!f.isConnected)return;f.classList.add('open');AIF.t2=setTimeout(()=>{f.classList.remove('open');AIF.t=setTimeout(show1,28000)},7000)};
  AIF.t=setTimeout(show1,1800)}
-function chTabs(){const t=(k,l)=>h('button',{type:'button',class:'cht'+(CH.tab===k?' on':''),onclick:()=>{if(CH.tab!==k){CH.tab=k;renderMain()}}},l);return h('div',{class:'ch-tabs'},t('pub','چت عمومی'),t('pm','چت با مدیریت'),t('ai','چت با هوش مصنوعی'))}
+function chTabs(){const t=(k,l,ico)=>h('button',{type:'button',class:'cht'+(CH.tab===k?' on':''),onclick:()=>{if(CH.tab!==k){CH.tab=k;renderMain()}}},h('span',{class:'cht-ic',html:ic(ico,16)}),h('span',{class:'cht-label'},l));return h('div',{class:'ch-tabs'},t('pub','چت عمومی','messages-square'),t('pm','چت با مدیریت','lock-keyhole'),t('ai','چت با هوش مصنوعی','sparkles'))}
 function pmView(channel='management'){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;const u=curUser(),root=h('div',{class:'ch'}),list=h('div',{class:'ch-list'});
+
  root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic(channel==='ai'?'sparkles':'lock',22)}),h('div',{},h('b',{},channel==='ai'?'چت با هوش مصنوعی':'چت با مدیریت'),h('small',{},channel==='ai'?'پاسخ‌گویی هوشمند درباره محصولات و خدمات SISE':'فقط شما و مدیر فروشگاه این گفتگو را می‌بینید'))),list);
  if(!u){add(list,h('div',{class:'empty'},channel==='ai'?'برای استفاده از دستیار هوشمند ابتدا وارد شوید.':'برای چت خصوصی با مدیریت ابتدا وارد شوید.'));root.append(chTabs(),h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'ورود یا ثبت‌نام')));return root}
- let pimg='',sending=false,err='',sig='';const inp=h('input',{class:'in',placeholder:channel==='ai'?'پیام خود را برای هوش مصنوعی بنویسید…':'پیام خود را بنویسید',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
+ let pimg='',sending=false,aiThinking=false,err='',sig='';const inp=h('input',{class:'in',placeholder:channel==='ai'?'پیام خود را برای هوش مصنوعی بنویسید…':'پیام خود را بنویسید',maxlength:'500',autocomplete:'off'}),pv=h('div',{class:'ch-pv',hidden:true}),file=h('input',{type:'file',accept:'image/*',style:{display:'none'}});
  const drawPv=()=>{pv.innerHTML='';pv.hidden=!pimg;if(pimg)add(pv,[h('img',{src:pimg,alt:''}),h('span',{},'عکس آماده ارسال است'),h('button',{type:'button',class:'sb dg','aria-label':'حذف عکس',html:ic('close',16),onclick:()=>{pimg='';drawPv()}})])};
+
  const near=()=>list.scrollHeight-list.scrollTop-list.clientHeight<220;
  const draw=stick=>{const keep=stick||near();list.innerHTML='';
   if(err){add(list,h('div',{class:'empty'},pmAuthErr({message:err})?'برای ادامه، دوباره با حساب جیمیل وارد شوید.':pmSetup({message:err})?'این بخش هنوز راه‌اندازی نشده است.':'اتصال برقرار نشد: '+err));return}
   add(list,PM.rows.length?PM.rows.map(r=>chMsgEl({id:'pm'+r.id,uid:r.uid,name:r.ai_generated?'دستیار هوشمند SISE':(r.from_admin?admName():uName(u)),is_admin:!!r.from_admin,ai_generated:!!r.ai_generated,needs_admin:!!r.needs_admin,avatar:r.from_admin?'':(u.avatar||''),text:r.text,image:r.image,created_at:r.created_at},{me:!r.from_admin})):h('div',{class:'empty'},channel==='ai'?'هنوز پیامی نیست؛ هر سؤالی درباره کیف‌ها و خدمات SISE دارید بپرسید.':'هنوز پیامی نیست؛ پیام شما مستقیماً برای مدیریت فروشگاه ارسال می‌شود.'));
+  if(channel==='ai'&&aiThinking)add(list,h('div',{class:'chm isai sise-ai-typing'},cmAvatar({is_admin:true,ai_generated:true}),h('div',{class:'chb'},h('b',{},'دستیار هوشمند SISE'),h('span',{class:'sise-typing-dots','aria-label':'در حال نوشتن'},h('i'),h('i'),h('i')))));
   if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
- const load=async first=>{try{const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const r=await custFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},token,timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;if(s2!==sig||first){sig=s2;PM.rows=rows;draw(first||true)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
+ const load=async first=>{try{const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const r=await custFetch('/rest/v1/rpc/pm_list_auth',{method:'POST',body:{p_channel:channel},token,timeout:8000});const rows=Array.isArray(r)?r:[],s2=rows.length+':'+(rows.length?rows[rows.length-1].id:'');err='';if(sending)return;const gotAi=channel==='ai'&&aiThinking&&rows.some(x=>x.ai_generated);if(gotAi)aiThinking=false;if(s2!==sig||first||gotAi){sig=s2;PM.rows=rows;draw(first||gotAi)}}catch(e){if(!sig||first){err=e.message||'خطا';draw()}}};
  const send=async()=>{const t=inp.value.trim(),img=pimg;if(!t&&!img||sending)return;if(Date.now()-CH.sentAt<1200)return toast('کمی آهسته‌تر 🙂');CH.sentAt=Date.now();sending=true;
   try{let url=null;if(img){toast('در حال ارسال عکس…');try{url=await chUpload(img)}catch(e){toast('عکس ارسال نشد: '+e.message);return}}
    const tmp={id:'t'+uid(),uid:u.id,text:t,image:url,from_admin:false,created_at:new Date().toISOString()};PM.rows=PM.rows.concat([tmp]);inp.value='';pimg='';drawPv();err='';draw(true);
    try{
     const token=await custToken();if(!token)throw new Error('نشست ورود منقضی شده؛ دوباره وارد حساب شوید');const pmId=await custFetch('/rest/v1/rpc/pm_send_auth',{method:'POST',body:{p_name:uName(u),p_text:t,p_image:url,p_channel:channel},token,timeout:10000});
     buzz(12);
-    if(channel==='ai'){try{const access=await custToken();const response=await fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key,Authorization:'Bearer '+access},body:JSON.stringify({message_id:Number(pmId),channel:'ai'})});if(!response.ok){let detail={};try{detail=await response.json()}catch(e){}toast(detail.error==='assistant_not_configured'?'دستیار هوشمند هنوز فعال نشده است':'پیام ثبت شد؛ پاسخ هوشمند موقتاً در دسترس نیست')}}catch(e){toast('پیام ثبت شد؛ اتصال دستیار هوشمند برقرار نشد')}}
+    if(channel==='ai'){aiThinking=true;draw(true);try{const access=await custToken();const response=await fetch(SB.url+'/functions/v1/sise-ai-chat',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key,Authorization:'Bearer '+access},body:JSON.stringify({message_id:Number(pmId),channel:'ai'})});if(!response.ok){aiThinking=false;let detail={};try{detail=await response.json()}catch(e){}toast(detail.error==='assistant_not_configured'?'دستیار هوشمند هنوز فعال نشده است':'پیام ثبت شد؛ پاسخ هوشمند موقتاً در دسترس نیست')}}catch(e){aiThinking=false;toast('پیام ثبت شد؛ اتصال دستیار هوشمند برقرار نشد')}}
    }
    catch(e){PM.rows=PM.rows.filter(x=>x!==tmp);draw();toast(pmSetup(e)?'این بخش هنوز راه‌اندازی نشده است':'ارسال نشد: '+e.message)}}
-  finally{sending=false;sig='';load(false)}};
+  finally{sending=false;load(false)}};
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
  root.append(chTabs(),h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},pv,h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>file.click()}),inp,file,h('button',{class:'btn',type:'submit','aria-label':'ارسال'},'ارسال')));
  PM.rows=[];draw(true);load(true);
  PM.timer=setInterval(()=>{if(cur!=='chat'||CH.tab!==channelToTab(channel)||!root.isConnected){clearInterval(PM.timer);PM.timer=0;return}if(!document.hidden)load(false)},5000);
  return root}
 function channelToTab(channel){return channel==='ai'?'ai':'pm'}
-function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;if(CH.tab==='pm')return pmView('management');if(CH.tab==='ai')return pmView('ai');const u=curUser(),me=u?u.id:null,adm=!!sbSess();
+function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);PM.timer=0;chStopRealtime();CH.readMarked=new Set();if(CH.tab==='pm')return pmView('management');if(CH.tab==='ai')return pmView('ai');const u=curUser(),me=u?u.id:null,adm=!!sbSess();
  let pimg='',editing=null,sending=false,replying=null;
  const list=h('div',{class:'ch-list'}),inp=h('input',{class:'in',id:'ch-in',placeholder:'پیام خود را بنویسید…',maxlength:'500',autocomplete:'off'}),root=h('div',{class:'ch'});
  const sp=h('div',{class:'ch-sp',hidden:true},STICKERS.map(s=>h('button',{type:'button',onclick:()=>{sp.hidden=true;send('::st::'+s)}},s)));
@@ -1928,6 +1962,7 @@ function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);P
     if(bs.length)acts=h('div',{class:'act'},bs);
     return chMsgEl(m,{me:mine,acts})}):h('div',{class:'empty'},'هنوز پیامی نیست؛ اولین نفر باشید 👋'));
   if(keep)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight})};
+ CH.redraw=draw;
  const saveEdit=async t=>{const m=editing,uu=curUser();if(!m||!uu)return;if(!t&&!m.image)return toast('متن پیام نمی‌تواند خالی باشد');
   try{const ok=await sbFetch('/rest/v1/rpc/chat_edit',{method:'POST',body:{p_id:m.id,p_uid:uu.id,p_tok:chTok(uu),p_text:t.slice(0,500)}});
    if(ok===false)return toast('اجازه ویرایش این پیام را ندارید');
@@ -1947,10 +1982,11 @@ function chatView(){clearInterval(CH.timer);CH.timer=0;clearInterval(PM.timer);P
  file.onchange=async()=>{const f=file.files[0];file.value='';if(!f)return;try{const d=await chPickImage(f);if(d){pimg=d;drawPv()}}catch(e){toast(e.message||'عکس خوانده نشد')}};
  const cp=(u||adm)?h('form',{class:'ch-cp glass',onsubmit:e=>{e.preventDefault();send()}},eb,rb,pv,sp,h('button',{class:'ch-st',type:'button','aria-label':'استیکر',onclick:()=>{if(!editing)sp.hidden=!sp.hidden}},'😊'),h('button',{class:'ch-st',type:'button','aria-label':'ارسال عکس',html:ic('image',22),onclick:()=>{if(!editing)file.click()}}),inp,file,sbtn):h('div',{class:'ch-cp glass'},h('button',{class:'btn ch-login',onclick:openAuth},'برای گفتگو وارد شوید یا ثبت‌نام کنید'));
  cp.addEventListener('focusin',e=>{if(e.target.matches('input'))setTimeout(()=>e.target.scrollIntoView({block:'nearest'}),300)});
- root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic('comment',22)}),h('div',{},h('b',{},'گفتگوی همگانی'),h('small',{},'با بقیه‌ی مشتری‌ها گفتگو کنید'))),list,chTabs(),cp);
- draw(true);chLoad(true).then(()=>draw(true));
- CH.timer=setInterval(async()=>{if(cur!=='chat'||!root.isConnected){clearInterval(CH.timer);CH.timer=0;return}if(document.hidden)return;
-  const nu=curUser();if((nu?nu.id:null)!==me){renderMain();return}if(await chLoad(false))draw(false)},4000);
+ const onlineEl=h('small',{class:'ch-online'},'در حال اتصال…'),typingEl=h('small',{class:'ch-typing',hidden:true},'');root.append(h('div',{class:'ch-hd glass'},h('span',{class:'ci',html:ic('comment',22)}),h('div',{},h('b',{},'گفتگوی همگانی'),onlineEl,typingEl)),chTabs(),list,cp);
+ draw(true);chLoad(true).then(async()=>{await chLoadExtras();draw(true);await chMarkReads(list)});
+ chStartRealtime(root,onlineEl,typingEl,inp,u,me,adm);
+ CH.timer=setInterval(async()=>{if(cur!=='chat'||!root.isConnected){clearInterval(CH.timer);CH.timer=0;chStopRealtime();return}if(document.hidden)return;
+  const nu=curUser();if((nu?nu.id:null)!==me){chStopRealtime();renderMain();return}const beforeExtras=JSON.stringify([CH.reactions,CH.reads]),beforeErr=CH.err;const changed=await chLoad(false);await chLoadExtras();const extrasChanged=beforeExtras!==JSON.stringify([CH.reactions,CH.reads]);if(changed||extrasChanged||beforeErr!==CH.err)draw(false);await chMarkReads(list)},4000);
  return root}
 /* ---------- stories viewer ---------- */
 function openStory(start){const list=S.stories;if(!list.length)return;let i=start,prog=0,last=0,paused=false,raf=0,vid=null,hold=0,hx=0,sheetOpen=false;
@@ -2155,7 +2191,7 @@ function stockF(p){const inp=h('input',{class:'in',type:'text',inputmode:'numeri
  sbFetch('/rest/v1/stock?pid=eq.'+encodeURIComponent(p.id)+'&select=qty',{auth:true}).then(r=>{if(r&&r[0]){inp.value=r[0].qty;st.textContent='موجودی فعلی روی سرور'}else{inp.value=+p.stock||0;st.textContent='هنوز در انبار ثبت نشده؛ با «ذخیره موجودی» ثبت می‌شود'}}).catch(e=>{inp.value=+p.stock||0;st.textContent='خطا: '+e.message});
  return h('div',{style:{display:'grid',gap:'6px'}},h('div',{class:'row',style:{flexWrap:'wrap'}},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn',type:'button',onclick:save},'ذخیره موجودی')),st)}
 function lifeF(s){const info=h('small',{class:'fh'},stLeft(s)),sel=h('select',{class:'in',onchange:()=>{s.life=+sel.value;s.created=Date.now();commit();info.textContent=stLeft(s)}},[[24,'۲۴ ساعت'],[72,'۳ روز'],[168,'یک هفته'],[720,'یک ماه'],[0,'بدون انقضا']].map(([v,l])=>h('option',{value:String(v)},l)));sel.value=String(+s.life||0);return h('div',{style:{display:'grid',gap:'6px'}},sel,info,h('small',{class:'fh'},'شمارش از لحظه ثبت یا تغییر مدت شروع می‌شود و بعد از اتمام، استوری در سایت دیده نمی‌شود و با انتشار بعدی از سرور پاک می‌شود.'))}
-const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['chat','گفتگوی همگانی','users'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
+const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['luxury','کالکشن لوکس','star'],['rack','مدیریت رگال','hanger'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['chat','گفتگوی همگانی','users'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
 const ADM={open:false};
 const enDigits=s=>String(s||'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 function openAdminLogin(){if(ADM.open)return;let c;const ss=sbSess();
@@ -2176,6 +2212,7 @@ function openAdmin(){const body=h('div',{class:'adm-b'}),tabs=h('div',{class:'ta
  ADM.go=k=>{if(admTab!==k&&!sisePopHandling){try{history.pushState({...(history.state||{}),siseAdminTab:k},'',location.href)}catch(e){}}admTab=k;draw()};try{history.pushState({siseAdminRoot:true,siseAdminTab:'dash'},'',location.href)}catch(e){}document.body.append(root);document.body.classList.add('lock');ADM.open=true;draw()}
 
 const PANELS={
+luxury(){const L=S.luxury||(S.luxury={enabled:true,logo:'',kicker:'A LITTLE MORE YOU',edition:'026 / AUTUMN EDIT',title:'استایل تو،',highlight:'قانون خودش',after:'را دارد.',description:'برای ترکیب کردن، دوباره پوشیدن و ساختن استایلی که فقط شبیه خودت باشد.',button:'کشف کالکشن لوکس',everyday:'THE ART OF EVERYDAY',items:[]});if(!Array.isArray(L.items))L.items=[];return[card('طراحی برگه کالکشن لوکس',h('p',{},'این بخش دقیقاً بعد از «جدیدترین محصولات» نمایش داده می‌شود. عکس کیف‌ها به صفحه محصول متصل است و مشتری می‌تواند جزئیات را ببیند و سفارش دهد.'),tog(L,'enabled','نمایش کالکشن در صفحه اصلی'),fld('لوگوی داخل نیم‌دایره بالای کارت',imgField(L,'logo',{max:700,alpha:true,clearable:true}),'اگر خالی باشد لوگوی اصلی فروشگاه استفاده می‌شود.'),g2(fld('نوشته بالای عنوان',tx(L,'kicker')),fld('برچسب کالکشن',tx(L,'edition'))),g2(fld('عنوان اول',tx(L,'title')),fld('عبارت هایلایت‌شده',tx(L,'highlight'))),g2(fld('ادامه عنوان',tx(L,'after')),fld('متن دکمه',tx(L,'button'))),fld('توضیحات',tx(L,'description',{area:true,rows:3})),fld('نوشته عمودی کنار عکس‌ها',tx(L,'everyday'))),card('کیف‌های کالکشن لوکس',h('p',{},'برای افزودن کیف جدید، ابتدا آن را در بخش «محصولات» بسازید؛ سپس اینجا انتخابش کنید. با انتخاب عکس اختصاصی، همان تصویر در کالکشن نمایش داده می‌شود؛ لمس عکس، صفحه محصول و امکان سفارش را باز می‌کند.'),listEd(L.items,it=>[fld('محصول متصل',pick(it,'productId',[['','انتخاب محصول'],...S.products.map(p=>[p.id,p.title])])),fld('تصویر نمایشی کالکشن',imgField(it,'image',{max:1800,q:.92,clearable:true})),tog(it,'active','نمایش این کیف')],()=>({id:uid(),productId:'',image:'',active:true}),{title:it=>{const p=prod(it.productId);return p?p.title:'کیف جدید — محصول انتخاب نشده'},addLabel:'افزودن کیف به کالکشن',thumb:it=>it.image||'',collapse:true}),h('button',{class:'btn sec',type:'button',onclick:()=>ADM.go('products')},I('plus',16),'رفتن به افزودن محصول جدید'))]},
 rack(){
  const R=S.rack||(S.rack={title:'منتخب‌های SISE',hint:'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن کیف کلیک کنید',limit:10,items:[]});
  if(!Array.isArray(R.items))R.items=[];
@@ -2351,8 +2388,7 @@ chat(){let rows=[],err='',pimg='',editId=null;const box=h('div',{class:'lst'});
  const post=async()=>{const t=inp.value.trim();if(!t&&!pimg)return toast('متن یا عکسی بنویسید');
   try{let url=null;if(pimg)url=await chUpload(pimg);const lg=S.store.logo;
    await sbFetch('/rest/v1/chat_messages',{method:'POST',auth:true,headers:{Prefer:'return=minimal'},body:Object.assign({uid:'admin',name:admName(),avatar:(lg&&/^https?:/.test(lg)&&lg.length<400)?lg:null,text:t,image:url,is_admin:true},CH_V2&&rep?{reply_to:rep.id,rname:rep.name,rtext:rqSnip(rep)}:{})});
-   inp.value='';pimg=''
-;drawPv();rep=null;drawRp();toast('پیام ارسال شد');load()}catch(e){toast('ارسال نشد: '+e.message)}};
+   inp.value='';pimg='';drawPv();rep=null;drawRp();toast('پیام ارسال شد');load()}catch(e){toast('ارسال نشد: '+e.message)}};
  box.append(h('div',{class:'empty'},'در حال بارگیری…'));load();
  return[card('ارسال پیام به‌عنوان ادمین',h('p',{},'پیام شما با برچسب «ادمین» و ظاهر متفاوت در گفتگوی همگانی نمایش داده می‌شود.'),rp,inp,pv,h('div',{class:'row'},h('span',{class:'btn sec up'},I('image',18),'افزودن عکس',file),h('button',{class:'btn',onclick:post},I('comment',18),'ارسال'))),
   h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('chat')},'بروزرسانی'),card('پیام‌های گفتگوی همگانی',box)]},
@@ -2372,8 +2408,7 @@ comments(){let rows=[],v2=true,noCol=false,editId=null,repId=null;const box=h('d
     h('small',{class:'fh'},'استوری: '+(st?st.title:'(حذف‌شده)')),rqEl(c,null),
     editId===c.id?[ta,h('div',{class:'row'},h('button',{class:'btn',onclick:()=>saveEdit(c,ta.value)},'ذخیره'),h('button',{class:'btn sec',onclick:()=>{editId=null;draw()}},'لغو'))]:h('p',{style:{margin:'4px 0'}},c.text),
     repId===c.id?[rt,h('div',{class:'row'},h('button',{class:'btn',onclick:()=>sendRep(c,rt.value)},'ارسال پاسخ'),h('button',{class:'btn sec',onclick:()=>{repId=null;draw()}},'لغو'))]:null,
-    busy?null:h('div',{class:'row'},v2?h('button',{class:'btn sec',onclick:()=>{repId=c.id;editId=null;draw()}},I('comment',16),'پاسخ'):null,v2?h('button',{class:'btn sec',onclick:()=>{editId=c.id;repId=null;draw()}},I('edit',16),'ویرایش'):null,h('button',{class:'btn dg',onclick:e=>delRow(c,
-e.currentTarget)},I('trash',16),'حذف نظر')))}):h('div',{class:'empty'},'هنوز نظری ثبت نشده است.'))};
+    busy?null:h('div',{class:'row'},v2?h('button',{class:'btn sec',onclick:()=>{repId=c.id;editId=null;draw()}},I('comment',16),'پاسخ'):null,v2?h('button',{class:'btn sec',onclick:()=>{editId=c.id;repId=null;draw()}},I('edit',16),'ویرایش'):null,h('button',{class:'btn dg',onclick:e=>delRow(c,e.currentTarget)},I('trash',16),'حذف نظر')))}):h('div',{class:'empty'},'هنوز نظری ثبت نشده است.'))};
  const load=()=>q(CM_NEW).then(r=>{v2=true;CM_V2=true;return r}).catch(e=>{if(!cmV2Err(e))throw e;v2=false;CM_V2=false;return q(CM_OLD).catch(()=>{noCol=true;return q('id,story_id,name,text,created_at')})}).then(r=>{rows=r||[];draw()}).catch(e=>{box.innerHTML='';box.append(h('small',{class:'fh'},'بارگیری نشد: '+e.message+''))});
  box.append(h('div',{class:'empty'},'در حال بارگیری…'));load();
  return[h('button',{class:'btn sec',style:{alignSelf:'flex-start'},onclick:()=>ADM.go('comments')},'بروزرسانی'),card('نظرات استوری‌ها',box)]},
@@ -2393,206 +2428,6 @@ settings(){const P=S.pay,R=S.rack||(S.rack={title:'منتخب‌های SISE',hin
    fld('بازگردانی از پشتیبان',imp),h('button',{class:'btn',style:{alignSelf:'flex-start'},onclick:()=>{try{const d=JSON.parse(imp.value);if(!d||d.v!==1||!d.products)throw 0;S=d;persist();refreshStore();toast('بازگردانی شد');document.querySelector('.tb.on').click()}catch(e){toast('متن پشتیبان معتبر نیست')}}},'بازگردانی')),
   card('بازنشانی',h('p',{},'همه‌چیز به داده‌های نمونه برمی‌گردد و تغییرات شما پاک می‌شود.'),h('button',{class:'btn dg',style:{alignSelf:'flex-start'},onclick:e=>{const b=e.currentTarget;if(b.dataset.s){S=seed();V.cart=[];V.orders=[];V.seen={};saveV();persist();refreshStore();toast('بازنشانی شد');document.querySelector('.tb.on').click()}else{b.dataset.s=1;b.textContent='مطمئنید؟ دوباره بزنید'}}},I('undo',16),'بازنشانی به نمونه'))]}
 };
-/* Rebuild the full SISE Messenger header shown in the approved reference. */
-const SISE_chatViewOriginal=chatView;
-function SISE_chatHeader(tabs){
- const menu=h('button',{type:'button',class:'sise-chat-icon','aria-label':'راهنمای گفتگو',title:'راهنمای گفتگو',html:ic('more-horizontal',21),onclick:()=>openModal(h('div',{class:'sh sise-chat-help'},h('div',{class:'grab'}),h('h3',{},'راهنمای گفتگوی SISE'),h('p',{},'از تب‌ها برای جابه‌جایی بین گفتگوی عمومی، مدیریت و دستیار هوشمند استفاده کنید.'),h('p',{},'برای واکنش به پیام، یکی از شکلک‌ها را انتخاب کنید و از منوی روی پیام، گزینه‌های همان پیام را ببینید.')),'b')});
- const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISÉ'),h('small',{},'MESSENGER'));
- const actions=h('div',{class:'sise-chat-actions'},
-  h('button',{type:'button',class:'sise-chat-icon','aria-label':'جستجوی محصولات',title:'جستجو',html:ic('search',20),onclick:()=>openSearch()}),
-  h('button',{type:'button',class:'sise-chat-icon','aria-label':'ورود یا حساب کاربری',title:'حساب کاربری',html:ic('user-round',20),onclick:openAuth}),
-  h('button',{type:'button',class:'sise-chat-icon','aria-label':'صفحه اصلی',title:'صفحه اصلی',html:ic('house',20),onclick:()=>go('home')})
- );
- const head=h('div',{class:'sise-chat-head'},menu,brand,actions);
- if(tabs){
-  tabs.classList.add('sise-chat-tabs');
-  const labels=['چت عمومی','چت با مدیریت','چت با هوش مصنوعی'];
-  [...tabs.children].forEach((b,i)=>{if(labels[i])b.textContent=labels[i]});
- }
- return h('div',{class:'sise-chat-top'},head,tabs||chTabs());
-}
-chatView=function(){return SISE_chatViewOriginal()};
-
-
-/* SISE interactive upgrade layer */
-const SISE_COMPARE_KEY='sise_compare_v1';
-let SISE_COMPARE=[];
-try{SISE_COMPARE=JSON.parse(localStorage.getItem(SISE_COMPARE_KEY)||'[]')}catch(e){SISE_COMPARE=[]}
-if(!Array.isArray(SISE_COMPARE))SISE_COMPARE=[];
-const SISE_saveCompare=()=>{try{localStorage.setItem(SISE_COMPARE_KEY,JSON.stringify(SISE_COMPARE))}catch(e){}};
-const SISE_compareProducts=()=>SISE_COMPARE.map(id=>S.products.find(p=>String(p.id)===String(id))).filter(Boolean);
-function SISE_openCompare(){
- const items=SISE_compareProducts();if(items.length<2)return toast('برای مقایسه حداقل دو محصول انتخاب کنید');
- const body=h('div',{class:'sise-cmp-scroll'}),table=h('table',{class:'sise-cmp-table'}),sheet=h('div',{class:'sh sise-cmp-sheet'},h('div',{class:'grab'}),h('h3',{},'مقایسه محصولات'),h('p',{class:'fh'},'ویژگی‌ها را کنار هم بررسی کنید'),body);
- const close=openModal(sheet,'b');
- const draw=()=>{
-  const ps=SISE_compareProducts();table.innerHTML='';
-  const head=h('thead',{},h('tr',{},h('th',{},'ویژگی'),ps.map(p=>h('th',{},h('img',{src:(p.images&&p.images[0])||'',alt:p.title}),h('b',{},p.title),h('div',{},h('button',{class:'sise-cmp-remove',type:'button',onclick:()=>{SISE_COMPARE=SISE_COMPARE.filter(x=>String(x)!==String(p.id));SISE_saveCompare();SISE_syncCompareDock();draw()}},'حذف از مقایسه'))))));
-  const rows=[
-   ['قیمت',p=>money(p.price)],
-   ['دسته‌بندی',p=>(S.categories.find(c=>c.id===p.cat)||{}).name||'—'],
-   ['وضعیت موجودی',p=>qtyOf(p)>0?'موجود · '+fa(qtyOf(p))+' عدد':'ناموجود'],
-   ['رنگ‌بندی',p=>(p.colors||[]).map(c=>c.name).join('، ')||'—'],
-   ['تخفیف',p=>disc(p)?fa(disc(p))+'٪':'بدون تخفیف'],
-   ['امتیاز',p=>revs(p).length?fa1(revAvg(p))+' از ۵':'هنوز امتیازی ثبت نشده'],
-   ['توضیحات',p=>p.desc||'—']
-  ];
-  const tb=h('tbody',{},rows.map(r=>h('tr',{},h('td',{},r[0]),ps.map(p=>h('td',{},r[1](p))))));
-  table.append(head,tb);body.innerHTML='';body.append(table);
-  if(ps.length<2){body.append(h('div',{class:'empty'},'برای ادامه، یک محصول دیگر به مقایسه اضافه کنید'))}
- };
- draw();return close;
-}
-function SISE_syncCompareDock(){
- let dock=document.getElementById('siseCompareDock');
- const ps=SISE_compareProducts();
- if(ps.length<2){if(dock)dock.remove();return}
- if(!dock){dock=h('div',{id:'siseCompareDock',class:'sise-compare-dock'});document.body.append(dock)}
- dock.innerHTML='';
- dock.append(h('div',{class:'sise-cmp-label'},fa(ps.length)+' محصول برای مقایسه انتخاب شده'),h('button',{type:'button',onclick:SISE_openCompare},'مقایسه'),h('button',{type:'button',class:'sise-cmp-clear',onclick:()=>{SISE_COMPARE=[];SISE_saveCompare();SISE_syncCompareDock();document.querySelectorAll('.sise-compare-card').forEach(b=>{b.classList.remove('on');b.setAttribute('aria-pressed','false')})}},'پاک‌کردن'));
-}
-function SISE_toggleCompare(p,btn){
- const id=String(p.id),has=SISE_COMPARE.some(x=>String(x)===id);
- if(has)SISE_COMPARE=SISE_COMPARE.filter(x=>String(x)!==id);
- else{if(SISE_COMPARE.length>=3)return toast('حداکثر سه محصول را هم‌زمان مقایسه کنید');SISE_COMPARE.push(p.id)}
- SISE_saveCompare();if(btn){btn.classList.toggle('on',!has);btn.setAttribute('aria-pressed',String(!has));btn.innerHTML=(!has?'✓ انتخاب شد':'⇄ مقایسه')}
- SISE_syncCompareDock();toast(has?'از مقایسه حذف شد':'به مقایسه اضافه شد');
-}
-const SISE_pcardBase=pcard;
-pcard=function(p){
- const card=SISE_pcardBase(p);
- const meta=card.querySelector('.in');
- if(meta&&!meta.querySelector('h4'))meta.insertBefore(h('h4',{},p.title||'محصول SISE'),meta.firstChild);
- const im=card.querySelector('.im');
- if(im&&!im.querySelector('.sise-compare-card')){
-  const on=SISE_COMPARE.some(x=>String(x)===String(p.id));
-  im.append(h('button',{type:'button',class:'sise-compare-card'+(on?' on':''),'aria-label':'مقایسه '+(p.title||''),'aria-pressed':String(on),onclick:e=>{e.stopPropagation();SISE_toggleCompare(p,e.currentTarget)}},on?'✓ انتخاب شد':'⇄ مقایسه'));
- }
- return card;
-};
-const SISE_renderMainBase=renderMain;
-renderMain=function(){SISE_renderMainBase();SISE_syncCompareDock()};
-const SISE_storiesBase=storiesSec;
-storiesSec=function(inPanel){
- const sec=SISE_storiesBase(inPanel);
- const old=sec.querySelector('.st-h');if(old)old.remove();
- const list=S.stories||[],seen=list.filter(x=>V.seen[x.id]).length,newCount=Math.max(0,list.length-seen);
- const row=sec.querySelector('.stories');
- if(row){
-  const head=h('div',{class:'sise-stories-head'},h('div',{class:'sise-st-title'},h('span',{html:ic('star',18)}),h('b',{},'استوری‌ها')),h('small',{},fa(list.length)+' استوری'));
-  sec.insertBefore(head,row);
- }
- const hint=sec.querySelector('.hint');
- if(hint){
-  const text=hint.querySelector('span:last-child');
-  if(text)text.textContent=list.length?(newCount?fa(newCount)+' استوری جدید · '+fa(seen)+' دیده شده':fa(list.length)+' استوری · همه دیده شده'):'هنوز استوری‌ای نیست';
-  const arrow=hint.querySelector('button');if(arrow){arrow.setAttribute('aria-label','رفتن به استوری بعدی');arrow.title='استوری بعدی'}
- }
- return sec;
-};
-const SISE_openSearchBase=openSearch;
-openSearch=function(){
- let close,filterCat='',query='';
- const inp=h('input',{id:'s-q',placeholder:'نام کیف، رنگ، مدل یا دسته‌بندی را بنویسید…','aria-label':'جستجوی هوشمند محصولات',autocomplete:'off'});
- const chips=h('div',{class:'sise-search-chips'}),meta=h('div',{class:'sise-search-meta'}),res=h('div',{class:'grid sise-search-grid'});
- const norm=v=>String(v||'').toLocaleLowerCase('fa').replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\s]+/g,' ').trim();
- const score=p=>{
-  if(!query)return 1;
-  const cat=(S.categories.find(c=>c.id===p.cat)||{}).name||'';
-  const hay=norm([p.title,p.desc,cat,(p.colors||[]).map(c=>c.name).join(' '),p.badge].join(' '));
-  const tokens=query.split(' ').filter(Boolean);let n=0;
-  tokens.forEach(t=>{if(hay===t)n+=12;else if(norm(p.title).startsWith(t))n+=8;else if(hay.includes(t))n+=4;else if(t.length>3&&[...hay].some((_,i)=>hay.slice(i,i+t.length-1)===t.slice(0,-1)))n+=1});
-  return n;
- };
- const draw=()=>{
-  chips.innerHTML='';chips.append(h('button',{type:'button',class:filterCat===''?'on':'',onclick:()=>{filterCat='';draw()}},'همه دسته‌ها'));
-  S.categories.forEach(c=>chips.append(h('button',{type:'button',class:filterCat===c.id?'on':'',onclick:()=>{filterCat=c.id;draw()}},c.name)));
-  const found=S.products.map(p=>({p,n:score(p)})).filter(x=>(!query||x.n>0)&&(!filterCat||x.p.cat===filterCat)).sort((a,b)=>b.n-a.n);
-  meta.textContent=fa(found.length)+' محصول پیدا شد'+(query?' برای «'+query+'»':'');
-  res.innerHTML='';
-  add(res,found.length?found.map(x=>pcard(x.p)):h('div',{class:'empty',style:{gridColumn:'1/-1'}},I('search',40),'نتیجه‌ای پیدا نشد؛ نام رنگ یا دسته‌بندی دیگری را امتحان کنید'));
- };
- inp.addEventListener('input',()=>{query=norm(inp.value);draw()});
- draw();
- close=openModal(h('div',{class:'sh sise-search-sheet',style:{minHeight:'76vh'}},h('div',{class:'grab'}),h('div',{class:'search glass sise-search-box'},I('search',20),inp),chips,meta,res),'b');
- setTimeout(()=>inp.focus(),140);
-};
-const SISE_chMsgBase=chMsgEl;
-chMsgEl=function(m,o){
- const node=SISE_chMsgBase(m,o||{});
- const bubble=node.querySelector('.chb'),actions=bubble&&bubble.querySelector('.act');
- if(bubble&&actions){
-  actions.classList.add('sise-msg-actions');
-  const more=h('button',{type:'button',class:'sise-msg-more','aria-label':'گزینه‌های پیام',title:'گزینه‌های پیام',html:ic('more-horizontal',16),onclick:e=>{
-   e.stopPropagation();
-   document.querySelectorAll('.sise-msg-actions.open').forEach(x=>{if(x!==actions)x.classList.remove('open')});
-   actions.classList.toggle('open');
-  }});
-  bubble.insertBefore(more,actions);
-  /* Per-device reaction UI; shared counts need a server-side reaction store. */
-  const reactionKey='sise_chat_reactions_v1';
-  const readReactions=()=>{try{return JSON.parse(localStorage.getItem(reactionKey)||'{}')}catch(e){return {}}};
-  const saveReactions=v=>{try{localStorage.setItem(reactionKey,JSON.stringify(v))}catch(e){}};
-  const reactions=[['👍','like'],['❤️','love'],['😂','laugh']];
-  const mid=String((node&&node.dataset&&node.dataset.mid)||(m&&m.id)||''),data=readReactions(),mine=data[mid]||'';
-  const bar=h('div',{class:'sise-reactions','aria-label':'واکنش به پیام'});
-  reactions.forEach(([emoji,key])=>{
-   const counts=data[mid+'_counts']||{},selected=mine===key;
-   const btn=h('button',{type:'button',class:'sise-reaction'+(selected?' on':''),'aria-pressed':String(selected),'aria-label':'واکنش '+emoji},emoji,h('span',{},String((counts[key]||0))));
-   btn.addEventListener('click',e=>{
-    e.stopPropagation();
-    const all=readReactions(),previous=all[mid]||'',nextCounts=all[mid+'_counts']||{};
-    if(previous===key){delete all[mid];nextCounts[key]=Math.max(0,(nextCounts[key]||0)-1)}
-    else{if(previous)nextCounts[previous]=Math.max(0,(nextCounts[previous]||0)-1);all[mid]=key;nextCounts[key]=(nextCounts[key]||0)+1}
-    all[mid+'_counts']=nextCounts;saveReactions(all);
-    bar.querySelectorAll('.sise-reaction').forEach((b,i)=>{const active=all[mid]===reactions[i][1],n=nextCounts[reactions[i][1]]||0;b.classList.toggle('on',active);b.setAttribute('aria-pressed',String(active));b.querySelector('span').textContent=String(n)});
-   });
-   bar.append(btn);
-  });
-  bubble.insertBefore(bar,more);
-  actions.addEventListener('click',()=>actions.classList.remove('open'));
- }
- return node;
-};
-if(!window.__siseChatMenuClose){
- window.__siseChatMenuClose=true;
- document.addEventListener('click',e=>{if(!e.target.closest('.sise-msg-more,.sise-msg-actions'))document.querySelectorAll('.sise-msg-actions.open').forEach(x=>x.classList.remove('open'))});
-}
-const SISE_pmViewBase=pmView;
-pmView=function(channel){
- const root=SISE_pmViewBase(channel||'management');
- if(channel==='ai'){
-  const list=root.querySelector('.ch-list'),form=root.querySelector('.ch-cp');
-  if(list&&form){
-   let baseline=list.querySelectorAll('.chm.isai').length,hideTimer=0,typing=null;
-   const hide=()=>{if(hideTimer)clearTimeout(hideTimer);hideTimer=0;if(typing){typing.remove();typing=null}};
-   const show=()=>{
-    if(!typing){typing=h('div',{class:'sise-ai-typing'},h('span',{},'دستیار SISE در حال نوشتن'),h('i'),h('i'),h('i'));list.append(typing)}
-    list.scrollTop=list.scrollHeight;clearTimeout(hideTimer);hideTimer=setTimeout(hide,55000);
-   };
-   const observer=new MutationObserver(()=>{
-    const n=list.querySelectorAll('.chm.isai').length;
-    if(n>baseline){baseline=n;hide()}
-   });
-   observer.observe(list,{childList:true,subtree:true});
-   form.addEventListener('submit',()=>{const field=form.querySelector('input.in');if(field&&field.value.trim())show()},true);
-   root.addEventListener('sise:dispose',()=>{observer.disconnect();hide()},{once:true});
-  }
- }
- return root;
-};
-
-/* Private chat uses the same final Messenger shell as public chat.
-   Keep pmView unwrapped here; the single shared shell is applied at the end of this file. */
-
-const SISE_cartBase=cartView;
-cartView=function(){const view=SISE_cartBase();return view};
-
-
-
-
-
-/* Reference-accurate SISE Messenger screen: one glass panel, three tabs, guest demo card. */
 (function(){
  const css=`
  body.chat-lock #app.app.chatp{padding:calc(8px + env(safe-area-inset-top,0px)) 12px calc(8px + env(safe-area-inset-bottom,0px));gap:9px}
@@ -2640,7 +2475,7 @@ cartView=function(){const view=SISE_cartBase();return view};
  .sise-chat-brand{direction:ltr;text-align:center;line-height:1;min-width:0}
  .sise-chat-brand b{display:block;font:600 31px/1 Georgia,'Times New Roman',serif;letter-spacing:.20em;padding-left:.20em;color:#8e704b}
  .sise-chat-brand small{display:block;margin-top:5px;font-size:9px;letter-spacing:.30em;color:#b18e60;font-weight:700}
- .sise-chat-actions{display:flex;align-items:center;gap:7px}
+ .sise-chat-actions{display:flex;align-items:center;justify-self:end!important;justify-content:flex-end!important;gap:7px}
  .sise-chat-actions button{width:52px;height:52px}
  .sise-chat-actions button.active{background:linear-gradient(145deg,#c7a36e,#a98551);color:#fff;border-color:rgba(255,255,255,.68);box-shadow:0 5px 14px rgba(128,91,48,.18),inset 0 1px 0 rgba(255,255,255,.35)}
  .sise-chat-tabs{direction:rtl;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0;border:0;border-radius:0;background:transparent;overflow:visible}
@@ -2686,12 +2521,23 @@ cartView=function(){const view=SISE_cartBase();return view};
  @media(max-width:390px){.sise-chat-head{grid-template-columns:35px minmax(0,1fr) 111px!important}.sise-chat-head>button,.sise-chat-actions button{width:31px!important;height:31px!important}.sise-chat-menu{width:33px!important;height:33px!important}.sise-chat-brand b{font-size:19px!important}.sise-chat-brand small{font-size:6px!important}.sise-chat-tabs .cht{font-size:9.5px!important;min-height:50px!important}}
  
  /* User refinement: truly centered wordmark, shorter header and compact single-line tabs */
- .sise-chat-head{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;min-height:42px!important;height:42px!important;padding:0 0 2px!important;gap:2px!important}
+ .sise-chat-head{width:100%!important;grid-template-columns:36px minmax(0,1fr) 112px!important;min-height:42px!important;height:42px!important;padding:0 0 2px!important;gap:2px!important}
  .sise-chat-menu{justify-self:start!important;width:29px!important;height:29px!important;border-radius:10px!important}
  .sise-chat-actions{justify-self:end!important;gap:3px!important}
  .sise-chat-actions button{width:29px!important;height:29px!important;border-radius:10px!important}
  .sise-chat-actions button svg{width:14px!important;height:14px!important}
  .sise-chat-brand{grid-column:2!important;grid-row:1!important;justify-self:center!important;align-self:center!important;text-align:center!important;white-space:nowrap!important}
+ /* Pin the wordmark to the true geometric center, independent of side controls */
+ .sise-chat-head{position:relative!important;display:grid!important;grid-template-columns:36px minmax(0,1fr) 112px!important}
+ .sise-chat-brand{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;grid-column:auto!important;grid-row:auto!important;width:max-content!important;max-width:calc(100% - 160px)!important;pointer-events:none!important}
+ @media(max-width:390px){.sise-chat-brand{max-width:calc(100% - 145px)!important}}
+ /* Refined animated typing indicator shared by all chat modes */
+ .sise-chat-screen .ch-typing,.sise-chat-screen .sise-typing-live{display:inline-flex!important;align-items:center;gap:7px;margin-top:3px!important;padding:3px 9px!important;border:1px solid rgba(190,153,101,.28)!important;border-radius:999px!important;background:linear-gradient(120deg,rgba(255,255,255,.42),rgba(222,190,145,.16))!important;color:#9b774b!important;font:600 9px/1.5 Georgia,'Times New Roman',serif!important;letter-spacing:.14em!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 3px 10px rgba(126,94,54,.06)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
+ .sise-chat-screen .ch-typing[hidden],.sise-chat-screen .sise-typing-live[hidden]{display:none!important}
+ .sise-chat-screen .ch-typing:after,.sise-chat-screen .sise-typing-live:after{content:'•••';display:inline-block;letter-spacing:3px;color:#c29b65;animation:siseTypingDots 1.15s ease-in-out infinite}
+ @keyframes siseTypingDots{0%,20%{opacity:.28;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}80%,100%{opacity:.42;transform:translateY(0)}}
+ .sise-chat-screen .sise-typing-live{align-self:flex-start;margin:0 5px 4px!important}
+ @media(prefers-reduced-motion:reduce){.sise-chat-screen .ch-typing:after,.sise-chat-screen .sise-typing-live:after{animation:none}}
  .sise-chat-brand b{display:block!important;font-size:19px!important;letter-spacing:.12em!important;padding-left:.12em!important;line-height:1!important}
  .sise-chat-brand small{font-size:6px!important;margin-top:2px!important;line-height:1!important}
  .sise-chat-top{gap:4px!important;padding:7px 9px 8px!important}
@@ -2748,21 +2594,25 @@ cartView=function(){const view=SISE_cartBase();return view};
   .sise-menu-expand{padding:10px 11px;border-radius:16px}
   .sise-menu-expand p{font-size:12.5px}
  }
+ /* Final requested lock: three-dot menu, one-line centered wordmark, unified typing label */
+ .sise-chat-menu svg{width:21px!important;height:21px!important;stroke-width:1.7!important}
+ .sise-chat-brand{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:max-content!important;max-width:calc(100% - 150px)!important;white-space:nowrap!important;text-align:center!important;pointer-events:none!important}
+ .sise-chat-brand b{display:block!important;font:700 clamp(13px,4vw,18px)/1 Georgia,'Times New Roman',serif!important;letter-spacing:.075em!important;padding:0!important;white-space:nowrap!important;color:#8e704b!important}
+ .sise-chat-brand>small.sise-brand-subtitle{display:none!important}
+ .sise-chat-screen .ch-typing,.sise-chat-screen .sise-typing-live{display:inline-flex!important;align-items:center!important;gap:7px!important;padding:4px 10px!important;border:1px solid rgba(190,153,101,.35)!important;border-radius:999px!important;background:linear-gradient(120deg,rgba(255,255,255,.5),rgba(222,190,145,.2))!important;color:#9b774b!important;font:700 9px/1.4 Georgia,'Times New Roman',serif!important;letter-spacing:.12em!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 3px 12px rgba(126,94,54,.08)!important}
+ .sise-chat-screen .ch-typing[hidden],.sise-chat-screen .sise-typing-live[hidden]{display:none!important}
+ .sise-chat-screen .ch-typing:after,.sise-chat-screen .sise-typing-live:after{content:'•••';display:inline-block;letter-spacing:3px;color:#c29b65;animation:siseTypingDots 1s ease-in-out infinite}
+ @media(max-width:390px){.sise-chat-brand{max-width:calc(100% - 128px)!important}.sise-chat-brand b{font-size:13px!important;letter-spacing:.045em!important}}
+
 `;
  if(!document.getElementById('sise-reference-chat-css')){const st=document.createElement('style');st.id='sise-reference-chat-css';st.textContent=css;document.head.append(st)}
  const tabInfo=[['pub','چت عمومی','users'],['pm','چت با مدیریت','lock'],['ai','چت با هوش مصنوعی','sparkles']];
- function openDemo(){
-  let close;const messages=h('div',{class:'sise-demo-messages'},h('div',{class:'sise-demo-bubble'},h('b',{},'دستیار SISE'),h('div',{},'سلام! این یک گفتگوی آزمایشی است. پیام‌ها فقط در همین صفحه نمایش داده می‌شوند.')));
-  const input=h('input',{class:'in',placeholder:'پیام آزمایشی خود را بنویسید…',maxlength:'250'});
-  const form=h('form',{class:'sise-demo-form',onsubmit:e=>{e.preventDefault();const value=input.value.trim();if(!value)return;messages.append(h('div',{class:'sise-demo-bubble',style:{alignSelf:'flex-end'}},value));input.value='';messages.append(h('div',{class:'sise-demo-bubble'},h('b',{},'دستیار SISE'),h('div',{},'پیام شما در این محیط نمایشی ثبت شد؛ به سرور ارسال نشده است.')));messages.scrollTop=messages.scrollHeight}});
-  form.append(input,h('button',{class:'btn',type:'submit'},'ارسال'));
-  close=openModal(h('div',{class:'sh sise-demo-modal'},h('div',{class:'grab'}),h('h3',{},'گفتگوی آزمایشی SISE'),messages,form),'b');
-  setTimeout(()=>input.focus(),120);
- }
  function shell(root,channel){
   if(!root||root.classList.contains('sise-chat-screen'))return root;
   root.classList.add('sise-chat-screen');
   const list=root.querySelector(':scope > .ch-list'),composer=root.querySelector(':scope > .ch-cp');
+  // Preserve live status nodes from the original chat header before shell replaces it.
+  const liveStatus=[...root.querySelectorAll(':scope > .ch-hd .ch-online,:scope > .ch-hd .ch-typing')];
   const current=channel==='ai'?'ai':channel==='pm'?'pm':'pub';
   const tabs=h('div',{class:'ch-tabs sise-chat-tabs','aria-label':'بخش‌های گفتگو'});
   tabInfo.forEach(([key,label,ico])=>tabs.append(h('button',{type:'button',class:'cht'+(current===key?' on':''),'aria-current':current===key?'page':'false',onclick:()=>{CH.tab=key;cur='chat';try{renderMain();setNav(true)}catch(e){console.error('SISE chat tab render failed',e);toast('خطا در باز شدن گفتگو: '+(e&&e.message?e.message:'خطای نامشخص'))}}},h('span',{class:'sise-tab-ic',html:ic(ico,19)}),h('span',{},label))));
@@ -2794,8 +2644,9 @@ cartView=function(){const view=SISE_cartBase();return view};
   );
   const close=openModal(panel,'sise-menu-overlay');
  }
- const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:ic('menu',22),onclick:openChatMenu});
-  const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISÉ'),h('small',{},'MESSENGER'));
+ const menu=h('button',{type:'button',class:'sise-chat-menu','aria-label':'گزینه‌های گفتگو',title:'گزینه‌ها',html:'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>',onclick:openChatMenu});
+  const brand=h('div',{class:'sise-chat-brand'},h('b',{},'SISÉ'),h('small',{class:'sise-brand-subtitle'},'MASSENGER'));
+  liveStatus.forEach(node=>brand.append(node));
   const actions=h('div',{class:'sise-chat-actions'},
    h('button',{type:'button','aria-label':'جستجو',title:'جستجو',html:ic('search',22),onclick:()=>openSearch()}),
    h('button',{type:'button','aria-label':'حساب کاربری',title:'حساب کاربری',html:ic('user',22),onclick:openAuth}),
@@ -2803,17 +2654,10 @@ cartView=function(){const view=SISE_cartBase();return view};
   );
   const head=h('div',{class:'sise-chat-head'},menu,brand,actions);
   const top=h('div',{class:'sise-chat-top'},head,tabs);
-  const guest=(!curUser()&&!sbSess()&&current==='pub')?h('section',{class:'sise-guest-demo'},
-   h('span',{class:'sise-demo-tag'},'حالت آزمایشی · بدون ورود'),
-   h('h3',{},'چت SISE را امتحان کن'),
-   h('p',{},'این محیط نمایشی است؛ پیام‌ها فقط روی همین صفحه شبیه‌سازی می‌شوند و به سرور یا حساب مشتریان ارسال نمی‌شوند.'),
-   h('button',{type:'button',class:'sise-demo-start',onclick:openDemo},'شروع تست چت')
-  ):null;
   root.innerHTML='';
   root.append(top);
   if(list)root.append(list);
   if(composer)root.append(composer);
-  if(guest)root.append(guest);
   return root;
  }
  const previousChatView=chatView;
@@ -2822,7 +2666,387 @@ cartView=function(){const view=SISE_cartBase();return view};
  pmView=function(channel){return shell(previousPmView(channel||'management'),channel==='ai'?'ai':'pm')};
 })();
 
+const siseHeaderFix=document.createElement('style');
+siseHeaderFix.textContent=`.sise-chat-brand .ch-online,.sise-chat-brand .ch-typing,.sise-chat-brand .sise-typing-live{position:relative!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;margin:5px 0 0!important;max-width:100%!important;white-space:nowrap!important;pointer-events:none!important}.sise-chat-brand .ch-typing[hidden],.sise-chat-brand .sise-typing-live[hidden]{display:none!important}
+.sise-chat-head{position:relative!important;display:block!important;width:100%!important;height:58px!important;min-height:58px!important;padding:0!important;margin:0!important;direction:ltr!important;box-sizing:border-box!important;overflow:visible!important}
+.sise-chat-head .sise-chat-menu{position:absolute!important;left:0!important;right:auto!important;top:50%!important;transform:translateY(-50%)!important;z-index:3!important;width:36px!important;height:36px!important;display:grid!important;place-items:center!important}
+.sise-chat-head .sise-chat-brand{position:absolute!important;left:50%!important;right:auto!important;top:50%!important;transform:translate(-50%,-50%)!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;width:max-content!important;max-width:calc(100% - 160px)!important;margin:0!important;padding:0!important;text-align:center!important;white-space:nowrap!important;pointer-events:none!important;z-index:1!important;line-height:1!important}
+.sise-chat-head .sise-chat-brand b{display:block!important;font:700 21px/1 Georgia,'Times New Roman',serif!important;letter-spacing:.18em!important;color:#8e704b!important}
+.sise-chat-head .sise-chat-brand small{display:block!important;font:700 8px/1 Georgia,'Times New Roman',serif!important;letter-spacing:.34em!important;color:#b18e60!important}
+.sise-chat-head .sise-chat-actions{position:absolute!important;right:0!important;left:auto!important;top:50%!important;transform:translateY(-50%)!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-end!important;width:auto!important;max-width:none!important;gap:6px!important;margin:0!important;z-index:3!important}
+.sise-chat-head .sise-chat-actions button{flex:0 0 34px!important;width:34px!important;height:34px!important;min-width:34px!important;margin:0!important;display:grid!important;place-items:center!important}
+.sise-chat-head .sise-chat-menu svg{display:block!important;width:21px!important;height:21px!important}
+@media(max-width:390px){.sise-chat-head{height:54px!important;min-height:54px!important}.sise-chat-head .sise-chat-menu{width:32px!important;height:32px!important}.sise-chat-head .sise-chat-actions{gap:4px!important}.sise-chat-head .sise-chat-actions button{flex-basis:30px!important;width:30px!important;height:30px!important;min-width:30px!important}.sise-chat-head .sise-chat-brand{max-width:calc(100% - 140px)!important}.sise-chat-head .sise-chat-brand b{font-size:19px!important}.sise-chat-head .sise-chat-brand small{font-size:7px!important}}
+`;
+document.head.append(siseHeaderFix);
+
 boot();
 </script>
+
+<style id="sise-luxury-editorial-polish">
+/* SISE luxury collection — refined editorial showroom */
+.lux-spot{
+  margin:clamp(22px,4vw,42px) 0!important;
+  padding:clamp(28px,5vw,48px) clamp(14px,4vw,34px) 22px!important;
+  border:1px solid rgba(133,101,72,.17)!important;
+  border-radius:30px 30px 30px 10px!important;
+  background:
+    radial-gradient(ellipse at 82% 18%,rgba(255,255,255,.82),transparent 42%),
+    radial-gradient(ellipse at 8% 92%,rgba(190,157,126,.18),transparent 38%),
+    linear-gradient(145deg,#f5eee5 0%,#eee3d5 52%,#e9dccd 100%)!important;
+  box-shadow:0 22px 58px rgba(62,43,29,.10),inset 0 1px 0 rgba(255,255,255,.85)!important;
+}
+.lux-spot:before{content:"";position:absolute;inset:9px;border:1px solid rgba(126,91,62,.12);border-radius:24px 24px 24px 7px;pointer-events:none;z-index:-1}
+.lux-spot:after{width:62%;height:38%;inset:auto -12% -18% 20%;background:radial-gradient(ellipse,rgba(168,128,91,.16),transparent 70%)!important}
+.lux-kicker{margin:34px 0 16px!important;letter-spacing:3.5px!important;font-size:10px!important;color:#86694f!important}
+.lux-kicker:after{width:54px!important;height:1px!important;background:linear-gradient(90deg,#9c7956,transparent)!important}
+.lux-edition{font-size:10px!important;letter-spacing:3px!important;color:#a18b76!important;margin-bottom:12px!important}
+.lux-title{font-size:clamp(29px,6.2vw,48px)!important;line-height:1.45!important;letter-spacing:-1.2px!important;color:#30251e!important;margin-bottom:12px!important}
+.lux-title mark{background:linear-gradient(120deg,#e7d4bd,#d7b995)!important;color:#684a35!important;border:1px solid rgba(130,92,60,.13);padding:0 13px 3px!important}
+.lux-desc{max-width:540px!important;font-size:13px!important;line-height:2!important;color:#806e5d!important;margin-bottom:18px!important}
+.lux-cta{background:linear-gradient(135deg,#3b3029,#65503f)!important;padding:7px 9px 7px 18px!important;gap:14px!important;box-shadow:0 9px 24px rgba(58,43,31,.18),inset 0 1px 0 rgba(255,255,255,.15)!important;transition:transform .25s,box-shadow .25s!important}
+.lux-cta:active{transform:scale(.97)}
+.lux-cta .lux-arrow{width:40px!important;height:40px!important;background:linear-gradient(145deg,#f4e8d8,#dfc7a9)!important;color:#493729!important}
+.lux-gallery-slider{
+  margin:26px 0 0!important;padding:clamp(10px,2.4vw,20px)!important;
+  border:1px solid rgba(255,255,255,.72)!important;
+  border-radius:27px!important;
+  background:linear-gradient(145deg,rgba(215,195,173,.76),rgba(194,168,142,.68))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 14px 34px rgba(91,66,45,.10)!important;
+}
+.lux-slider{width:min(100%,560px)!important;padding-bottom:61px!important}
+.lux-frame{
+  border:1px solid rgba(255,255,255,.92)!important;border-radius:22px!important;
+  background:linear-gradient(145deg,#fffdfa,#f4eee6)!important;
+  box-shadow:0 12px 30px rgba(66,47,32,.12),inset 0 0 0 5px rgba(255,255,255,.38)!important;
+  transition:box-shadow .25s,border-color .25s!important;
+}
+.lux-frame:active{box-shadow:0 6px 18px rgba(66,47,32,.13)!important}
+.lux-frame img{padding:clamp(8px,2vw,18px)!important}
+.lux-arrow-btn{
+  width:42px!important;height:42px!important;top:calc(50% - 30px)!important;
+  border:1px solid rgba(126,95,67,.18)!important;
+  background:rgba(255,253,249,.94)!important;color:#594331!important;
+  box-shadow:0 7px 20px rgba(55,39,27,.14)!important;
+  backdrop-filter:blur(10px);transition:transform .2s,background .2s!important;
+}
+.lux-arrow-btn:active{transform:scale(.91)}
+.lux-slide-meta{
+  left:clamp(9px,2vw,18px)!important;right:clamp(9px,2vw,18px)!important;
+  bottom:68px!important;padding:11px 15px!important;
+  border:1px solid rgba(255,255,255,.88)!important;
+  background:rgba(255,253,249,.91)!important;
+  box-shadow:0 6px 18px rgba(64,46,32,.08)!important;
+  backdrop-filter:blur(12px);
+}
+.lux-slide-meta b{font-size:14px!important;color:#3b2d23!important}
+.lux-slide-meta>div span{font-weight:800!important;color:#846348!important}
+.lux-count{font-variant-numeric:tabular-nums;color:#8b735e!important}
+.lux-dots{gap:8px!important;margin:13px auto 0!important;align-items:center}
+.lux-dots button{width:6px!important;height:6px!important;background:#775b443d!important;transition:width .25s,background .25s!important}
+.lux-dots button.on{width:25px!important;background:#70543d!important}
+.lux-everyday{color:#8b745f!important;letter-spacing:3px!important;font-size:9px!important}
+.lux-detail-sheet{border:1px solid rgba(139,105,76,.18);box-shadow:0 24px 70px rgba(35,25,18,.25)!important}
+@media(max-width:520px){
+ .lux-spot{padding:26px 13px 16px!important;border-radius:24px 24px 24px 9px!important}
+ .lux-spot:before{inset:7px;border-radius:19px 19px 19px 6px}
+ .lux-gallery-slider{margin-top:20px!important;padding:9px!important;border-radius:20px!important}
+ .lux-slider{padding-bottom:56px!important}
+ .lux-frame{border-radius:17px!important}
+ .lux-arrow-btn{width:36px!important;height:36px!important;top:calc(50% - 25px)!important}
+ .lux-slide-meta{bottom:63px!important;padding:9px 11px!important}
+ .lux-slide-meta b{font-size:12px!important}
+}
+@media(prefers-reduced-motion:no-preference){
+ .lux-frame{animation:luxArrive .55s cubic-bezier(.2,.7,.2,1) both}
+ @keyframes luxArrive{from{opacity:.72;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+}
+</style>
+
+
+<style id="sise-luxury-showroom-v2">
+.lux-editorial-showroom{position:relative!important;overflow:hidden!important;padding:clamp(24px,4vw,44px)!important;background:linear-gradient(132deg,#f8f1e8 0%,#eee1d1 53%,#f8f1e8 100%)!important;border:1px solid rgba(172,132,88,.42)!important;border-radius:30px!important;box-shadow:0 24px 60px rgba(67,45,28,.12),inset 0 1px 0 #fff!important;color:#30251e!important}
+.lux-editorial-showroom:before{content:"";position:absolute;inset:10px;border:1px solid rgba(171,133,91,.22);border-radius:23px;pointer-events:none}
+.lux-masthead{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 48px;align-items:center;min-height:230px;padding:8px 7% 26px 15%;direction:rtl}
+.lux-logo-notch{position:absolute!important;left:-18px!important;top:-35px!important;width:168px!important;height:168px!important;border-radius:0 0 100% 0!important;display:grid!important;place-items:center!important;background:linear-gradient(145deg,#fffaf3,#e7d4bd)!important;border:1px solid #c69b63!important;box-shadow:0 8px 24px rgba(82,58,35,.12)!important;overflow:hidden!important;z-index:2}
+.lux-logo-notch img{width:72%!important;height:72%!important;object-fit:contain!important}
+.lux-editorial-copy{text-align:right;max-width:680px;margin-inline:auto}
+.lux-kicker{font:500 11px/1.5 Georgia,serif!important;letter-spacing:3px!important;color:#8a6a4c!important;margin:0 0 7px!important}
+.lux-edition{font:500 10px/1.5 Georgia,serif!important;letter-spacing:2.5px!important;color:#a38b73!important;margin:0 0 14px!important}
+.lux-title{font-size:clamp(28px,5.4vw,48px)!important;line-height:1.55!important;color:#2d2119!important;margin:0 0 9px!important}
+.lux-title mark{background:linear-gradient(110deg,#e7c18d,#d5a866)!important;color:#39291c!important;border-radius:999px!important;padding:0 17px 4px!important;box-decoration-break:clone}
+.lux-desc{max-width:570px!important;font-size:13px!important;line-height:2!important;color:#786653!important;margin:0 0 15px!important}
+.lux-cta{display:inline-flex!important;align-items:center!important;gap:12px!important;background:#201b17!important;color:#f5dfbd!important;border:1px solid #c99d60!important;border-radius:999px!important;padding:7px 9px 7px 18px!important;box-shadow:0 7px 20px rgba(47,32,20,.16)!important}
+.lux-cta .lux-arrow{display:grid!important;place-items:center!important;width:34px!important;height:34px!important;border-radius:50%!important;background:#e8c48f!important;color:#39291c!important}
+.lux-everyday{writing-mode:vertical-rl;transform:rotate(180deg);justify-self:end;align-self:stretch;display:flex;align-items:center;justify-content:center;border-left:1px solid rgba(118,87,59,.38);padding-left:14px;color:#75583d!important;font:500 10px/1.5 Georgia,serif!important;letter-spacing:3px!important;white-space:nowrap}
+.lux-showroom-wrap{margin:0!important;padding:clamp(9px,1.8vw,18px)!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:28px!important;background:linear-gradient(140deg,rgba(210,186,159,.8),rgba(189,158,126,.66))!important;box-shadow:inset 0 1px 0 #fff,0 16px 38px rgba(74,49,29,.12)!important}
+.lux-showroom{display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(245px,.8fr)!important;gap:clamp(12px,2vw,24px)!important;align-items:stretch!important;width:100%!important;max-width:none!important;padding:0 0 8px!important;position:relative!important}
+.lux-showroom .lux-frame{position:relative!important;display:block!important;width:100%!important;min-width:0!important;aspect-ratio:1/1!important;height:auto!important;overflow:hidden!important;border-radius:22px!important;border:1px solid rgba(255,255,255,.95)!important;background:linear-gradient(145deg,#fffdf9,#eee4d8)!important;box-shadow:0 12px 30px rgba(59,40,25,.15),inset 0 0 0 5px rgba(255,255,255,.35)!important;cursor:zoom-in!important}
+.lux-showroom .lux-frame img{display:block!important;width:100%!important;height:100%!important;max-height:none!important;object-fit:contain!important;padding:clamp(10px,2vw,22px)!important;transform:none!important}
+.lux-product-panel{position:relative;display:flex;flex-direction:column;justify-content:center;min-width:0;padding:clamp(18px,3vw,34px)!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:22px!important;background:linear-gradient(145deg,rgba(255,252,247,.97),rgba(244,234,222,.96))!important;box-shadow:0 10px 28px rgba(67,46,29,.10),inset 0 1px 0 #fff!important;text-align:right}
+.lux-panel-eyebrow{font:600 9px/1.5 Georgia,serif;letter-spacing:2px;color:#947553;margin-bottom:12px}
+.lux-panel-discount{align-self:flex-start;border-radius:0 0 14px 14px;background:#d9b477;color:#382819;padding:7px 11px;font-size:11px;font-weight:800}
+.lux-panel-discount[hidden]{display:none}
+.lux-panel-name{font-family:Georgia,serif!important;font-size:clamp(19px,2.4vw,28px)!important;line-height:1.5!important;color:#30231a!important;margin:0 0 5px!important}
+.lux-panel-sub{font:600 10px/1.6 Georgia,serif;letter-spacing:1.2px;color:#90785e}
+.lux-panel-rule{height:2px;width:86px;background:linear-gradient(90deg,#bd8d50,transparent);margin:17px 0}
+.lux-panel-prices{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin-bottom:12px;font-variant-numeric:tabular-nums}
+.lux-panel-prices del{font-size:13px;color:#9d9185}
+.lux-panel-prices del[hidden]{display:none}
+.lux-panel-prices strong{font-size:clamp(20px,2.6vw,29px);font-weight:800;color:#2b211b}
+.lux-panel-desc{font-size:13px;line-height:2;color:#6d5b49;margin:0 0 10px}
+.lux-panel-desc[hidden],.lux-panel-spec[hidden]{display:none}
+.lux-panel-spec{font-size:11px;line-height:1.9;color:#94795c;margin:0 0 16px}
+.lux-panel-buy{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:auto;padding:12px 16px;border:1px solid #c79a5c;border-radius:999px;background:linear-gradient(120deg,#211b17,#3b2c21);color:#f3d9b3;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(48,32,19,.14)}
+.lux-panel-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:13px;color:#a08b75;font:10px/1.5 Georgia,serif}
+.lux-panel-foot .lux-count{font:600 11px/1.5 inherit;color:#846447;font-variant-numeric:tabular-nums}
+.lux-showroom .lux-arrow-btn{top:50%!important;transform:translateY(-50%)!important;width:42px!important;height:42px!important;border:1px solid #c6a477!important;background:rgba(255,251,245,.95)!important;color:#4a3524!important;box-shadow:0 6px 18px rgba(43,29,18,.16)!important;z-index:3!important}
+.lux-showroom .lux-arrow-btn:active{transform:translateY(-50%) scale(.92)!important}
+.lux-showroom .lux-arrow-btn.prev{left:12px!important;right:auto!important}
+.lux-showroom .lux-arrow-btn.next{right:auto!important;left:calc(61.5% - 23px)!important}
+.lux-thumbnails{display:flex;gap:12px;justify-content:center;align-items:center;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;padding:10px 5px 3px;scrollbar-width:thin;scrollbar-color:#b89a78 transparent}
+.lux-thumb{position:relative;flex:0 0 clamp(68px,11vw,112px);width:clamp(68px,11vw,112px);aspect-ratio:1/1;padding:4px;border:1px solid rgba(112,82,55,.18);border-radius:15px;background:linear-gradient(145deg,#f8f1e9,#e5d7c7);box-shadow:0 4px 12px rgba(54,37,23,.09);overflow:hidden;scroll-snap-align:center;cursor:pointer;transition:transform .22s,border-color .22s,box-shadow .22s}
+.lux-thumb img{display:block;width:100%;height:100%;object-fit:contain;border-radius:10px;background:#f8f4ee}
+.lux-thumb span{position:absolute;left:4px;right:4px;bottom:4px;padding:4px 3px;border-radius:0 0 9px 9px;background:rgba(35,27,21,.72);color:#fff7ec;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity .2s}
+.lux-thumb.on{border:2px solid #b98b50;box-shadow:0 0 0 3px rgba(185,139,80,.17),0 8px 18px rgba(65,44,25,.14);transform:translateY(-3px)}
+.lux-thumb.on span,.lux-thumb:focus-visible span{opacity:1}
+@media(max-width:700px){
+ .lux-editorial-showroom{padding:24px 12px 13px!important;border-radius:23px!important}
+ .lux-editorial-showroom:before{inset:7px;border-radius:17px}
+ .lux-masthead{grid-template-columns:minmax(0,1fr) 27px;min-height:190px;padding:12px 2% 20px 19%}
+ .lux-logo-notch{width:104px!important;height:104px!important;left:-13px!important;top:-27px!important}
+ .lux-kicker{font-size:9px!important;letter-spacing:2px!important}
+ .lux-edition{font-size:8px!important;letter-spacing:1.7px!important}
+ .lux-title{font-size:clamp(23px,6.2vw,34px)!important;line-height:1.55!important}
+ .lux-desc{font-size:11px!important;line-height:1.9!important}
+ .lux-everyday{font-size:8px!important;letter-spacing:1.5px!important;padding-left:7px}
+ .lux-showroom-wrap{padding:8px!important;border-radius:19px!important}
+ .lux-showroom{grid-template-columns:minmax(0,1fr)!important;gap:9px!important;padding-bottom:0!important}
+ .lux-showroom .lux-frame{border-radius:16px!important}
+ .lux-product-panel{padding:15px!important;border-radius:16px!important;min-height:0}
+ .lux-panel-eyebrow{margin-bottom:5px;font-size:8px}
+ .lux-panel-name{font-size:20px!important}
+ .lux-panel-rule{margin:9px 0}
+ .lux-panel-prices{margin-bottom:7px}
+ .lux-panel-prices strong{font-size:22px}
+ .lux-panel-desc{font-size:11px;line-height:1.8;margin-bottom:5px}
+ .lux-panel-spec{margin-bottom:9px}
+ .lux-panel-buy{padding:10px 13px;font-size:12px}
+ .lux-panel-foot{margin-top:8px}
+ .lux-showroom .lux-arrow-btn{width:34px!important;height:34px!important}
+ .lux-showroom .lux-arrow-btn.prev{left:8px!important}
+ .lux-showroom .lux-arrow-btn.next{left:8px!important;right:auto!important;top:calc(100% - 170px)!important}
+ .lux-thumbnails{justify-content:flex-start;gap:8px;padding:8px 2px 3px}
+ .lux-thumb{flex-basis:76px;width:76px;border-radius:12px}
+}
+@media(prefers-reduced-motion:no-preference){.lux-thumb{transition:transform .22s,border-color .22s,box-shadow .22s}.lux-showroom .lux-frame img{animation:luxPhotoIn .38s ease both}@keyframes luxPhotoIn{from{opacity:.7;transform:translateY(4px)}to{opacity:1;transform:none}}}
+</style>
+
+<style id="sise-luxury-photo-only-v3">
+/* The showroom is an image-first experience: product details appear only on tap. */
+.lux-editorial-showroom .lux-masthead{display:flex!important;flex-direction:column!important;align-items:stretch!important;min-height:0!important;padding:12px 7% 22px 16%!important;gap:12px!important}
+.lux-editorial-showroom .lux-editorial-copy{width:100%;max-width:680px;margin-inline:auto}
+.lux-editorial-showroom .lux-everyday{writing-mode:horizontal-tb!important;transform:none!important;align-self:center!important;display:block!important;border-left:0!important;border-top:1px solid rgba(118,87,59,.3)!important;padding:12px 20px 0!important;margin:4px auto 0!important;color:#85694c!important;font:500 10px/1.5 Georgia,serif!important;letter-spacing:3px!important;text-align:center!important;white-space:nowrap!important}
+.lux-editorial-showroom .lux-showroom{display:block!important;padding:0!important}
+.lux-editorial-showroom .lux-photo-stage{position:relative!important;width:100%!important;max-width:680px!important;margin:0 auto!important;padding:0!important}
+.lux-editorial-showroom .lux-photo-only{position:relative!important;display:block!important;width:100%!important;aspect-ratio:1/1!important;height:auto!important;min-height:0!important;overflow:hidden!important;padding:0!important;border-radius:22px!important;border:1px solid rgba(255,255,255,.95)!important;background:linear-gradient(145deg,#fffdf9,#eee4d8)!important;box-shadow:0 16px 38px rgba(59,40,25,.15),inset 0 0 0 5px rgba(255,255,255,.36)!important;cursor:pointer!important}
+.lux-editorial-showroom .lux-photo-only img{display:block!important;width:100%!important;height:100%!important;max-height:none!important;object-fit:contain!important;padding:clamp(10px,2vw,22px)!important;transform:none!important}
+.lux-editorial-showroom .lux-tap-hint{position:absolute;right:18px;bottom:18px;display:flex;align-items:center;gap:9px;padding:8px 13px 8px 9px;border:1px solid rgba(255,255,255,.8);border-radius:999px;background:rgba(38,29,22,.72);color:#fff4e5;font-size:11px;opacity:0;transform:translateY(7px);transition:opacity .25s,transform .25s;pointer-events:none;backdrop-filter:blur(10px)}
+.lux-editorial-showroom .lux-photo-only:focus-visible .lux-tap-hint,.lux-editorial-showroom .lux-photo-only:hover .lux-tap-hint{opacity:1;transform:translateY(0)}
+.lux-editorial-showroom .lux-tap-icon{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#e8c48f;color:#39291c;font-size:18px}
+.lux-editorial-showroom .lux-photo-enter{animation:luxPhotoReveal .48s cubic-bezier(.2,.7,.2,1) both}
+@keyframes luxPhotoReveal{from{opacity:.55;transform:scale(.985);filter:blur(2px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+.lux-editorial-showroom .lux-photo-stage .lux-arrow-btn{top:50%!important;transform:translateY(-50%)!important;width:43px!important;height:43px!important;border:1px solid rgba(185,139,80,.72)!important;background:rgba(255,251,245,.94)!important;color:#4a3524!important;box-shadow:0 7px 20px rgba(43,29,18,.15)!important;z-index:3!important;transition:transform .22s,box-shadow .22s,background .22s!important}
+.lux-editorial-showroom .lux-photo-stage .lux-arrow-btn:hover{transform:translateY(-50%) scale(1.08)!important;background:#fff!important;box-shadow:0 10px 24px rgba(43,29,18,.2)!important}
+.lux-editorial-showroom .lux-photo-stage .lux-arrow-btn.prev{left:14px!important;right:auto!important}
+.lux-editorial-showroom .lux-photo-stage .lux-arrow-btn.next{right:14px!important;left:auto!important}
+.lux-editorial-showroom .lux-thumbnails{display:flex!important;justify-content:flex-start!important;gap:13px!important;overflow-x:auto!important;overflow-y:hidden!important;overscroll-behavior-x:contain!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;touch-action:pan-x!important;padding:17px 5px 13px!important;cursor:grab!important;scrollbar-width:none!important}
+.lux-editorial-showroom .lux-thumbnails::-webkit-scrollbar{display:none!important}
+.lux-editorial-showroom .lux-thumbnails.dragging{cursor:grabbing!important;scroll-behavior:auto!important;scroll-snap-type:none!important}
+.lux-editorial-showroom .lux-thumb{flex:0 0 clamp(76px,12vw,112px)!important;width:clamp(76px,12vw,112px)!important;aspect-ratio:1/1!important;border-radius:16px!important;padding:4px!important;scroll-snap-align:center!important;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s,border-color .35s!important}
+.lux-editorial-showroom .lux-thumb img{width:100%!important;height:100%!important;object-fit:contain!important;border-radius:11px!important}
+.lux-editorial-showroom .lux-thumb.on{transform:translateY(-4px) scale(1.035)!important;border:2px solid #b98b50!important;box-shadow:0 0 0 4px rgba(185,139,80,.16),0 12px 25px rgba(65,44,25,.15)!important}
+.lux-editorial-showroom .lux-scroll-progress{height:2px!important;width:min(240px,55%)!important;margin:0 auto 2px!important;background:rgba(126,97,68,.16)!important;border-radius:9px!important;overflow:hidden!important}
+.lux-editorial-showroom .lux-scroll-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#c59b63,#8d6a43);border-radius:9px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+@media(max-width:700px){
+ .lux-editorial-showroom .lux-masthead{padding:9px 3% 15px 19%!important;gap:10px!important}
+ .lux-editorial-showroom .lux-logo-notch{width:104px!important;height:104px!important;left:-13px!important;top:-27px!important}
+ .lux-editorial-showroom .lux-everyday{font-size:9px!important;letter-spacing:2.4px!important;padding-top:10px!important;margin-top:1px!important}
+ .lux-editorial-showroom .lux-showroom-wrap{padding:8px!important;border-radius:19px!important}
+ .lux-editorial-showroom .lux-photo-only{border-radius:16px!important}
+ .lux-editorial-showroom .lux-photo-only img{padding:9px!important}
+ .lux-editorial-showroom .lux-photo-stage .lux-arrow-btn{width:36px!important;height:36px!important}
+ .lux-editorial-showroom .lux-photo-stage .lux-arrow-btn.prev{left:8px!important}
+ .lux-editorial-showroom .lux-photo-stage .lux-arrow-btn.next{right:8px!important;left:auto!important}
+ .lux-editorial-showroom .lux-tap-hint{opacity:1;transform:none;right:11px;bottom:11px;font-size:10px;padding:6px 10px 6px 7px}
+ .lux-editorial-showroom .lux-thumbnails{gap:9px!important;padding:13px 3px 10px!important}
+ .lux-editorial-showroom .lux-thumb{flex-basis:72px!important;width:72px!important;border-radius:12px!important}
+}
+</style>
+
+
+
+<style id="sise-luxury-hard-layout-v5">
+.lux-editorial-showroom .lux-logo-notch{display:none!important}
+.lux-editorial-showroom .lux-everyday-inline{position:static!important;writing-mode:horizontal-tb!important;transform:none!important}
+.lux-editorial-showroom .lux-showroom-wrap:before,.lux-editorial-showroom .lux-showroom-wrap:after{display:none!important}
+.lux-editorial-showroom .lux-photo-only{width:100%!important;aspect-ratio:1/1!important;background:#f8f5ef!important;border:1px solid #e3d8ca!important;box-shadow:inset 0 0 0 5px #f8f5ef,0 8px 22px rgba(67,48,31,.10)!important}
+.lux-editorial-showroom .lux-photo-only img{width:100%!important;height:100%!important;object-fit:contain!important}
+.lux-editorial-showroom .lux-photo-stage .lux-arrow-btn{background:#f8f5ef!important;border:1px solid #c9b69e!important;color:#493729!important}
+.lux-editorial-showroom .lux-thumbnails{background:transparent!important;display:flex!important;overflow-x:auto!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;gap:10px!important}
+.lux-editorial-showroom .lux-thumb{background:#f4eee5!important;scroll-snap-align:center!important}
+.lux-editorial-showroom .lux-thumb.on{border-color:#9c7953!important;box-shadow:0 0 0 3px rgba(156,121,83,.13),0 8px 18px rgba(65,44,25,.12)!important}
+.lux-detail-body{background:#f8f4ed!important;color:#33271e!important;border:1px solid #e0d2c1!important;border-radius:24px!important}
+.lux-detail-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:18px!important}
+.lux-detail-actions .lux-detail-add{background:#30251e!important;color:#f8e8d0!important;border:1px solid #b9966b!important}
+@media(max-width:700px){.lux-editorial-showroom{margin:16px 0 22px!important;padding:18px 9px 12px!important}.lux-editorial-showroom .lux-masthead{padding:8px 9px 16px!important}.lux-editorial-showroom .lux-title{font-size:clamp(25px,7vw,34px)!important;line-height:1.72!important}.lux-editorial-showroom .lux-everyday-inline{font-size:9px!important;letter-spacing:2px!important;margin-top:13px!important}.lux-editorial-showroom .lux-showroom-wrap{padding:7px!important;border-radius:19px!important}.lux-editorial-showroom .lux-photo-only{border-radius:15px!important}.lux-editorial-showroom .lux-photo-stage .lux-arrow-btn{width:35px!important;height:35px!important}}
+</style>
+
+<style id="sise-luxury-reference-editorial-v6">
+/* Editorial layout modeled on the user's exact reference: one quiet scroll gallery. */
+.lux-reference-editorial{direction:rtl;position:relative;display:flex;flex-direction:column;gap:26px;overflow:hidden;width:100%;margin:24px 0 30px;padding:clamp(28px,6vw,58px) clamp(18px,7vw,54px) 26px;border-radius:58px 18px 58px 18px;background:#eee4d7;border:0;box-shadow:none;color:#33251e}
+.lux-reference-copy{display:flex;flex-direction:column;align-items:flex-start;width:100%;max-width:680px;margin:0 auto;text-align:right}
+.lux-reference-copy .lux-kicker{display:flex;align-items:center;gap:14px;margin:0 0 22px;color:#785b48;font:700 11px/1.5 Arial,sans-serif;letter-spacing:3px}
+.lux-reference-copy .lux-kicker:after{content:"";width:42px;height:2px;background:#8b624a;border-radius:2px}
+.lux-reference-copy .lux-edition{margin:0 0 20px;color:#998775;font:500 11px/1.5 Arial,sans-serif;letter-spacing:3px}
+.lux-reference-copy .lux-title{margin:0 0 20px;color:#30231d;font-size:clamp(30px,5.5vw,48px);font-weight:850;line-height:1.75;max-width:100%;overflow-wrap:anywhere}
+.lux-reference-copy .lux-title mark{display:inline;padding:0 12px 4px;border-radius:999px;background:#dfc7b2;color:#8b4e36;white-space:normal}
+.lux-reference-copy .lux-desc{margin:0 0 24px;color:#887565;font-size:clamp(14px,2.2vw,17px);line-height:2.05;max-width:100%}
+.lux-reference-cta{display:inline-flex;align-items:center;gap:18px;min-height:70px;padding:8px 26px 8px 12px;border:0;border-radius:50px 12px 50px 50px;background:#442d23;color:#f8eee2;font-family:inherit;font-size:16px;font-weight:600;line-height:1.5;box-shadow:none;cursor:pointer;transition:transform .25s,background .25s}
+.lux-reference-cta:active{transform:scale(.98)}
+.lux-reference-cta-icon{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border-radius:50%;background:#f0dfc9;color:#51392c;font-size:23px}
+.lux-reference-gallery{position:relative;width:100%;max-width:680px;margin:0 auto}
+.lux-reference-stage{position:relative;width:100%;aspect-ratio:1/1.06;padding:0;border-radius:44% 12% 18% 18% / 22% 7% 9% 9%;background:#d9c2ad;box-shadow:0 18px 0 rgba(198,171,145,.26);overflow:visible}
+.lux-reference-photo{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;overflow:hidden;border:0;border-radius:inherit;background:#d9c2ad;cursor:pointer;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.lux-reference-photo>img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:transparent;padding:0;transform:none!important}
+.lux-reference-outline{position:absolute;inset:3.5%;border:1px solid rgba(255,250,242,.95);border-radius:44% 12% 18% 18% / 22% 7% 9% 9%;pointer-events:none}
+.lux-reference-ribbon{position:absolute;right:-1px;top:51%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;min-height:190px;padding:18px 12px;border-radius:18px 0 0 18px;background:#442d23;color:#f2e5d5;writing-mode:vertical-rl;transform-origin:center;font:500 9px/1.5 Georgia,serif;letter-spacing:2.8px;white-space:nowrap;pointer-events:none;box-shadow:0 7px 18px rgba(48,31,22,.12)}
+.lux-reference-touch{position:absolute;left:16px;bottom:16px;padding:9px 14px;border:1px solid rgba(255,255,255,.55);border-radius:30px;background:rgba(56,39,29,.72);color:#fff4e8;font-size:11px;opacity:0;transform:translateY(5px);transition:opacity .25s,transform .25s;pointer-events:none;backdrop-filter:blur(8px)}
+.lux-reference-photo:hover .lux-reference-touch,.lux-reference-photo:focus-visible .lux-reference-touch{opacity:1;transform:translateY(0)}
+.lux-reference-enter{animation:luxReferenceReveal .55s cubic-bezier(.2,.7,.2,1) both}
+@keyframes luxReferenceReveal{from{opacity:.55;transform:scale(.985);filter:blur(2px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+.lux-reference-dots{display:flex;justify-content:center;align-items:center;gap:8px;margin:25px auto 0}
+.lux-reference-dot{width:6px;height:6px;padding:0;border:0;border-radius:20px;background:#b9a28d;transition:width .35s,background .35s}
+.lux-reference-dot.on{width:26px;background:#604332}
+.lux-detail-body{background:#f8f4ed!important;color:#33271e!important;border:1px solid #e0d2c1!important;border-radius:24px!important}
+.lux-detail-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:18px!important}
+.lux-detail-actions .lux-detail-add{background:#442d23!important;color:#f8eee2!important;border:1px solid #b9966b!important}
+@media(max-width:700px){
+ .lux-reference-editorial{gap:22px;margin:16px 0 24px;padding:clamp(26px,7vw,44px) 7% 24px;border-radius:48px 14px 48px 14px}
+ .lux-reference-copy .lux-kicker{font-size:10px;letter-spacing:2.4px;margin-bottom:19px}
+ .lux-reference-copy .lux-edition{font-size:10px;letter-spacing:2.4px;margin-bottom:16px}
+ .lux-reference-copy .lux-title{font-size:clamp(29px,7.8vw,39px);line-height:1.8;margin-bottom:16px}
+ .lux-reference-copy .lux-desc{font-size:14px;line-height:2;margin-bottom:22px}
+ .lux-reference-cta{min-height:62px;gap:13px;padding:7px 19px 7px 9px;font-size:14px}
+ .lux-reference-cta-icon{flex-basis:48px;width:48px;height:48px;font-size:21px}
+ .lux-reference-gallery{width:100%}
+ .lux-reference-stage{aspect-ratio:1/1.04;border-radius:42% 12% 17% 17% / 19% 7% 9% 9%}
+ .lux-reference-outline{inset:3.5%}
+ .lux-reference-ribbon{min-height:155px;padding:14px 9px;font-size:8px;letter-spacing:2.2px;border-radius:15px 0 0 15px}
+ .lux-reference-touch{opacity:1;transform:none;left:10px;bottom:10px;font-size:10px;padding:7px 11px}
+ .lux-reference-dots{margin-top:20px}
+}
+</style>
+
+<style id="sise-luxury-navigation-type-v7">
+/* Typography: intentional two-line Persian editorial headline */
+.lux-reference-editorial .lux-reference-title{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;width:100%!important;max-width:100%!important;line-height:1.55!important;overflow:visible!important}
+.lux-reference-editorial .lux-reference-title-lead{display:block!important;white-space:normal!important;max-width:100%!important}
+.lux-reference-editorial .lux-reference-title-mark{display:inline-flex!important;align-items:center!important;align-self:flex-start!important;max-width:100%!important;width:max-content!important;white-space:normal!important;padding:2px 15px 7px!important;margin:0!important;border-radius:28px 18px 30px 16px!important;background:#dfc7b2!important;color:#854c37!important;line-height:1.55!important;box-shadow:none!important;transform:rotate(-1.5deg)!important;transform-origin:right center!important;overflow-wrap:anywhere!important}
+.lux-reference-editorial .lux-reference-title-mark>span{display:block!important;transform:rotate(1.5deg)!important}
+.lux-reference-editorial .lux-reference-controls{display:flex!important;align-items:center!important;justify-content:center!important;gap:22px!important;width:100%!important;margin:20px auto 0!important;direction:ltr!important}
+.lux-reference-editorial .lux-reference-nav{display:grid!important;place-items:center!important;width:46px!important;height:46px!important;min-width:46px!important;padding:0!important;border:1px solid #bca58e!important;border-radius:50%!important;background:#f8f1e8!important;color:#51392c!important;font-family:Georgia,serif!important;font-size:30px!important;line-height:1!important;box-shadow:0 5px 14px rgba(67,48,31,.10)!important;cursor:pointer!important;transition:transform .2s,background .2s,box-shadow .2s!important}
+.lux-reference-editorial .lux-reference-nav:active{transform:scale(.92)!important;background:#e8d7c3!important}
+.lux-reference-editorial .lux-reference-count{min-width:48px!important;text-align:center!important;color:#927a65!important;font:500 11px/1.4 Arial,sans-serif!important;letter-spacing:1.5px!important}
+.lux-reference-editorial .lux-reference-ribbon{right:-4px!important;transform:translateY(-50%) rotate(-5deg)!important;border:1px solid rgba(255,244,229,.48)!important;border-radius:17px 5px 17px 5px!important;box-shadow:0 9px 18px rgba(48,31,22,.20),inset 0 0 0 2px rgba(255,255,255,.07)!important}
+@media(max-width:700px){
+ .lux-reference-editorial .lux-reference-title{font-size:clamp(28px,7.3vw,37px)!important;gap:4px!important;line-height:1.58!important}
+ .lux-reference-editorial .lux-reference-title-mark{padding:1px 12px 5px!important;border-radius:23px 15px 25px 13px!important}
+ .lux-reference-editorial .lux-reference-controls{gap:20px!important;margin-top:18px!important}
+ .lux-reference-editorial .lux-reference-nav{width:42px!important;height:42px!important;min-width:42px!important;font-size:28px!important}
+ .lux-reference-editorial .lux-reference-ribbon{right:-3px!important;transform:translateY(-50%) rotate(-5deg)!important;min-height:145px!important}
+}
+</style>
+
+<style id="sise-luxury-highlight-only-v8">
+/* Only the highlighted words sit inside the capsule; surrounding Persian copy stays outside. */
+.lux-reference-editorial .lux-reference-title{display:block!important;direction:rtl!important;text-align:right!important;line-height:1.9!important;overflow:visible!important}
+.lux-reference-editorial .lux-reference-title-lead,.lux-reference-editorial .lux-reference-title-after{display:inline!important;white-space:normal!important;color:inherit!important}
+.lux-reference-editorial .lux-reference-title-mark{display:inline-flex!important;vertical-align:middle!important;align-items:center!important;max-width:100%!important;width:auto!important;margin:0 5px!important;padding:0 13px 5px!important;white-space:nowrap!important;border-radius:26px 17px 27px 15px!important;transform:rotate(-1.5deg)!important}
+.lux-reference-editorial .lux-reference-title-mark>span{display:inline!important;white-space:nowrap!important;transform:rotate(1.5deg)!important}
+.lux-reference-editorial .lux-link-note{margin:12px 0 0!important;color:#887565!important;font-size:12px!important;line-height:1.9!important;text-align:center!important}
+@media(max-width:700px){.lux-reference-editorial .lux-reference-title{line-height:1.95!important}.lux-reference-editorial .lux-reference-title-mark{padding:0 10px 4px!important;margin:0 3px!important}}
+</style>
+
+<style id="sise-scroll-flight-preview">
+#sise-flight-layer{position:absolute;inset:0 auto auto 0;width:100%;height:1px;z-index:90;pointer-events:none;overflow:visible}
+.sise-flight-bag{position:absolute;display:block;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(38,25,18,.18));will-change:transform,left,top,width,height;transform-origin:50% 50%;backface-visibility:hidden}
+.sise-flight-target{opacity:0!important}
+@media(prefers-reduced-motion:reduce){#sise-flight-layer{display:none!important}.sise-flight-target{opacity:1!important}}
+</style>
+<script id="sise-scroll-flight-preview-js">
+(()=> {
+ let layer=null,items=[],hero=null,grid=null,started=false,raf=0,resizeObs=null;
+ const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const clamp=n=>Math.max(0,Math.min(1,n));
+ const pageRect=el=>{const r=el.getBoundingClientRect();return {left:r.left+scrollX,top:r.top+scrollY,width:r.width,height:r.height}};
+ function init(){
+  if(reduced||started)return;
+  hero=document.querySelector('.hero');
+  const cards=[...document.querySelectorAll('.pc .im img')].filter(im=>(im.currentSrc||im.src||im.getAttribute('src'))&&im.closest('.pc')).slice(0,4);
+  if(!cards.length||!hero)return;
+  grid=cards[0].closest('.grid')||cards[0].closest('section')||cards[0].parentElement;
+  if(!grid)return;
+  layer=document.createElement('div');layer.id='sise-flight-layer';document.body.appendChild(layer);
+  const heroBox=pageRect(hero);
+  const starts=[
+   {x:.17,y:.20,w:.23,r:-16},
+   {x:.68,y:.13,w:.22,r:14},
+   {x:.42,y:.48,w:.24,r:-8},
+   {x:.78,y:.57,w:.19,r:19}
+  ];
+  items=cards.map((target,i)=>{
+   const src=target.currentSrc||target.src||target.getAttribute('src');
+   const img=document.createElement('img');img.className='sise-flight-bag';img.alt='';img.draggable=false;img.src=src;layer.appendChild(img);
+   target.classList.add('sise-flight-target');
+   return {img,target,start:starts[i],index:i};
+  });
+  started=true;
+  if('ResizeObserver'in window){resizeObs=new ResizeObserver(()=>paint());resizeObs.observe(hero);resizeObs.observe(grid)}
+  window.addEventListener('scroll',schedule,{passive:true});
+  window.addEventListener('resize',schedule,{passive:true});
+  paint();
+ }
+ function paint(){
+  if(!started||!items.length)return;
+  const h=pageRect(hero),g=pageRect(grid);
+  const from=Math.max(0,h.top+h.height*.12);
+  const to=Math.max(from+window.innerHeight*.6,g.top-window.innerHeight*.52);
+  const p=clamp((scrollY-from)/(to-from));
+  items.forEach((it,i)=>{
+   const a=it.start,t=pageRect(it.target);
+   const targetW=Math.max(44,t.width),targetH=Math.max(55,t.height);
+   const startW=Math.min(window.innerWidth*.29,window.innerWidth<600?122:205);
+   const startH=startW*(targetH/Math.max(1,targetW));
+   const sx=h.left+h.width*a.x-startW/2, sy=h.top+h.height*a.y-startH/2;
+   const ex=t.left,ey=t.top;
+   const ease=p*p*(3-2*p);
+   const x=sx+(ex-sx)*ease,y=sy+(ey-sy)*ease;
+   const w=startW+(targetW-startW)*ease,hh=startH+(targetH-startH)*ease;
+   const spin=(1-ease)*360+(i%2?1:-1)*(1-ease)*24;
+   it.img.style.left=x+'px';it.img.style.top=y+'px';it.img.style.width=w+'px';it.img.style.height=hh+'px';
+   it.img.style.transform='rotate('+((a.r*(1-ease))+spin)+'deg)';
+   it.img.style.opacity=String(p<.94?1:clamp((1-p)/.06));
+   it.target.style.setProperty('opacity',String(p<.94?0:clamp((p-.94)/.06)),'important');
+  });
+ }
+ function schedule(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;paint()})}
+ const mo=new MutationObserver(()=>{if(!started){const heroNow=document.querySelector('.hero'),cardsNow=document.querySelector('.pc .im img');if(heroNow&&cardsNow)init()}});
+ mo.observe(document.documentElement,{childList:true,subtree:true});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+ setTimeout(init,900);setTimeout(init,2200);
+})();
+</script>
+
 </body>
 </html>
