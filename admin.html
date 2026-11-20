@@ -1181,10 +1181,10 @@ html{overflow-x:hidden;max-width:100%}
 .adm-b .stock-controls>.btn{min-width:0;max-width:100%;padding:10px 7px;justify-content:center;white-space:nowrap}
 .adm-b .stock-controls>.in{width:100%!important;min-width:0!important;max-width:100%;box-sizing:border-box}
 .adm-b .stock-save{gap:5px}
-.adm-b .adm-count-badge{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:22px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:800;white-space:nowrap;line-height:1.3}
-.adm-b .adm-count-badge.is-neutral{background:rgba(117,145,168,.16);color:var(--muted)}
-.adm-b .adm-count-badge.is-alert{background:#dc3545;color:#fff;box-shadow:0 3px 10px rgba(220,53,69,.2)}
-.adm-b .adm-chat-badges{display:inline-flex;align-items:center;gap:5px;margin-inline-start:5px;flex-wrap:wrap}
+.adm .adm-count-badge{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:22px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:800;white-space:nowrap;line-height:1.3}
+.adm .adm-count-badge.is-neutral{background:rgba(117,145,168,.16);color:var(--muted)}
+.adm .adm-count-badge.is-alert{background:#dc3545;color:#fff;box-shadow:0 3px 10px rgba(220,53,69,.2)}
+.adm .adm-chat-badges{display:inline-flex;align-items:center;gap:5px;margin-inline-start:5px;flex-wrap:wrap}
 @media(max-width:560px){
  .adm-b .stock-summary{gap:7px}
  .adm-b .stock-metric{padding:10px 9px}
@@ -2128,7 +2128,7 @@ inventory(){let map=null,err='',nf={};const box=h('div',{class:'lst'}),LOW=3;
   if(!map){add(box,h('div',{class:'empty'},'در حال بارگیری…'));return}
   const values=S.products.map(p=>mAdm(p)!=null?mAdm(p):(+p.stock||0)),outCount=values.filter(v=>v<=0).length,lowCount=values.filter(v=>v>0&&v<=LOW).length,totalUnits=values.reduce((a,v)=>a+v,0);
   add(box,h('div',{class:'stock-summary'},h('div',{class:'stock-metric'},h('small',{},'کل موجودی'),h('b',{},fa(totalUnits)),h('span',{},'عدد در انبار')),h('div',{class:'stock-metric is-low'},h('small',{},'موجودی کم'),h('b',{},fa(lowCount)),h('span',{},'محصول')),h('div',{class:'stock-metric is-empty'},h('small',{},'ناموجود'),h('b',{},fa(outCount)),h('span',{},'محصول'))));
-  add(box,S.products.length?S.products.map(p=>{const v=mAdm(p),cur=v!=null?v:(+p.stock||0),inp=h('input',{class:'in',type:'text',inputmode:'numeric',value:String(cur),style:{width:'110px',flex:'none',textAlign:'center',direction:'ltr',padding:'12px 6px',fontSize:'16px',fontWeight:'700'},onfocus:e=>e.target.select()}),w=nf[p.id]||[];
+  add(box,S.products.length?S.products.map(p=>{const v=mAdm(p),cur=v!=null?v:(+p.stock||0),inp=h('input',{class:'in',type:'text',inputmode:'numeric',value:String(cur),style:{width:'100%',flex:'1 1 auto',minWidth:'0',textAlign:'center',direction:'ltr',padding:'12px 6px',fontSize:'16px',fontWeight:'700'},onfocus:e=>e.target.select()}),w=nf[p.id]||[];
    const step=(l,d)=>h('button',{class:'btn sec',type:'button',onclick:()=>{inp.value=Math.max(0,(+normNum(inp.value)||0)+d)}},l);
    return h('div',{class:'li stock-item'},h('div',{class:'li-h stock-head'},h('span',{class:'stock-product-title'},p.images[0]?h('img',{src:p.images[0],alt:'',loading:'lazy'}):h('span',{class:'stock-placeholder'},I('image',18)),h('b',{},p.title)),h('span',{class:'pill stock-state '+(cur<=0?'is-empty':cur<=LOW?'is-low':'is-ok')},cur<=0?'اتمام موجودی':(cur<=LOW?'کم‌موجود':'موجود'))),
     h('div',{class:'stock-controls'},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn stock-save',type:'button',onclick:()=>save(p,normNum(inp.value))},I('check',16),v!=null?'ذخیره':'ثبت موجودی')),
