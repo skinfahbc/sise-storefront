@@ -1566,7 +1566,7 @@ function saleRail(){
  return h('section',{class:'srl srs'},secHead(R.title||'تخفیف‌خورده‌ها',h('button',{onclick:()=>go('categories')},'مشاهده همه')),stage,h('p',{class:'sr-hint'},R.hint||'انگشت یا موس را روی کیف‌ها بکشید · برای دیدن پشت کیف کلیک کنید'))}
 function luxurySpotlight(){
  const L=S.luxury||{};if(L.enabled===false)return null;
- const items=(L.items||[]).filter(x=>x&&x.active!==false&&(x.image||x.productId||x.title)).map(it=>{const p=it.productId?prod(it.productId):null,src=it.image||(p&&(p.images&&p.images[0]||p.rackImage))||'';return src?{p,src,name:it.title||p&&p.title||'کیف منتخب',price:+it.price||p&&+p.price||0,old:+it.oldPrice||p&&+p.oldPrice||0,desc:it.description||p&&(p.desc||p.description)||'',color:it.color||'',material:it.material||'',dimensions:it.dimensions||'',spec:[it.color,it.material,it.dimensions].filter(Boolean).join(' · ')}:null}).filter(Boolean);
+ const items=(L.items||[]).filter(x=>x&&x.active!==false&&(x.image||x.productId||x.title)).map(it=>{const p=it.productId?(prod(it.productId)||S.products.find(q=>String(q.id)===String(it.productId)||String(q.sku||q.code||'')===String(it.productId))):S.products.find(q=>String(q.title||'').trim().toLowerCase()===String(it.title||'').trim().toLowerCase()),src=it.image||(p&&(p.images&&p.images[0]||p.rackImage))||'';return src?{p,src,name:it.title||p&&p.title||'کیف منتخب',price:+it.price||p&&+p.price||0,old:+it.oldPrice||p&&+p.oldPrice||0,desc:it.description||p&&(p.desc||p.description)||'',color:it.color||'',material:it.material||'',dimensions:it.dimensions||'',spec:[it.color,it.material,it.dimensions].filter(Boolean).join(' · ')}:null}).filter(Boolean);
  let n=0,closeDetail;const photo=h('img',{src:items[0]?.src||'',alt:items[0]?.name||'',draggable:false,loading:'eager'});
  const frame=h('button',{class:'lux-frame lux-photo-only',type:'button',onclick:detail,'aria-label':'برای مشاهده قیمت و مشخصات لمس کنید'},photo,h('span',{class:'lux-tap-hint'},h('span',{class:'lux-tap-icon'},'⌕'),h('span',{},'لمس برای مشاهده جزئیات')));
  const thumbs=h('div',{class:'lux-thumbnails','aria-label':'انتخاب کیف',tabindex:'0'});
@@ -1575,7 +1575,7 @@ function luxurySpotlight(){
  const progress=h('div',{class:'lux-scroll-progress'},h('span',{}));
  function show(i){if(!items.length)return;n=(i+items.length)%items.length;const x=items[n];photo.classList.remove('lux-photo-enter');photo.src=x.src;photo.alt=x.name;void photo.offsetWidth;photo.classList.add('lux-photo-enter');[...thumbs.children].forEach((b,k)=>{b.classList.toggle('on',k===n);b.setAttribute('aria-current',k===n?'true':'false')});const active=thumbs.children[n];active&&active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});progress.firstChild.style.width=((n+1)/items.length*100)+'%'}
  items.forEach((x,i)=>thumbs.append(h('button',{type:'button',class:'lux-thumb'+(i===0?' on':''),onclick:()=>show(i),'aria-label':'انتخاب '+x.name,'aria-current':i===0?'true':'false'},h('img',{src:x.src,alt:x.name,loading:'lazy'}),h('span',{},x.name))));
- function detail(){if(!items.length)return;const x=items[n],linked=!!x.p;const body=h('div',{class:'lux-detail-body'},h('div',{class:'lux-detail-top'},'LUXURY EDITION',h('button',{class:'lux-detail-close',onclick:()=>closeDetail()},'×')),h('img',{src:x.src,alt:x.name,style:{width:'100%',aspectRatio:'1/1',objectFit:'contain',borderRadius:'18px',background:'#f7f3ed'}}),h('h2',{},x.name),x.price?h('div',{class:'lux-detail-price'},money(x.price),x.old>x.price?h('del',{},money(x.old)):null):null,x.desc?h('p',{class:'lux-detail-desc'},x.desc):null,x.spec?h('div',{class:'lux-detail-spec'},x.spec):null,linked?h('div',{class:'lux-detail-actions'},h('button',{class:'btn',onclick:()=>{closeDetail();openProduct(x.p.id)}},'افزودن به سبد خرید'),h('button',{class:'btn sec',onclick:()=>{closeDetail();openProduct(x.p.id);setTimeout(()=>{const z=[...document.querySelectorAll('.sh .actions button')].find(q=>q.textContent.includes('سفارش مستقیم'));z&&z.click()},80)}},'سفارش مستقیم')):h('div',{class:'lux-link-note'},'برای خرید آنلاین، این کیف را در پنل به محصول فروشگاه متصل کنید.',h('button',{class:'btn sec',onclick:()=>{closeDetail();openContact()}},'تماس با فروشگاه')));closeDetail=openModal(h('div',{class:'lux-detail-sheet'},body))}
+ function detail(){if(!items.length)return;const x=items[n],linked=!!x.p;const body=h('div',{class:'lux-detail-body'},h('div',{class:'lux-detail-top'},'جزئیات محصول',h('button',{class:'lux-detail-close',onclick:()=>closeDetail()},'×')),h('img',{src:x.src,alt:x.name,style:{width:'100%',aspectRatio:'1/1',objectFit:'contain',borderRadius:'18px',background:'#f7f3ed'}}),h('h2',{},x.name),x.price?h('div',{class:'lux-detail-price'},money(x.price),x.old>x.price?h('del',{},money(x.old)):null):null,x.desc?h('p',{class:'lux-detail-desc'},x.desc):null,x.spec?h('div',{class:'lux-detail-spec'},x.spec):null,linked?h('div',{class:'lux-detail-actions'},h('button',{class:'btn lux-detail-add',onclick:()=>{closeDetail();openProduct(x.p.id)}},'افزودن به سبد خرید'),h('button',{class:'btn sec',onclick:()=>{closeDetail();openProduct(x.p.id);setTimeout(()=>{const z=[...document.querySelectorAll('.sh .actions button')].find(q=>q.textContent.includes('سفارش مستقیم'));z&&z.click()},80)}},'سفارش مستقیم')):h('div',{class:'lux-link-note'},'برای خرید آنلاین، این کیف را در پنل به محصول فروشگاه متصل کنید.',h('button',{class:'btn sec',onclick:()=>{closeDetail();openContact()}},'تماس با فروشگاه')));closeDetail=openModal(h('div',{class:'lux-detail-sheet'},body))}
  let touchX=0,touchY=0;frame.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});frame.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25)show(n+(dx<0?1:-1))},{passive:true});
  stage.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)>Math.abs(e.deltaY)||e.shiftKey){e.preventDefault();if(Math.abs(e.deltaX||e.deltaY)>24)show(n+((e.deltaX||e.deltaY)>0?1:-1))}},{passive:false});
  let down=false,dragX=0,scrollStart=0;thumbs.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){down=true;dragX=e.clientX;scrollStart=thumbs.scrollLeft;thumbs.classList.add('dragging')}});window.addEventListener('pointerup',()=>{down=false;thumbs.classList.remove('dragging')});thumbs.addEventListener('pointermove',e=>{if(down){thumbs.scrollLeft=scrollStart-(e.clientX-dragX);e.preventDefault()}});
@@ -2883,6 +2883,54 @@ boot();
  .lux-editorial-showroom .lux-tap-hint{opacity:1;transform:none;right:11px;bottom:11px;font-size:10px;padding:6px 10px 6px 7px}
  .lux-editorial-showroom .lux-thumbnails{gap:9px!important;padding:13px 3px 10px!important}
  .lux-editorial-showroom .lux-thumb{flex-basis:72px!important;width:72px!important;border-radius:12px!important}
+}
+</style>
+
+<style id="sise-luxury-layout-polish-v4">
+/* Correct mobile editorial hierarchy: no floating plaque over the headline. */
+.lux-editorial-showroom{margin-top:24px!important;padding-top:clamp(22px,4vw,38px)!important;background:#f2e7d8!important;border:1px solid #dfcfbb!important;box-shadow:0 18px 44px rgba(67,48,31,.10),inset 0 1px 0 #fff!important}
+.lux-editorial-showroom:before{border-color:rgba(151,119,84,.2)!important}
+.lux-editorial-showroom .lux-masthead{position:relative!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;min-height:0!important;gap:0!important;padding:12px clamp(8px,5vw,46px) 24px!important;margin:0!important}
+.lux-editorial-showroom .lux-logo-notch{display:none!important}
+.lux-editorial-showroom .lux-editorial-copy{position:relative!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;width:100%!important;max-width:680px!important;margin:0 auto!important;text-align:right!important}
+.lux-editorial-showroom .lux-kicker{margin:0 0 8px!important}
+.lux-editorial-showroom .lux-edition{margin:0 0 12px!important}
+.lux-editorial-showroom .lux-title{position:relative!important;z-index:1!important;max-width:100%!important;line-height:1.65!important;margin:0 0 10px!important;overflow-wrap:anywhere!important}
+.lux-editorial-showroom .lux-title mark{position:static!important;display:inline!important;white-space:normal!important;box-shadow:none!important}
+.lux-editorial-showroom .lux-desc{position:relative!important;z-index:1!important;max-width:100%!important;margin:0 0 14px!important}
+.lux-editorial-showroom .lux-cta{position:relative!important;z-index:1!important;align-self:flex-start!important;margin:2px 0 0!important}
+.lux-editorial-showroom .lux-everyday{position:static!important;inset:auto!important;display:block!important;align-self:center!important;writing-mode:horizontal-tb!important;transform:none!important;z-index:auto!important;width:max-content!important;max-width:100%!important;margin:17px auto 0!important;padding:10px 20px 0!important;border:0!important;border-top:1px solid rgba(133,103,73,.35)!important;border-radius:0!important;background:transparent!important;color:#866b50!important;box-shadow:none!important;font:500 10px/1.5 Georgia,serif!important;letter-spacing:3px!important;text-align:center!important;white-space:normal!important}
+.lux-editorial-showroom .lux-showroom-wrap{background:#e8ddcf!important;border:1px solid #e8ddcf!important;border-radius:26px!important;padding:10px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 12px 30px rgba(67,48,31,.09)!important}
+.lux-editorial-showroom .lux-photo-only{background:#f8f5ef!important;border:1px solid #e3d8ca!important;border-radius:19px!important;box-shadow:inset 0 0 0 5px #f8f5ef,0 8px 22px rgba(67,48,31,.10)!important}
+.lux-editorial-showroom .lux-photo-only img{object-fit:contain!important;background:#f8f5ef!important}
+.lux-editorial-showroom .lux-photo-stage .lux-arrow-btn{background:#f8f5ef!important;border:1px solid #c9b69e!important;color:#493729!important}
+.lux-editorial-showroom .lux-thumbnails{background:transparent!important}
+.lux-editorial-showroom .lux-thumb{background:#f4eee5!important;border-color:#d7c8b5!important}
+.lux-editorial-showroom .lux-thumb.on{border-color:#9c7953!important;box-shadow:0 0 0 3px rgba(156,121,83,.13),0 8px 18px rgba(65,44,25,.12)!important}
+.lux-detail-body{background:#f8f4ed!important;color:#33271e!important;border:1px solid #e0d2c1!important;border-radius:24px!important}
+.lux-detail-top{display:flex!important;align-items:center!important;justify-content:space-between!important;color:#927554!important;font:600 11px/1.5 Georgia,serif!important;letter-spacing:1.2px!important}
+.lux-detail-body h2{color:#30231a!important}
+.lux-detail-price{color:#35271d!important;font-size:23px!important;font-weight:800!important}
+.lux-detail-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:18px!important}
+.lux-detail-actions .btn{min-height:50px!important;border-radius:15px!important;font-weight:700!important}
+.lux-detail-actions .lux-detail-add{background:#30251e!important;color:#f8e8d0!important;border:1px solid #b9966b!important}
+.lux-detail-actions .btn.sec{background:#eee3d5!important;color:#493729!important;border:1px solid #d4c2aa!important}
+.lux-link-note{padding:14px!important;border-radius:16px!important;background:#eee3d5!important;color:#6d5945!important;line-height:1.9!important}
+@media(max-width:700px){
+ .lux-editorial-showroom{margin-top:16px!important;padding:19px 10px 12px!important;border-radius:23px!important}
+ .lux-editorial-showroom .lux-masthead{padding:8px 9px 16px!important}
+ .lux-editorial-showroom .lux-kicker{font-size:9px!important;letter-spacing:2px!important}
+ .lux-editorial-showroom .lux-edition{font-size:9px!important;letter-spacing:1.8px!important}
+ .lux-editorial-showroom .lux-title{font-size:clamp(25px,7vw,34px)!important;line-height:1.72!important;margin-bottom:8px!important}
+ .lux-editorial-showroom .lux-title mark{padding:0 10px 3px!important;border-radius:999px!important}
+ .lux-editorial-showroom .lux-desc{font-size:12px!important;line-height:1.95!important;margin-bottom:12px!important}
+ .lux-editorial-showroom .lux-cta{font-size:12px!important;padding:6px 8px 6px 15px!important}
+ .lux-editorial-showroom .lux-cta .lux-arrow{width:34px!important;height:34px!important}
+ .lux-editorial-showroom .lux-everyday{margin-top:13px!important;padding-top:9px!important;font-size:9px!important;letter-spacing:2px!important}
+ .lux-editorial-showroom .lux-showroom-wrap{padding:7px!important;border-radius:19px!important;background:#e8ddcf!important}
+ .lux-editorial-showroom .lux-photo-only{border-radius:15px!important}
+ .lux-editorial-showroom .lux-photo-stage .lux-arrow-btn{width:35px!important;height:35px!important}
+ .lux-editorial-showroom .lux-thumbnails{padding:12px 3px 8px!important}
 }
 </style>
 </body>
