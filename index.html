@@ -1568,7 +1568,7 @@ function luxurySpotlight(){
  const L=S.luxury||{};if(L.enabled===false)return null;
  const items=(L.items||[]).filter(x=>x&&x.active!==false&&(x.image||x.productId||x.title)).map(it=>{const key=it.productId??it.product_id??it.product??'';const p=(key!==''?(prod(key)||S.products.find(q=>String(q.id)===String(key)||String(q.sku||q.code||'')===String(key))):null)||S.products.find(q=>String(q.title||'').trim().toLowerCase()===String(it.title||'').trim().toLowerCase());const src=it.image||(p&&(p.images&&p.images[0]||p.rackImage))||'';return src?{p,src,name:it.title||p&&p.title||'کیف منتخب',price:+it.price||p&&+p.price||0,old:+it.oldPrice||p&&+p.oldPrice||0,desc:it.description||p&&(p.desc||p.description)||'',spec:[it.color,it.material,it.dimensions].filter(Boolean).join(' · ')}:null}).filter(Boolean);
  let n=0,closeDetail;const photo=h('img',{src:items[0]?.src||'',alt:items[0]?.name||'',draggable:false,loading:'eager'});
- const frame=h('button',{class:'lux-reference-photo',type:'button',onclick:detail,'aria-label':'برای مشاهده قیمت و مشخصات لمس کنید'},photo,h('span',{class:'lux-photo-outline'}),h('span',{class:'lux-photo-ribbon'},L.everyday||'THE ART OF EVERYDAY'),h('span',{class:'lux-photo-touch'},'لمس برای مشاهده جزئیات'));
+ const frame=h('button',{class:'lux-reference-photo',type:'button',onclick:detail,'aria-label':'برای مشاهده قیمت و مشخصات لمس کنید'},photo,h('span',{class:'lux-reference-outline'}),h('span',{class:'lux-reference-ribbon'},L.everyday||'THE ART OF EVERYDAY'),h('span',{class:'lux-reference-touch'},'لمس برای مشاهده جزئیات'));
  const stage=h('div',{class:'lux-reference-stage'},frame);
  const dots=h('div',{class:'lux-reference-dots','aria-label':'موقعیت تصویر'}); 
  function show(i){if(!items.length)return;n=(i+items.length)%items.length;const x=items[n];photo.classList.remove('lux-reference-enter');photo.src=x.src;photo.alt=x.name;void photo.offsetWidth;photo.classList.add('lux-reference-enter');[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===n))}
@@ -2911,7 +2911,7 @@ boot();
 .lux-reference-copy .lux-title{margin:0 0 20px;color:#30231d;font-size:clamp(30px,5.5vw,48px);font-weight:850;line-height:1.75;max-width:100%;overflow-wrap:anywhere}
 .lux-reference-copy .lux-title mark{display:inline;padding:0 12px 4px;border-radius:999px;background:#dfc7b2;color:#8b4e36;white-space:normal}
 .lux-reference-copy .lux-desc{margin:0 0 24px;color:#887565;font-size:clamp(14px,2.2vw,17px);line-height:2.05;max-width:100%}
-.lux-reference-cta{display:inline-flex;align-items:center;gap:18px;min-height:70px;padding:8px 26px 8px 12px;border:0;border-radius:50px 12px 50px 50px;background:#442d23;color:#f8eee2;font:600 16px/1.5 inherit;box-shadow:none;cursor:pointer;transition:transform .25s,background .25s}
+.lux-reference-cta{display:inline-flex;align-items:center;gap:18px;min-height:70px;padding:8px 26px 8px 12px;border:0;border-radius:50px 12px 50px 50px;background:#442d23;color:#f8eee2;font-family:inherit;font-size:16px;font-weight:600;line-height:1.5;box-shadow:none;cursor:pointer;transition:transform .25s,background .25s}
 .lux-reference-cta:active{transform:scale(.98)}
 .lux-reference-cta-icon{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border-radius:50%;background:#f0dfc9;color:#51392c;font-size:23px}
 .lux-reference-gallery{position:relative;width:100%;max-width:680px;margin:0 auto}
