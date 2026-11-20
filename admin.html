@@ -1158,6 +1158,44 @@ html{overflow-x:hidden;max-width:100%}
 @media(max-width:700px){.adm-b .lux-ops-grid{grid-template-columns:1fr;gap:10px}.adm-b .lux-ops-card{padding:14px}.adm-b .lux-alert-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px}.adm-b .lux-welcome{border-radius:20px!important}}
 @media(prefers-reduced-motion:reduce){.adm-b .lux-metric,.adm-b .lux-shortcut{transition:none!important}}
 
+
+/* SISE admin inventory controls and live notification badges */
+.adm-b .stock-intro{margin:0 0 14px;color:var(--muted);line-height:1.9;font-size:13px}
+.adm-b .stock-toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 14px}
+.adm-b .stock-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.adm-b .stock-metric{min-width:0;padding:13px 14px;border:1px solid rgba(85,125,160,.16);border-radius:15px;background:rgba(225,238,249,.48);display:grid;gap:3px}
+.adm-b .stock-metric small,.adm-b .stock-metric span{font-size:11px;color:var(--muted)}
+.adm-b .stock-metric b{font-size:21px;color:var(--ink);line-height:1.25}
+.adm-b .stock-metric.is-low b{color:#b7791f}.adm-b .stock-metric.is-empty b{color:#c24141}
+.adm-b .stock-item{padding:14px!important;gap:12px!important;border:1px solid rgba(92,130,164,.16)!important;background:rgba(255,255,255,.62)!important}
+.adm-b .stock-head{align-items:center;gap:10px}
+.adm-b .stock-product-title{display:flex;align-items:center;gap:10px;min-width:0}
+.adm-b .stock-product-title b{font-size:13px;line-height:1.7;overflow-wrap:anywhere}
+.adm-b .stock-product-title img,.adm-b .stock-placeholder{width:46px;height:46px;flex:none;border-radius:12px;object-fit:cover;background:rgba(112,145,173,.12)}
+.adm-b .stock-placeholder{display:grid;place-items:center;color:var(--muted)}
+.adm-b .stock-state{white-space:nowrap}
+.adm-b .stock-state.is-ok{background:rgba(16,150,100,.12);color:#16805a}
+.adm-b .stock-state.is-low{background:rgba(210,145,35,.14);color:#a66b13}
+.adm-b .stock-state.is-empty{background:rgba(210,65,65,.12);color:#bb3434}
+.adm-b .stock-controls{display:grid;grid-template-columns:44px minmax(72px,1fr) 44px 52px minmax(112px,1.2fr);gap:7px;align-items:center;width:100%;min-width:0}
+.adm-b .stock-controls>.btn{min-width:0;max-width:100%;padding:10px 7px;justify-content:center;white-space:nowrap}
+.adm-b .stock-controls>.in{width:100%!important;min-width:0!important;max-width:100%;box-sizing:border-box}
+.adm-b .stock-save{gap:5px}
+.adm .adm-count-badge{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:22px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:800;white-space:nowrap;line-height:1.3}
+.adm .adm-count-badge.is-neutral{background:rgba(117,145,168,.16);color:var(--muted)}
+.adm .adm-count-badge.is-alert{background:#dc3545;color:#fff;box-shadow:0 3px 10px rgba(220,53,69,.2)}
+.adm .adm-chat-badges{display:inline-flex;align-items:center;gap:5px;margin-inline-start:5px;flex-wrap:wrap}
+@media(max-width:560px){
+ .adm-b .stock-summary{gap:7px}
+ .adm-b .stock-metric{padding:10px 9px}
+ .adm-b .stock-metric b{font-size:18px}
+ .adm-b .stock-controls{grid-template-columns:38px minmax(65px,1fr) 38px 46px;gap:6px}
+ .adm-b .stock-save{grid-column:1/-1;width:100%}
+ .adm-b .stock-toolbar{display:grid;grid-template-columns:1fr 1fr}
+ .adm-b .stock-toolbar .btn:last-child{grid-column:1/-1}
+ .adm-b .stock-item{padding:12px!important}
+}
+@media(max-width:360px){.adm-b .stock-controls{grid-template-columns:34px minmax(55px,1fr) 34px 42px;gap:5px}.adm-b .stock-controls>.btn{font-size:11px;padding:9px 4px}}
 </style>
 </head>
 <body>
@@ -1974,7 +2012,7 @@ function stockF(p){const inp=h('input',{class:'in',type:'text',inputmode:'numeri
  return h('div',{style:{display:'grid',gap:'6px'}},h('div',{class:'row',style:{flexWrap:'wrap'}},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn',type:'button',onclick:save},'ذخیره موجودی')),st)}
 function lifeF(s){const info=h('small',{class:'fh'},stLeft(s)),sel=h('select',{class:'in',onchange:()=>{s.life=+sel.value;s.created=Date.now();commit();info.textContent=stLeft(s)}},[[24,'۲۴ ساعت'],[72,'۳ روز'],[168,'یک هفته'],[720,'یک ماه'],[0,'بدون انقضا']].map(([v,l])=>h('option',{value:String(v)},l)));sel.value=String(+s.life||0);return h('div',{style:{display:'grid',gap:'6px'}},sel,info,h('small',{class:'fh'},'شمارش از لحظه ثبت یا تغییر مدت شروع می‌شود و بعد از اتمام، استوری در سایت دیده نمی‌شود و با انتشار بعدی از سرور پاک می‌شود.'))}
 const TABS=[['dash','نمای کلی','list'],['general','اطلاعات فروشگاه','gear'],['theme','رنگ و شیشه','palette'],['content','صفحه اصلی','home'],['hero','اسلایدر','image'],['menu','منوی کشویی','menu'],['stories','استوری‌ها','play'],['products','محصولات','box'],['rack','مدیریت رگال','bag'],['nav','منوی پایین','grid'],['orders','سفارش‌ها','truck'],['users','کاربران','users'],['inventory','موجودی','box'],['shipping','هزینه ارسال','truck'],['reports','گزارش فروش','list'],['comments','نظرات استوری','comment'],['support','مرکز پشتیبانی','headset'],['chat','گفتگوی همگانی','users'],['pm','چت خصوصی با مشتری','lock'],['coupons','کد تخفیف','tag'],['draw','قرعه‌کشی','gift'],['settings','تنظیمات','lock']];
-const ADM={open:false,pmUnread:0,pmPeople:0,chatCount:0,chatUnread:0,badgeTimer:0,drawTabs:null};
+const ADM={open:false,pmUnread:0,pmPeople:0,chatCount:0,chatUnread:0,orderUnread:0,badgeTimer:0,drawTabs:null};
 const PM_READ_KEY='sise_admin_pm_last_read';
 function markPmRead(rows){
  const latest=(rows||[]).reduce((n,r)=>!r.from_admin?Math.max(n,+r.id||0):n,0);
@@ -1985,10 +2023,11 @@ function markPmRead(rows){
 async function refreshAdminBadges(){
  if(!ADM.open||!sbSess())return;
  try{
-  const [mr,ar,cr]=await Promise.all([
+  const [mr,ar,cr,orows]=await Promise.all([
    sbFetch('/rest/v1/pm?select=id,uid,from_admin,channel&channel=eq.management&order=id.desc&limit=1200',{auth:true}),
    sbFetch('/rest/v1/pm?select=id,uid,from_admin,channel&channel=eq.ai&order=id.desc&limit=1200',{auth:true}),
-   sbFetch('/rest/v1/chat_messages?select=id,uid,is_admin&order=id.desc&limit=1200',{auth:true})
+   sbFetch('/rest/v1/chat_messages?select=id,uid,is_admin&order=id.desc&limit=1200',{auth:true}),
+   sbFetch('/rest/v1/orders?select=code,created_at&order=created_at.desc&limit=200',{auth:true})
   ]);
   const all=[...(mr||[]),...(ar||[])],groups=new Map();
   all.filter(x=>!x.from_admin).forEach(x=>{const k=x.uid+'_'+(x.channel||'management');if(!groups.has(k))groups.set(k,[]);groups.get(k).push(x)});
@@ -2004,6 +2043,18 @@ async function refreshAdminBadges(){
   let chatSeen=0;try{const v=localStorage.getItem('sise_admin_chat_last_read');chatSeen=v==null?latestChat:+v;if(v==null)localStorage.setItem('sise_admin_chat_last_read',String(latestChat))}catch(e){chatSeen=latestChat}
   if(admTab==='chat'){chatSeen=latestChat;try{localStorage.setItem('sise_admin_chat_last_read',String(latestChat))}catch(e){}}
   ADM.chatUnread=incoming.filter(x=>(+x.id||0)>chatSeen).length;ADM.chatCount=(cr||[]).length;
+  const orderRows=orows||[],latestOrderAt=orderRows.reduce((n,x)=>Math.max(n,Date.parse(x.created_at)||0),0);
+  let orderSeenAt=0,lastOrderNotice=0,hasOrderSeen=false,hasOrderNotice=false;try{const sv=localStorage.getItem('sise_admin_orders_last_seen'),nv=localStorage.getItem('sise_admin_orders_last_notified');hasOrderSeen=sv!==null;hasOrderNotice=nv!==null;orderSeenAt=+(sv||0);lastOrderNotice=+(nv||0)}catch(e){}
+  if(!hasOrderSeen){orderSeenAt=latestOrderAt;try{localStorage.setItem('sise_admin_orders_last_seen',String(orderSeenAt))}catch(e){}}
+  if(!hasOrderNotice){lastOrderNotice=latestOrderAt;try{localStorage.setItem('sise_admin_orders_last_notified',String(lastOrderNotice))}catch(e){}}
+  if(admTab==='orders'){orderSeenAt=latestOrderAt;try{localStorage.setItem('sise_admin_orders_last_seen',String(orderSeenAt))}catch(e){}}
+  ADM.orderUnread=orderRows.filter(x=>(Date.parse(x.created_at)||0)>orderSeenAt).length;
+  const freshOrders=orderRows.filter(x=>(Date.parse(x.created_at)||0)>lastOrderNotice);
+  if(freshOrders.length){const newest=freshOrders.reduce((n,x)=>Math.max(n,Date.parse(x.created_at)||0),lastOrderNotice);try{localStorage.setItem('sise_admin_orders_last_notified',String(newest))}catch(e){}if(admTab!=='orders'){toast('🛍️ '+fa(freshOrders.length)+' سفارش جدید ثبت شد');try{if(navigator.vibrate)navigator.vibrate([90,45,90])}catch(e){}}}
+  const latestChatId=incoming.reduce((n,x)=>Math.max(n,+x.id||0),0);let lastChatNotice=0,hasChatNotice=false;try{const nv=localStorage.getItem('sise_admin_chat_last_notified');hasChatNotice=nv!==null;lastChatNotice=+(nv||0)}catch(e){}
+  if(!hasChatNotice){lastChatNotice=latestChatId;try{localStorage.setItem('sise_admin_chat_last_notified',String(lastChatNotice))}catch(e){}}
+  const freshChat=incoming.filter(x=>(+x.id||0)>lastChatNotice);
+  if(freshChat.length){const newest=freshChat.reduce((n,x)=>Math.max(n,+x.id||0),lastChatNotice);try{localStorage.setItem('sise_admin_chat_last_notified',String(newest))}catch(e){}if(admTab!=='chat'){toast('💬 '+fa(freshChat.length)+' پیام جدید در گفتگوی همگانی');try{if(navigator.vibrate)navigator.vibrate([70,35,70])}catch(e){}}}
   if(ADM.drawTabs)ADM.drawTabs();
  }catch(e){}
 }
@@ -2022,10 +2073,10 @@ let admTab='dash';
 function openAdmin(){const body=h('div',{class:'adm-b'}),tabs=h('div',{class:'tabs',role:'tablist'});
  const close=()=>{clearInterval(ADM.badgeTimer);ADM.badgeTimer=0;ADM.drawTabs=null;if(syncT){clearTimeout(syncT);syncT=0;sbPush()}root.remove();document.body.classList.remove('lock');ADM.open=false;if(window.ADMIN_PAGE){try{location.href='index.html'}catch(e){}return}try{if(location.hash==='#admin')history.replaceState(null,'',location.pathname+location.search)}catch(e){}refreshStore()};
  const adminLogout=async()=>{if(!confirm('از پنل مدیریت خارج شوید؟'))return;try{await sbFetch('/auth/v1/logout',{method:'POST',auth:true})}catch(e){}sbSave(null);clearInterval(ADM.badgeTimer);ADM.badgeTimer=0;ADM.drawTabs=null;if(syncT){clearTimeout(syncT);syncT=0}root.remove();document.body.classList.remove('lock');ADM.open=false;if(window.ADMIN_PAGE){location.href='index.html';return}try{if(location.hash==='#admin')history.replaceState(null,'',location.pathname+location.search)}catch(e){}refreshStore();toast('با موفقیت از پنل مدیریت خارج شدید')};
- const drawTabs=()=>{tabs.innerHTML='';add(tabs,TABS.map(([k,l,i])=>h('button',{class:'tb'+(k===admTab?' on':''),role:'tab','aria-selected':k===admTab,onclick:()=>{admTab=k;draw();if(k==='pm'||k==='chat')refreshAdminBadges()}},I(i,16),l,
-  k==='pm'&&ADM.pmUnread?h('span',{style:{display:'inline-flex',minWidth:'20px',height:'20px',padding:'0 5px',alignItems:'center',justifyContent:'center',borderRadius:'20px',background:'#ef4444',color:'#fff',fontSize:'11px',fontWeight:'800',marginInlineStart:'6px'},'aria-label':'پیام خصوصی جدید'},fa(ADM.pmUnread)):null,
-  k==='chat'&&(ADM.chatUnread+ADM.pmUnread)>0?h('span',{style:{display:'inline-flex',alignItems:'center',gap:'5px',marginInlineStart:'6px'},'aria-label':'پیام جدید در گفتگوها'},h('i',{style:{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#ef4444'}}),h('b',{style:{minWidth:'20px',height:'20px',padding:'0 5px',display:'inline-flex',alignItems:'center',justifyContent:'center',borderRadius:'20px',background:'#ef4444',color:'#fff',fontSize:'11px'}},fa(ADM.chatUnread+ADM.pmUnread))):null,
-  k==='chat'&&!(ADM.chatUnread+ADM.pmUnread)&&ADM.chatCount?h('span',{style:{display:'inline-flex',minWidth:'20px',height:'20px',padding:'0 5px',alignItems:'center',justifyContent:'center',borderRadius:'20px',background:'var(--field)',fontSize:'11px',marginInlineStart:'6px'},'aria-label':'تعداد پیام‌های همگانی'},fa(ADM.chatCount)):null
+ const drawTabs=()=>{tabs.innerHTML='';add(tabs,TABS.map(([k,l,i])=>h('button',{class:'tb'+(k===admTab?' on':''),role:'tab','aria-selected':k===admTab,onclick:()=>{admTab=k;draw();if(k==='pm'||k==='chat'||k==='orders')refreshAdminBadges()}},I(i,16),l,
+  k==='orders'&&ADM.orderUnread?h('span',{class:'adm-count-badge is-alert','aria-label':'سفارش جدید'},fa(ADM.orderUnread)):null,
+  k==='pm'&&ADM.pmUnread?h('span',{class:'adm-count-badge is-alert','aria-label':'پیام خصوصی جدید'},fa(ADM.pmUnread)):null,
+  k==='chat'?h('span',{class:'adm-chat-badges','aria-label':'تعداد پیام و پیام جدید'},h('span',{class:'adm-count-badge is-neutral'},fa(ADM.chatCount)+' پیام'),ADM.chatUnread?h('span',{class:'adm-count-badge is-alert'},I('bell',11),fa(ADM.chatUnread)+' جدید'):null):null
   )))};
  const draw=()=>{body.innerHTML='';try{drawTabs();const panel=PANELS[admTab];if(typeof panel!=='function')throw new Error('این بخش هنوز آماده نیست: '+admTab);add(body,panel());root.scrollTo({top:0})}catch(err){console.error('SISE admin panel error:',admTab,err);body.innerHTML='';body.append(h('section',{class:'ac glass',style:{padding:'24px',textAlign:'center',border:'1px solid rgba(220,80,80,.22)'}},h('div',{style:{fontSize:'34px',marginBottom:'10px'}},'⚠️'),h('h3',{},'این بخش با خطا روبه‌رو شد'),h('p',{style:{color:'var(--muted)',lineHeight:'1.9'}},admTab==='settings'?'تنظیمات به‌درستی بارگذاری نشد. اطلاعات ذخیره‌شده بررسی و دوباره تلاش کنید.':'بارگذاری این بخش کامل نشد.'),h('small',{style:{display:'block',direction:'ltr',opacity:'.65',margin:'8px 0'}},String(err&&err.message||err)),h('div',{class:'row',style:{justifyContent:'center',marginTop:'14px'}},h('button',{class:'btn',onclick:()=>draw()},'تلاش دوباره'),h('button',{class:'btn sec',onclick:()=>ADM.go('dash')},'بازگشت به داشبورد'))));root.scrollTo({top:0})}};
  const root=h('div',{class:'adm',role:'dialog','aria-label':'پنل مدیریت'},h('div',{class:'adm-top'},h('div',{class:'adm-t'},h('h2',{},'پنل مدیریت'),h('div',{class:'row',style:{gap:'6px'}},h('button',{class:'btn dg',style:{padding:'8px 10px',fontSize:'12px'},onclick:adminLogout},'خروج'),h('button',{class:'btn sec',style:{padding:'8px 10px',fontSize:'12px'},onclick:close},I('eye',18),'مشاهده سایت'))),h('div',{class:'sync-row'},h('small',{id:'sync-st',class:'sync'},'متصل به سرور'),h('button',{class:'btn sm',onclick:()=>{clearTimeout(syncT);sbPush()}},'انتشار روی سرور')),tabs),body);
@@ -2076,18 +2127,20 @@ inventory(){let map=null,err='',nf={};const box=h('div',{class:'lst'}),LOW=3;
  const draw=()=>{box.innerHTML='';
   if(err){add(box,h('div',{class:'li'},h('p',{style:{margin:0}},/relation|does not exist|schema cache|404/i.test(err)?'جدول موجودی ساخته نشده.':'بارگیری نشد: '+err)));return}
   if(!map){add(box,h('div',{class:'empty'},'در حال بارگیری…'));return}
-  add(box,S.products.length?S.products.map(p=>{const v=mAdm(p),cur=v!=null?v:(+p.stock||0),inp=h('input',{class:'in',type:'text',inputmode:'numeric',value:String(cur),style:{width:'110px',flex:'none',textAlign:'center',direction:'ltr',padding:'12px 6px',fontSize:'16px',fontWeight:'700'},onfocus:e=>e.target.select()}),w=nf[p.id]||[];
+  const values=S.products.map(p=>mAdm(p)!=null?mAdm(p):(+p.stock||0)),outCount=values.filter(v=>v<=0).length,lowCount=values.filter(v=>v>0&&v<=LOW).length,totalUnits=values.reduce((a,v)=>a+v,0);
+  add(box,h('div',{class:'stock-summary'},h('div',{class:'stock-metric'},h('small',{},'کل موجودی'),h('b',{},fa(totalUnits)),h('span',{},'عدد در انبار')),h('div',{class:'stock-metric is-low'},h('small',{},'موجودی کم'),h('b',{},fa(lowCount)),h('span',{},'محصول')),h('div',{class:'stock-metric is-empty'},h('small',{},'ناموجود'),h('b',{},fa(outCount)),h('span',{},'محصول'))));
+  add(box,S.products.length?S.products.map(p=>{const v=mAdm(p),cur=v!=null?v:(+p.stock||0),inp=h('input',{class:'in',type:'text',inputmode:'numeric',value:String(cur),style:{width:'100%',flex:'1 1 auto',minWidth:'0',textAlign:'center',direction:'ltr',padding:'12px 6px',fontSize:'16px',fontWeight:'700'},onfocus:e=>e.target.select()}),w=nf[p.id]||[];
    const step=(l,d)=>h('button',{class:'btn sec',type:'button',onclick:()=>{inp.value=Math.max(0,(+normNum(inp.value)||0)+d)}},l);
-   return h('div',{class:'li'},h('div',{class:'li-h'},h('span',{style:{display:'flex',gap:'8px',alignItems:'center'}},p.images[0]?h('img',{src:p.images[0],alt:'',style:{width:'42px',height:'42px',borderRadius:'10px',objectFit:'cover'}}):null,h('b',{},p.title)),h('span',{class:'pill'},cur<=0?'اتمام موجودی':(cur<=LOW?'کم‌موجود':'موجود'))),
-    h('div',{class:'row',style:{alignItems:'center'}},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn',type:'button',onclick:()=>save(p,normNum(inp.value))},v!=null?'ذخیره':'ثبت در انبار')),
+   return h('div',{class:'li stock-item'},h('div',{class:'li-h stock-head'},h('span',{class:'stock-product-title'},p.images[0]?h('img',{src:p.images[0],alt:'',loading:'lazy'}):h('span',{class:'stock-placeholder'},I('image',18)),h('b',{},p.title)),h('span',{class:'pill stock-state '+(cur<=0?'is-empty':cur<=LOW?'is-low':'is-ok')},cur<=0?'اتمام موجودی':(cur<=LOW?'کم‌موجود':'موجود'))),
+    h('div',{class:'stock-controls'},step('−۱',-1),inp,step('+۱',1),step('+۱۰',10),h('button',{class:'btn stock-save',type:'button',onclick:()=>save(p,normNum(inp.value))},I('check',16),v!=null?'ذخیره':'ثبت موجودی')),
     v==null?h('small',{class:'fh'},'هنوز در انبار سرور ثبت نشده (عدد بالا از تنظیمات قدیمی محصول است). بعد از ثبت، با هر فروش خودکار کم می‌شود.'):null,
     w.length?h('div',{class:'li'},h('b',{},'منتظر موجود شدن ('+fa(w.length)+' نفر)'+(cur>0?' · الان موجود است، خبرشان کن':'')),w.map(x=>h('div',{class:'li-h'},h('span',{style:{fontSize:'13px'}},(x.name||'—')+' · '+x.phone),h('span',{class:'row',style:{gap:'6px'}},h('a',{class:'btn sec',href:'tel:'+x.phone,style:{textDecoration:'none'}},'تماس'),h('a',{class:'btn sec',href:'sms:'+x.phone+'?body='+encodeURIComponent('«'+p.title+'» دوباره در '+(S.store.name||'فروشگاه')+' موجود شد 🌸'),style:{textDecoration:'none'}},'پیامک')))),
      h('button',{class:'btn dg',style:{alignSelf:'flex-start'},onclick:ev=>{const b=ev.currentTarget;if(!b.dataset.s){b.dataset.s=1;b.textContent='برای پاک‌کردن لیست دوباره بزنید';return}sbFetch('/rest/v1/stock_notify?pid=eq.'+encodeURIComponent(p.id),{method:'DELETE',auth:true,headers:{Prefer:'return=minimal'}}).then(()=>{delete nf[p.id];draw()}).catch(er=>toast('حذف نشد: '+er.message))}},I('trash',16),'پاک‌کردن لیست منتظران')):null)}):h('div',{class:'empty'},'هنوز محصولی ندارید.'))};
  const load=async()=>{try{const r=await sbFetch('/rest/v1/stock?select=pid,qty',{auth:true});map={};(r||[]).forEach(x=>map[x.pid]=x.qty);
    const n=await sbFetch('/rest/v1/stock_notify?select=id,pid,phone,name,created_at&order=created_at.asc&limit=2000',{auth:true}).catch(()=>[]);nf={};(n||[]).forEach(x=>(nf[x.pid]=nf[x.pid]||[]).push(x));err=''}catch(e){err=e.message||'خطا'}draw()};
  draw();load();
- return[card('موجودی انبار',h('p',{},'تعداد هر محصول را اینجا تنظیم کنید. با هر سفارش جدید، موجودی خودکار کم می‌شود و با لغو سفارش برمی‌گردد. وقتی موجودی صفر شد، محصول روی سایت خاکستری می‌شود و «اتمام موجودی» و دکمه‌ی «خبرم کن» نشان می‌دهد.'),
-   h('div',{class:'row'},h('button',{class:'btn sec',onclick:load},'بروزرسانی'),h('button',{class:'btn sec',onclick:syncAll},'ثبت همه محصولات در انبار'),h('button',{class:'btn',onclick:()=>ADM.go('products')},I('plus',16),'افزودن محصول جدید')),box)]},
+ return[card('مرکز کنترل موجودی',h('p',{class:'stock-intro'},'موجودی هر محصول را سریع تغییر بده؛ با ثبت سفارش به‌صورت خودکار کم می‌شود و با لغو سفارش برمی‌گردد. وضعیت کمبود و اتمام موجودی هم همین‌جا مشخص است.'),
+   h('div',{class:'stock-toolbar'},h('button',{class:'btn sec',onclick:load},I('check',16),'بروزرسانی'),h('button',{class:'btn sec',onclick:syncAll},I('box',16),'ثبت محصولات در انبار'),h('button',{class:'btn',onclick:()=>ADM.go('products')},I('plus',16),'محصول جدید')),box)]},
 shipping(){const Sh=S.ship;return[card('روش‌ها و هزینه ارسال',h('p',{},'مشتری هنگام ثبت سفارش یکی از روش‌های فعال را انتخاب می‌کند و هزینه‌ی آن به مبلغ نهایی اضافه می‌شود. قیمت‌های پیش‌فرض نمونه است؛ حتماً با قیمت واقعی خودتان عوض کنید. اگر برای روشی «نمایش پنجره‌ی تماس» را روشن کنید، بعد از ثبت سفارش پنجره‌ی هماهنگی با شماره‌ی تماس باز می‌شود.'),
    listEd(Sh.methods,(m,i,draw)=>[g2(fld('عنوان',tx(m,'title')),fld('هزینه ('+S.store.currency+')',tx(m,'price',{num:true}),'۰ = رایگان / هماهنگی با ادمین')),fld('توضیح کوتاه زیر عنوان',tx(m,'desc')),g2(fld('وضعیت',onoff(m,'on','فعال','غیرفعال',draw)),fld('بعد از ثبت سفارش',onoff(m,'courier','نمایش پنجره‌ی هماهنگی و تماس','بدون پنجره')))],
     ()=>({id:uid(),title:'روش جدید',price:0,desc:'',on:true}),{title:m=>m.title+' · '+(+m.price?money(+m.price):'—'),addLabel:'افزودن روش ارسال'})),
