@@ -1199,7 +1199,7 @@ html{overflow-x:hidden;max-width:100%}
 
 /* ===== Luxury editorial collection ===== */
 .lux-spot{position:relative;overflow:hidden;margin:26px 0 30px;padding:34px 22px 18px;border-radius:38px 38px 38px 12px;background:#eee3d5;color:#38271f;isolation:isolate;box-shadow:0 18px 48px rgba(73,48,31,.10);direction:rtl}.lux-spot:after{content:"";position:absolute;inset:auto -12% -24% 18%;height:48%;border-radius:50%;background:rgba(193,153,119,.14);z-index:-1}
-.lux-logo-notch{position:absolute;top:0;left:17%;width:112px;height:58px;background:var(--bg);border-radius:0 0 58px 58px;display:grid;place-items:start center;z-index:2}.lux-logo-notch img,.lux-logo-notch .lux-logo-fallback{width:62px;height:62px;border-radius:50%;object-fit:contain;background:#fff;padding:7px;box-shadow:0 5px 18px #5b3b2720;transform:translateY(12px)}.lux-logo-notch .lux-logo-fallback{display:grid;place-items:center;color:#684832;font-family:serif;font-size:19px;font-weight:800}
+.lux-logo-notch{position:absolute;top:0;left:17%;width:112px;height:58px;background:#eee3d5;border:1px solid rgba(112,82,60,.16);border-top:0;border-radius:0 0 58px 58px;display:grid;place-items:start center;z-index:2;box-shadow:0 5px 16px rgba(65,43,29,.07)}.lux-logo-notch img,.lux-logo-notch .lux-logo-fallback{width:62px;height:62px;border-radius:50%;object-fit:contain;background:#fff;padding:7px;box-shadow:0 5px 18px #5b3b2720;transform:translateY(12px)}.lux-logo-notch .lux-logo-fallback{display:grid;place-items:center;color:#684832;font-family:serif;font-size:19px;font-weight:800}
 .lux-kicker{display:flex;align-items:center;gap:12px;color:#79533d;font-size:11px;font-weight:900;letter-spacing:3px;margin:36px 0 22px}.lux-kicker:after{content:"";height:2px;width:42px;background:#79533d;border-radius:2px}.lux-edition{font-size:11px;letter-spacing:4px;color:#a38b78;margin-bottom:18px;text-align:right}
 .lux-title{font-size:clamp(28px,6vw,46px);line-height:1.55;font-weight:900;letter-spacing:-1.5px;margin:0 0 18px;color:#39271e}.lux-title span{display:inline}.lux-title mark{display:inline-block;background:#dfc5ad;color:#925b3e;padding:0 15px 3px;border-radius:40px 30px 36px 24px;transform:rotate(-1.5deg);margin:0 4px}.lux-desc{font-size:14px;line-height:2.1;color:#8b7563;max-width:620px;margin:0 0 24px}
 .lux-cta{border:0;border-radius:48px;background:#4a3024;color:#fff;padding:10px 12px 10px 22px;display:inline-flex;align-items:center;gap:16px;font:inherit;font-size:14px;cursor:pointer;box-shadow:0 8px 20px #4a30241c}.lux-cta .lux-arrow{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#eee0d0;color:#4a3024;font-size:23px}
@@ -2126,7 +2126,8 @@ luxury(){
    g2(fld('عنوان اصلی',tx(L,'title')),fld('عبارت هایلایت‌شده',tx(L,'highlight'))),
    g2(fld('ادامه عنوان',tx(L,'after')),fld('متن دکمه',tx(L,'button'))),
    fld('توضیحات کالکشن',tx(L,'description',{area:true,rows:3})),
-   fld('نوشته عمودی کنار تصاویر',tx(L,'everyday'))),
+   fld('نوشته عمودی کنار تصاویر',tx(L,'everyday')),
+   h('div',{class:'row'},h('button',{class:'btn',type:'button',onclick:()=>{Object.assign(L,{kicker:'A LITTLE MORE YOU',edition:'026 / AUTUMN EDIT',title:'استایل تو،',highlight:'قانون خودش',after:'را دارد.',description:'برای ترکیب کردن، دوباره پوشیدن و ساختن استایلی که فقط شبیه خودت باشد.',button:'کشف کالکشن لوکس',everyday:'THE ART OF EVERYDAY'});commit();sbPush();draw();toast('نوشته‌های اولیه کالکشن بازگردانی شد')}},I('refresh-ccw',16),'بازگردانی نوشته‌های اولیه'))),
   card('محصولات کالکشن لوکس',
    h('p',{},'اطلاعات هر کیف را مستقل وارد کن؛ نیازی نیست ابتدا آن را در بخش محصولات بسازی. اتصال به محصول فروشگاه اختیاری است.'),
    listEd(L.items,it=>[
