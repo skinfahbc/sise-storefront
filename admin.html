@@ -1116,6 +1116,48 @@ html{overflow-x:hidden;max-width:100%}
  .adm .rack-items .li-a{width:100%;justify-content:flex-start}
 }
 
+
+/* SISE GLASS CONTROL CENTER — admin-only visual system */
+.adm-b{background:radial-gradient(ellipse at 8% 0%,rgba(108,157,197,.16),transparent 38%),radial-gradient(ellipse at 92% 12%,rgba(162,190,214,.18),transparent 34%),linear-gradient(145deg,#edf3f8 0%,#e5edf5 52%,#f5f8fb 100%)!important;color:#17334c}
+.adm-b .ac.glass,.adm-b .lux-panel,.adm-b .lux-welcome,.adm-b .lux-metric,.adm-b .sise-support,.adm-b .settings-card{
+ background:rgba(255,255,255,.62)!important;
+ border:1px solid rgba(255,255,255,.82)!important;
+ box-shadow:0 12px 34px rgba(36,67,94,.085),inset 0 1px 0 rgba(255,255,255,.9)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(155%);backdrop-filter:blur(22px) saturate(155%);
+}
+.adm-b .lux-welcome{background:linear-gradient(120deg,rgba(255,255,255,.78),rgba(219,233,245,.66))!important;border-color:rgba(255,255,255,.95)!important}
+.adm-b .lux-metric{border-radius:22px!important;transition:transform .22s ease,box-shadow .22s ease}
+.adm-b .lux-metric:active,.adm-b .lux-shortcut:active{transform:scale(.985)}
+.adm-b .lux-panel{border-radius:24px!important}
+.adm-b .lux-shortcut{background:rgba(255,255,255,.48)!important;border:1px solid rgba(255,255,255,.78)!important;border-radius:18px!important;box-shadow:0 5px 18px rgba(33,67,96,.055)!important;transition:all .2s ease}
+.adm-b .lux-shortcut:hover{background:rgba(255,255,255,.82)!important;transform:translateY(-2px);box-shadow:0 12px 24px rgba(33,67,96,.10)!important}
+.adm-b .lux-shortcut-icon,.adm-b .lux-metric-ico,.adm-b .lux-alert-icon{background:linear-gradient(145deg,rgba(224,239,250,.94),rgba(196,218,237,.62))!important;color:#285b82!important;border:1px solid rgba(255,255,255,.9)}
+.adm-b .lux-eyebrow{color:#527b9d!important;letter-spacing:.12em}
+.adm-b .lux-panel h3,.adm-b .lux-welcome h2,.adm-b .lux-metric b{color:#173b59!important}
+.adm-b .lux-order-row,.adm-b .lux-alert-row,.adm-b .lux-top-row{border-color:rgba(63,103,137,.12)!important}
+.adm-b .lux-text-link{color:#2e638d!important}
+.adm-b .ac.glass{border-radius:22px!important}
+.adm-b .in,.adm-b input,.adm-b textarea,.adm-b select{background:rgba(255,255,255,.72)!important;border:1px solid rgba(116,151,180,.24)!important;color:#193b56!important;border-radius:13px}
+.adm-b .tabs{background:rgba(245,249,252,.72)!important;border:1px solid rgba(255,255,255,.85)!important;border-radius:18px;backdrop-filter:blur(18px)}
+.adm-b .tb{border-radius:13px!important}
+.adm-b .tb.on{background:linear-gradient(135deg,#244e70,#3f7198)!important;color:#fff!important;box-shadow:0 7px 18px rgba(31,72,105,.2)}
+.adm-b .lux-ops-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:14px 0}
+.adm-b .lux-ops-card{min-width:0;padding:18px}
+.adm-b .lux-alert-list,.adm-b .lux-top-products{display:grid;gap:7px}
+.adm-b .lux-alert-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;padding:10px 4px;border:0;border-bottom:1px solid rgba(63,103,137,.12);background:transparent;text-align:right;color:inherit;cursor:pointer}
+.adm-b .lux-alert-row:last-child{border-bottom:0}
+.adm-b .lux-alert-icon{width:36px;height:36px;border-radius:12px;display:grid;place-items:center}
+.adm-b .lux-alert-row b,.adm-b .lux-top-row b{display:block;font-size:13px}
+.adm-b .lux-alert-row small,.adm-b .lux-top-row small{display:block;color:#6c8295;font-size:11px;margin-top:3px;line-height:1.6}
+.adm-b .lux-alert-row strong{font-size:17px;color:#285b82}
+.adm-b .lux-top-row{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:9px;padding:10px 2px;border-bottom:1px solid rgba(63,103,137,.12)}
+.adm-b .lux-top-row:last-child{border-bottom:0}
+.adm-b .lux-top-row>strong{font-size:12px;color:#285b82;white-space:nowrap}
+.adm-b .lux-rank{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:rgba(202,222,239,.72);color:#285b82;font-weight:800}
+.adm-b .lux-ops-grid .lux-empty{min-height:110px}
+@media(max-width:700px){.adm-b .lux-ops-grid{grid-template-columns:1fr;gap:10px}.adm-b .lux-ops-card{padding:14px}.adm-b .lux-alert-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px}.adm-b .lux-welcome{border-radius:20px!important}}
+@media(prefers-reduced-motion:reduce){.adm-b .lux-metric,.adm-b .lux-shortcut{transition:none!important}}
+
 </style>
 </head>
 <body>
@@ -2183,6 +2225,14 @@ dash(){
   h('div',{class:'lux-main-grid'},
    h('section',{class:'lux-panel lux-sales'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'SALES OVERVIEW'),h('h3',{},'روند فروش هفت روز اخیر')),h('span',{class:'lux-panel-tag'},I('trending-up',14),'فروش تأییدشده')),h('div',{class:'lux-chart'},days.map(x=>h('div',{class:'lux-chart-col'},h('div',{class:'lux-bar-track'},h('i',{class:'lux-bar',style:{height:Math.max(x.sum?8:3,(x.sum/peak)*100)+'%'}})),h('small',{},x.d.toLocaleDateString('fa-IR',{weekday:'short'}))))),h('div',{class:'lux-chart-foot'},h('span',{},'فروش ثبت‌شده در بازه اخیر'),h('b',{},money(days.reduce((a,x)=>a+x.sum,0))))),
    h('section',{class:'lux-panel lux-orders'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'LATEST ACTIVITY'),h('h3',{},'آخرین سفارش‌ها')),h('button',{class:'lux-text-link',onclick:()=>ADM.go&&ADM.go('orders')},'مشاهده همه',I('arrow-left',14))),recent.length? h('div',{class:'lux-order-list'},recent.map(o=>h('div',{class:'lux-order-row'},h('div',{class:'lux-order-id'},h('b',{},o.name||'مشتری'),h('small',{},'#'+(o.code||'—')+' · '+new Date(o.created||Date.now()).toLocaleDateString('fa-IR'))),h('div',{class:'lux-order-value'},h('b',{},money(o.total)),h('small',{},stName(o.status)))))):h('div',{class:'lux-empty'},I('shopping-bag',24),'هنوز سفارشی ثبت نشده است'))),
+  h('div',{class:'lux-ops-grid'},
+   (()=>{const low=S.products.filter(p=>p.active!==false&&qtyOf(p)<=3),noPhoto=S.products.filter(p=>p.active!==false&&!(p.images&&p.images.length)&&!p.image),inactive=S.products.filter(p=>p.active===false);return h('section',{class:'lux-panel lux-ops-card'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'ATTENTION REQUIRED'),h('h3',{},'هشدارهای مدیریتی')),h('span',{class:'lux-panel-tag'},I('alert-circle',14),'نیازمند رسیدگی')),h('div',{class:'lux-alert-list'},
+    h('button',{class:'lux-alert-row',type:'button',onclick:()=>ADM.go&&ADM.go('inventory')},h('span',{class:'lux-alert-icon'},I('package',18)),h('span',{},h('b',{},'موجودی کم یا رو به اتمام'),h('small',{},low.length?low.slice(0,3).map(p=>p.title).join('، '):'همه محصولات موجودی مناسبی دارند')),h('strong',{},fa(low.length))),
+    h('button',{class:'lux-alert-row',type:'button',onclick:()=>ADM.go&&ADM.go('products')},h('span',{class:'lux-alert-icon'},I('image',18)),h('span',{},h('b',{},'محصول بدون تصویر'),h('small',{},noPhoto.length?noPhoto.slice(0,3).map(p=>p.title).join('، '):'همه محصولات فعال تصویر دارند')),h('strong',{},fa(noPhoto.length))),
+    h('button',{class:'lux-alert-row',type:'button',onclick:()=>ADM.go&&ADM.go('products')},h('span',{class:'lux-alert-icon'},I('eye-off',18)),h('span',{},h('b',{},'محصول غیرفعال'),h('small',{},'برای بازبینی وضعیت انتشار')),h('strong',{},fa(inactive.length)))
+   ))})(),
+   (()=>{const rank=new Map();paid.forEach(o=>(o.items||[]).forEach(it=>{const k=it.productId||it.pid||it.id||it.title||'محصول';const old=rank.get(k)||{title:it.title||'محصول',qty:0,revenue:0};old.qty+=(+it.qty||1);old.revenue+=(+it.price||0)*(+it.qty||1);rank.set(k,old)}));const top=[...rank.values()].sort((a,b)=>b.qty-a.qty).slice(0,4);return h('section',{class:'lux-panel lux-ops-card'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'PRODUCT INSIGHTS'),h('h3',{},'محصولات پرفروش')),h('button',{class:'lux-text-link',type:'button',onclick:()=>ADM.go&&ADM.go('reports')},'گزارش کامل',I('arrow-left',14))),top.length?h('div',{class:'lux-top-products'},top.map((p,i)=>h('div',{class:'lux-top-row'},h('span',{class:'lux-rank'},fa(i+1)),h('span',{},h('b',{},p.title),h('small',{},fa(p.qty)+' عدد فروش')),h('strong',{},money(p.revenue))))):h('div',{class:'lux-empty'},I('trending-up',22),'با ثبت سفارش‌های پرداخت‌شده، رتبه‌بندی محصولات نمایش داده می‌شود'))})()
+  ),
   h('section',{class:'lux-panel lux-shortcuts'},h('div',{class:'lux-panel-head'},h('div',{},h('span',{class:'lux-eyebrow'},'QUICK ACCESS'),h('h3',{},'دسترسی سریع')),h('button',{class:'lux-text-link lux-settings-link',type:'button',onclick:()=>ADM.go&&ADM.go('settings')},I('gear',16),'تنظیمات')),h('div',{class:'lux-shortcut-grid'},[["settings","gear","تنظیمات","پشتیبان‌گیری و مدیریت"],["general","home","اطلاعات فروشگاه","هویت و اطلاعات پایه"],["theme","palette","رنگ و شیشه","ظاهر و جلوه فروشگاه"],["content","grid","صفحه اصلی","مدیریت بخش‌های صفحه"],["hero","image","اسلایدر","تصاویر و بنرها"],["menu","menu","منوی کشویی","لینک‌ها و دسته‌ها"],["stories","play","استوری‌ها","مدیریت استوری‌ها"],["products","bag","محصولات","کاتالوگ و قیمت‌ها"],["rack","box","مدیریت رگال","چیدمان کیف‌های منتخب"],["nav","grid","منوی پایین","دسترسی‌های پایین سایت"],["orders","truck","سفارش‌ها","پیگیری و پردازش"],["users","users","کاربران","حساب‌ها و پرونده مشتری"],["inventory","box","موجودی","کنترل موجودی کالا"],["shipping","truck","هزینه ارسال","تنظیم روش و هزینه"],["reports","card","گزارش فروش","تحلیل عملکرد"],["comments","comment","نظرات استوری","مدیریت دیدگاه‌ها"],["support","mail","مرکز پشتیبانی","گفتگو با مشتریان"],["chat","comment","گفتگوی همگانی","مدیریت گفتگوی عمومی"],["pm","mail","چت خصوصی با مشتری","گفتگو و پاسخ به پیام‌های خصوصی"],["coupons","tag","کد تخفیف","مدیریت تخفیف‌ها"],["draw","gift","قرعه‌کشی","مدیریت قرعه‌کشی"]].map(([key,icon,title,sub])=>h('button',{class:'lux-shortcut',type:'button',onclick:()=>ADM.go&&ADM.go(key)},h('span',{class:'lux-shortcut-icon'},I(icon,22)),h('span',{},h('b',{},title),h('small',{},sub)))))))]},
 general(){const s=S.store;if(!s.toteColor)s.toteColor='#eadfcb';return[card('ساک خرید روی رگال',fld('لوگوی روی ساک',imgField(s,'toteLogo',{alpha:true,max:700,clearable:true}),'اگر خالی باشد لوگوی Sisé روی ساک چاپ می‌شود. تصویر PNG شفاف یا با زمینه سفید بگذارید.'),fld('رنگ ساک',colorF(s,'toteColor'),'رنگ بدنه ساکی که کیف‌ها داخلش می‌روند؛ پیش‌فرض کرم است.')),card('صفحه شروع / لودینگ',tog(s,'loadingEnabled','نمایش صفحه لود'),fld('لوگوی صفحه لود (اختیاری)',imgField(s,'loadingLogo',{alpha:true,max:700,clearable:true}),'اگر خالی باشد از لوگوی اصلی سایت استفاده می‌شود.'),g2(fld('نوشته اصلی صفحه لود',tx(s,'loadingTitle')),fld('متن زیر نوار لود',tx(s,'loadingText'))),g2(fld('رنگ پس‌زمینه',colorF(s,'loadingBg')),fld('رنگ تأکیدی لوگو و نوار',colorF(s,'loadingAccent'))),range(s,'loadingDuration',0,5000,' ms','مدت نمایش صفحه لود')),card('هویت فروشگاه',g2(fld('نام فروشگاه',tx(s,'name')),fld('شعار',tx(s,'tagline'))),fld('لوگو',imgField(s,'logo',{alpha:true,max:600,clearable:true}),'اگر لوگو نگذارید نام فروشگاه با فونت تزئینی نمایش داده می‌شود. فایل PNG شفاف پیشنهاد می‌شود.'),fld('آیکون سربرگ مرورگر (Favicon)',imgField(s,'favicon',{alpha:true,max:256,clearable:true}),'همان آیکون کوچکی که کنار عنوان تب مرورگر دیده می‌شود. تصویر مربعی (مثلاً ۲۵۶ در ۲۵۶) بگذارید؛ اگر خالی بماند، آیکون پیش‌فرض SISE نمایش داده می‌شود.'),fld('نماد اعتماد (اینماد) — آدرس لینک',tx(s,'enamadLink',{ph:'https://trustseal.enamad.ir/...'}),'بعد از گرفتن اینماد، آدرس لینک نماد را اینجا بگذارید.'),fld('تصویر نماد اعتماد',imgField(s,'enamadImg',{max:320,clearable:true,alpha:true}),'تصویر نماد را آپلود کنید؛ در صفحه محصول زیر نشان‌های اعتماد نمایش داده می‌شود.'),range(s,'logoH',32,84,'px','اندازه‌ی لوگو در هدر')),
   card('اطلاعات تماس',g2(fld('تلفن',tx(s,'phone')),fld('آدرس',tx(s,'address')),fld('واحد پول',tx(s,'currency')))),
