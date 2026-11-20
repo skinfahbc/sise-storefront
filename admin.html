@@ -1574,37 +1574,32 @@ function cartView(){const lines=V.cart.map(l=>({l,i:lineInfo(l)})).filter(x=>x.i
     const code='K'+Math.floor(100000+Math.random()*900000);
     const ord={id:uid(),code,created:Date.now(),name:name.value.trim(),phone:ph,address:addr.value.trim(),note:note.value.trim(),status:'new',payRef:'',total:pay,subtotal:total,ship:shSel?{id:shSel.id,title:shSel.title,price:shp,courier:!!shSel.courier}:null,discount:disc,coupon:disc?{code:cps.c.code,percent:cps.p}:null,reg:!!curUser(),pending:true,
      items:lines.map(({l,i})=>({pid:l.pid,title:i.p.title,color:i.c?.name||'',qty:l.qty,price:i.p.price,img:i.img}))};S.orders.unshift(ord);sbOrderPost(Object.assign({},ord,{pending:undefined})).then(()=>{delete ord.pending;persist()}).catch(()=>{});
-    V.orders.push(code);V.cart=[];V.cpCode='';saveV();persist();cartBadge();toast('سفارش ثبت شد · کد پیگیری: '+code);go('pay');if(shSel&&shSel.courier)courierSheet(code)}},
+    V.orders.push(code);V.cart=[];V.cpCode='';saveV();persist();cartBadge();toast('سفارش ثبت شد · کد پیگیری: '+orderDisplayCode(ord));go('pay');if(shSel&&shSel.courier)courierSheet(code)}},
    h('h3',{style:{margin:0}},'اطلاعات ارسال'),name,phone,addr,note,h('button',{class:'pbtn',type:'submit'},I('check',20),'ثبت سفارش'))]}
 const myOrders=()=>S.orders.filter(o=>V.orders.includes(o.code));
 const stName=k=>(STATUSES.find(s=>s[0]===k)||[0,k])[1];
 function orderDisplayCode(o){
- const all=[...S.orders].sort((a,b)=>(a.created||0)-(b.created||0)),used=new Set();
- for(const x of all){
-  const raw=String(x.code||'');
-  let n=/^K\d{6}$/.test(raw)?raw.slice(1):raw.replace(/\D/g,'').slice(-6).padStart(6,'0');
-  let code='K'+n;
-  while(used.has(code))code='K'+String((+code.slice(1)+1)%1000000).padStart(6,'0');
-  used.add(code);
-  if(x===o)return code;
- }
- return 'K000000';
+ const raw=String(o&&o.code||'').trim().toUpperCase();
+ if(/^K[0-9A-F]{6,8}$/.test(raw))return raw;
+ if(/^SI[A-F0-9]{32}$/.test(raw))return 'K'+raw.slice(-8);
+ const n=raw.replace(/\D/g,'').slice(-6).padStart(6,'0');
+ return 'K'+n;
 }
 function orderCard(o){const steps=STATUSES.slice(0,5),idx=steps.findIndex(s=>s[0]===o.status);
- return h('div',{class:'oc glass'},h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px'}},h('b',{style:{direction:'ltr'}},o.code),h('span',{class:'pill'},stName(o.status))),
+ return h('div',{class:'oc glass'},h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px'}},h('b',{style:{direction:'ltr'}},orderDisplayCode(o)),h('span',{class:'pill'},stName(o.status))),
   h('small',{style:{color:'var(--muted)'}},new Date(o.created).toLocaleDateString('fa-IR')+' · '+o.items.map(i=>`${i.title}${i.color?' ('+i.color+')':''} × ${fa(i.qty)}`).join('، ')),h('div',{class:'price'},money(o.total)),
   o.status==='canceled'?h('div',{style:{color:'var(--bad)'}},'این سفارش لغو شده است'):h('div',{class:'tl'},steps.map((s,k)=>h('div',{class:k<=idx?'d':''},s[1]))))}
 function trackView(){setTimeout(()=>{if(cur==='track'&&V.orders.length)refreshMine().then(c=>c&&cur==='track'&&renderMain())},50);const q=h('input',{class:'in',id:'t-q',placeholder:'کد پیگیری یا شماره موبایل',style:{flex:1}}),out=h('div',{style:{display:'flex',flexDirection:'column',gap:'12px'}});
  const show=list=>{out.innerHTML='';add(out,list.length?list.map(orderCard):[h('div',{class:'empty glass'},I('truck',44),h('div',{},'سفارشی پیدا نشد؛ کد یا شماره را بررسی کنید'))])};
  const mine=myOrders();
- const view=[h('h2',{class:'pg-h'},'پیگیری خرید'),h('form',{class:'search glass',onsubmit:async e=>{e.preventDefault();const v=q.value.trim().toUpperCase(),n=normNum(q.value);if(!v)return;let l=S.orders.filter(o=>o.code===v||(n.length>=10&&o.phone===n));if(!l.length&&/^K\d{6}$/.test(v)){out.innerHTML='';out.append(h('div',{class:'empty glass'},'در حال جستجو…'));const d=await sbTrack(v);l=d?[d]:[]}show(l)}},I('search',20),q,h('button',{class:'btn',type:'submit',style:{padding:'8px 16px'}},'جستجو')),out];
+ const view=[h('h2',{class:'pg-h'},'پیگیری خرید'),h('form',{class:'search glass',onsubmit:async e=>{e.preventDefault();const v=q.value.trim().toUpperCase(),n=normNum(q.value);if(!v)return;let l=S.orders.filter(o=>o.code===v||(n.length>=10&&o.phone===n));if(!l.length&&/^K(?:\d{6}|[A-F0-9]{8})$/.test(v)){out.innerHTML='';out.append(h('div',{class:'empty glass'},'در حال جستجو…'));const d=await sbTrack(v);l=d?[d]:[]}show(l)}},I('search',20),q,h('button',{class:'btn',type:'submit',style:{padding:'8px 16px'}},'جستجو')),out];
  if(mine.length){add(out,[h('div',{class:'sec-h'},h('h3',{},'سفارش‌های شما'))]);add(out,mine.map(orderCard))}else out.append(h('div',{class:'empty glass'},I('truck',44),h('div',{},'کد پیگیری سفارش را وارد کنید')));
  return view}
 function payView(){if(!payView.r){payView.r=1;setTimeout(()=>{payView.r=0;if(cur==='pay'&&V.orders.length)refreshMine().then(c=>c&&cur==='pay'&&renderMain())},50)}const un=myOrders().filter(o=>o.status==='new'),P=S.pay;
  if(!un.length)return[h('h2',{class:'pg-h'},'پرداخت'),h('div',{class:'empty glass'},I('card',46),h('div',{},'سفارش در انتظار پرداختی ندارید'),h('button',{class:'btn',onclick:()=>go('home')},'ادامه خرید'))];
  let sel=un[0];const ref=h('input',{class:'in',id:'p-ref',placeholder:'شماره پیگیری / ۴ رقم آخر کارت پرداخت‌کننده'}),box=h('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}});
- const draw=()=>{box.innerHTML='';add(box,[h('div',{style:{display:'flex',gap:'8px',flexWrap:'wrap'}},un.map(o=>h('button',{class:'tb'+(o===sel?' on':''),onclick:()=>{sel=o;draw()}},o.code))),
-  h('div',{class:'tot glass'},h('div',{class:'g'},h('span',{},'مبلغ سفارش '+sel.code),h('span',{},money(sel.total)))),
+ const draw=()=>{box.innerHTML='';add(box,[h('div',{style:{display:'flex',gap:'8px',flexWrap:'wrap'}},un.map(o=>h('button',{class:'tb'+(o===sel?' on':''),onclick:()=>{sel=o;draw()}},orderDisplayCode(o)))),
+  h('div',{class:'tot glass'},h('div',{class:'g'},h('span',{},'مبلغ سفارش '+orderDisplayCode(sel)),h('span',{},money(sel.total)))),
   h('div',{class:'frm glass'},h('b',{},'کارت‌به‌کارت · '+P.bank),h('div',{class:'card-n'},P.card),h('small',{style:{color:'var(--muted)',textAlign:'center'}},P.owner),
    h('button',{class:'pbtn ghost',onclick:()=>copyText(P.card.replace(/\D/g,''))},I('link',18),'کپی شماره کارت'),P.gateway?h('button',{class:'pbtn',onclick:()=>openUrl(P.gateway)},I('card',18),'پرداخت آنلاین'):null,
    h('small',{style:{color:'var(--muted)'}},P.note),ref,h('button',{class:'pbtn',onclick:()=>{if(ref.value.trim().length<3)return toast('شماره پیگیری را وارد کنید');sel.status='paid';sel.payRef=ref.value.trim();persist();sbFetch('/rest/v1/rpc/pay_order',{method:'POST',body:{c:sel.code,r:sel.payRef}}).catch(()=>{});toast('پرداخت ثبت شد؛ سفارش در حال بررسی است');go('track')}},I('check',20),'پرداخت را انجام دادم'))])};
