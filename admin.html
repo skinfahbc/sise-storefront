@@ -2044,14 +2044,15 @@ async function refreshAdminBadges(){
   if(admTab==='chat'){chatSeen=latestChat;try{localStorage.setItem('sise_admin_chat_last_read',String(latestChat))}catch(e){}}
   ADM.chatUnread=incoming.filter(x=>(+x.id||0)>chatSeen).length;ADM.chatCount=(cr||[]).length;
   const orderRows=orows||[],latestOrderAt=orderRows.reduce((n,x)=>Math.max(n,Date.parse(x.created_at)||0),0);
-  let orderSeenAt=0,lastOrderNotice=0;try{orderSeenAt=+(localStorage.getItem('sise_admin_orders_last_seen')||0);lastOrderNotice=+(localStorage.getItem('sise_admin_orders_last_notified')||0)}catch(e){}
-  if(!orderSeenAt&&latestOrderAt){orderSeenAt=latestOrderAt;lastOrderNotice=latestOrderAt;try{localStorage.setItem('sise_admin_orders_last_seen',String(orderSeenAt));localStorage.setItem('sise_admin_orders_last_notified',String(lastOrderNotice))}catch(e){}}
+  let orderSeenAt=0,lastOrderNotice=0,hasOrderSeen=false,hasOrderNotice=false;try{const sv=localStorage.getItem('sise_admin_orders_last_seen'),nv=localStorage.getItem('sise_admin_orders_last_notified');hasOrderSeen=sv!==null;hasOrderNotice=nv!==null;orderSeenAt=+(sv||0);lastOrderNotice=+(nv||0)}catch(e){}
+  if(!hasOrderSeen){orderSeenAt=latestOrderAt;try{localStorage.setItem('sise_admin_orders_last_seen',String(orderSeenAt))}catch(e){}}
+  if(!hasOrderNotice){lastOrderNotice=latestOrderAt;try{localStorage.setItem('sise_admin_orders_last_notified',String(lastOrderNotice))}catch(e){}}
   if(admTab==='orders'){orderSeenAt=latestOrderAt;try{localStorage.setItem('sise_admin_orders_last_seen',String(orderSeenAt))}catch(e){}}
   ADM.orderUnread=orderRows.filter(x=>(Date.parse(x.created_at)||0)>orderSeenAt).length;
   const freshOrders=orderRows.filter(x=>(Date.parse(x.created_at)||0)>lastOrderNotice);
   if(freshOrders.length){const newest=freshOrders.reduce((n,x)=>Math.max(n,Date.parse(x.created_at)||0),lastOrderNotice);try{localStorage.setItem('sise_admin_orders_last_notified',String(newest))}catch(e){}if(admTab!=='orders'){toast('🛍️ '+fa(freshOrders.length)+' سفارش جدید ثبت شد');try{if(navigator.vibrate)navigator.vibrate([90,45,90])}catch(e){}}}
-  const latestChatId=incoming.reduce((n,x)=>Math.max(n,+x.id||0),0);let lastChatNotice=0;try{lastChatNotice=+(localStorage.getItem('sise_admin_chat_last_notified')||0)}catch(e){}
-  if(!lastChatNotice&&latestChatId){lastChatNotice=latestChatId;try{localStorage.setItem('sise_admin_chat_last_notified',String(lastChatNotice))}catch(e){}}
+  const latestChatId=incoming.reduce((n,x)=>Math.max(n,+x.id||0),0);let lastChatNotice=0,hasChatNotice=false;try{const nv=localStorage.getItem('sise_admin_chat_last_notified');hasChatNotice=nv!==null;lastChatNotice=+(nv||0)}catch(e){}
+  if(!hasChatNotice){lastChatNotice=latestChatId;try{localStorage.setItem('sise_admin_chat_last_notified',String(lastChatNotice))}catch(e){}}
   const freshChat=incoming.filter(x=>(+x.id||0)>lastChatNotice);
   if(freshChat.length){const newest=freshChat.reduce((n,x)=>Math.max(n,+x.id||0),lastChatNotice);try{localStorage.setItem('sise_admin_chat_last_notified',String(newest))}catch(e){}if(admTab!=='chat'){toast('💬 '+fa(freshChat.length)+' پیام جدید در گفتگوی همگانی');try{if(navigator.vibrate)navigator.vibrate([70,35,70])}catch(e){}}}
   if(ADM.drawTabs)ADM.drawTabs();
