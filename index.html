@@ -1582,11 +1582,20 @@ function luxurySpotlight(){
  const gallery=h('div',{class:'lux-reference-gallery'},items.length?[stage,controls,dots]:h('div',{class:'lux-empty'},'کالکشن هنوز محصولی ندارد'));
  return h('section',{class:'lux-reference-editorial'},copy,gallery)
 }
+function scrollBagShowcase(){
+ const list=S.products.filter(p=>p&&p.images&&p.images[0]).slice(0,4);
+ if(!list.length)return null;
+ const stage=h('div',{class:'sise-flight-stage','aria-hidden':'true'});
+ const poses=[{x:16,y:24,w:25,z:-12},{x:69,y:18,w:24,z:11},{x:40,y:48,w:27,z:7},{x:78,y:59,w:20,z:-8}];
+ list.forEach((p,i)=>{const a=poses[i];stage.append(h('img',{class:'sise-flight-source','data-flight-index':i,src:p.images[0],alt:'',draggable:false,loading:'eager',style:{left:a.x+'%',top:a.y+'%',width:a.w+'%',transform:'translate(-50%,-50%) rotate('+a.z+'deg)'}}))});
+ return h('section',{class:'sise-flight-showcase','aria-label':'نمایش متحرک محصولات'},h('div',{class:'sise-flight-copy'},h('span',{},'SISE · THE ART OF MOVEMENT'),h('p',{},'کیف‌های منتخب، در حرکت تا جایگاه خودشان')),stage)
+}
 function homeView(){const sh=S.show,A=S.about,hn=sh.hero?hero(sh.stories?storiesSec(true):null):null;return[
+ scrollBagShowcase(),
  hn,!hn&&sh.stories&&storiesSec(false),
  sh.intro&&h('section',{class:'intro glass'},h('span',{class:'star',html:ic('star',34)}),h('span',{class:'k'},A.kicker),h('h3',{},A.introTitle),h('p',{},A.introText)),
  sh.products&&saleRail(),
- sh.products&&h('section',{},secHead('جدیدترین محصولات',h('button',{onclick:()=>go('categories')},'مشاهده همه')),(()=>{const sec=h('div',{});const newest=[...S.products].sort((a,b)=>(+b.createdAt||+b.created_at||0)-(+a.createdAt||+a.created_at||0));sec.append(pagedGrid(newest,()=>sec.parentElement));return sec})()),
+ sh.products&&h('section',{id:'sise-flight-products'},secHead('جدیدترین محصولات',h('button',{onclick:()=>go('categories')},'مشاهده همه')),(()=>{const sec=h('div',{});const newest=[...S.products].sort((a,b)=>(+b.createdAt||+b.created_at||0)-(+a.createdAt||+a.created_at||0));sec.append(pagedGrid(newest,()=>sec.parentElement));return sec})()),
  luxurySpotlight(),
  sh.features&&h('section',{class:'feat'},S.features.map(f=>h('div',{class:'fc glass'},h('span',{class:'fi',html:ic(f.icon,26)}),h('b',{},f.title),h('span',{},f.text)))),
  sh.night&&h('button',{class:'night glass',onclick:toggleMode},h('span',{class:'ni',html:ic('moon',24)}),h('span',{class:'nt'},h('small',{},A.nightHint),h('b',{},A.nightTitle)),h('span',{class:'tg'+(isDark()?' on':'')})),
@@ -1625,7 +1634,7 @@ function revealInit(){if(!fxOn('reveal')||!('IntersectionObserver'in window))ret
  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('rvd');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px',threshold:.08});
  els.forEach((e,i)=>{if(e.closest('.hero'))return;e.classList.add('rv');e.style.setProperty('--d',(i%2)*70+'ms');io.observe(e)})}
 function skImg(src,alt){const i=h('img',{src,alt,loading:'lazy',decoding:'async'}),ok=()=>i.parentNode&&i.parentNode.classList.remove('sk');i.addEventListener('load',ok);i.addEventListener('error',ok);if(i.complete&&src)setTimeout(ok,0);return i}
-function pcard(p){const d=disc(p),so=qtyOf(p)<=0;return h('article',{class:'pc glass'+(so?' so':''),title:p.title,'aria-label':p.title,onclick:()=>openProduct(p.id)},
+function pcard(p){const d=disc(p),so=qtyOf(p)<=0;return h('article',{class:'pc glass'+(so?' so':''),'data-product-id':p.id,title:p.title,'aria-label':p.title,onclick:()=>openProduct(p.id)},
  h('div',{class:'im'+(fxOn('skeleton')?' sk':'')},skImg(p.images[0]||'',p.title),p.badge?h('div',{class:'bd k-'+(p.badgeKind||'gold')},p.badge):null,d?h('span',{class:'off'},fa(d)+'٪ تخفیف'):null,
   so?h('span',{class:'sold'},'اتمام موجودی'):null,
   h('button',{class:'rb fav'+(V.wish[p.id]?' on':''),'aria-label':'علاقه‌مندی',html:ic('heart',20),onclick:e=>{e.stopPropagation();toggleWish(p.id,e.currentTarget)}})),
@@ -2978,75 +2987,61 @@ boot();
 @media(max-width:700px){.lux-reference-editorial .lux-reference-title{line-height:1.95!important}.lux-reference-editorial .lux-reference-title-mark{padding:0 10px 4px!important;margin:0 3px!important}}
 </style>
 
-<style id="sise-scroll-flight-preview">
-#sise-flight-layer{position:absolute;inset:0 auto auto 0;width:100%;height:1px;z-index:90;pointer-events:none;overflow:visible}
-.sise-flight-bag{position:absolute;display:block;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(38,25,18,.18));will-change:transform,left,top,width,height;transform-origin:50% 50%;backface-visibility:hidden}
-.sise-flight-target{opacity:0!important}
-@media(prefers-reduced-motion:reduce){#sise-flight-layer{display:none!important}.sise-flight-target{opacity:1!important}}
+
+
+<style id="sise-scroll-flight-preview-v2">
+.sise-flight-showcase{position:relative;width:100%;margin:0 auto 22px;padding:8px 0 0;overflow:visible;background:transparent;isolation:isolate}
+.sise-flight-copy{position:relative;z-index:1;text-align:center;padding:0 16px 5px;color:var(--muted)}
+.sise-flight-copy span{display:block;font:600 10px/1.5 system-ui;letter-spacing:3px;opacity:.72}
+.sise-flight-copy p{margin:5px 0 0;font-size:clamp(13px,2.4vw,16px);font-weight:600;color:var(--text)}
+.sise-flight-stage{height:clamp(285px,42vw,440px);position:relative;width:100%;max-width:980px;margin:0 auto;perspective:1000px;transform-style:preserve-3d;overflow:visible;background:transparent}
+.sise-flight-source{position:absolute;height:auto;max-height:68%;object-fit:contain;filter:drop-shadow(0 16px 20px rgba(38,25,18,.17));transform-style:preserve-3d;backface-visibility:visible;will-change:transform;animation:siseBagOrbit 4.8s ease-in-out infinite}
+.sise-flight-source:nth-child(2){animation-delay:-1.1s}.sise-flight-source:nth-child(3){animation-delay:-2.3s}.sise-flight-source:nth-child(4){animation-delay:-3.4s}
+@keyframes siseBagOrbit{0%,100%{rotate:0deg;filter:drop-shadow(0 13px 17px rgba(38,25,18,.13))}25%{rotate:3deg}50%{rotate:0deg;filter:drop-shadow(0 19px 24px rgba(38,25,18,.2))}75%{rotate:-3deg}}
+#sise-flight-layer{position:absolute;inset:0 auto auto 0;width:100%;height:1px;z-index:120;pointer-events:none;overflow:visible}
+.sise-flight-ghost{position:absolute;display:block;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(38,25,18,.18));will-change:transform,left,top,width,height;transform-origin:50% 50%;backface-visibility:hidden;pointer-events:none}
+#sise-flight-products .pc .im img{transition:opacity .25s ease}
+@media(max-width:600px){.sise-flight-showcase{margin-bottom:14px}.sise-flight-stage{height:300px}.sise-flight-copy{padding-bottom:0}.sise-flight-source{max-height:62%;filter:drop-shadow(0 10px 14px rgba(38,25,18,.16))}}
+@media(prefers-reduced-motion:reduce){.sise-flight-source{animation:none!important}#sise-flight-layer{display:none!important}}
 </style>
-<script id="sise-scroll-flight-preview-js">
+<script id="sise-scroll-flight-preview-v2-js">
 (()=> {
- let layer=null,items=[],hero=null,grid=null,started=false,raf=0,resizeObs=null;
+ let layer=null,items=[],section=null,productSection=null,raf=0,ready=false;
  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const clamp=n=>Math.max(0,Math.min(1,n));
- const pageRect=el=>{const r=el.getBoundingClientRect();return {left:r.left+scrollX,top:r.top+scrollY,width:r.width,height:r.height}};
+ const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left+scrollX,top:r.top+scrollY,width:r.width,height:r.height}};
  function init(){
-  if(reduced||started)return;
-  hero=document.querySelector('.hero');
-  const cards=[...document.querySelectorAll('.pc .im img')].filter(im=>(im.currentSrc||im.src||im.getAttribute('src'))&&im.closest('.pc')).slice(0,4);
-  if(!cards.length||!hero)return;
-  grid=cards[0].closest('.grid')||cards[0].closest('section')||cards[0].parentElement;
-  if(!grid)return;
+  if(reduced||ready)return;
+  section=document.querySelector('.sise-flight-showcase');productSection=document.querySelector('#sise-flight-products');
+  if(!section||!productSection)return;
+  const sources=[...section.querySelectorAll('.sise-flight-source')],cards=[...productSection.querySelectorAll('.pc[data-product-id]')];
+  if(!sources.length||!cards.length)return;
   layer=document.createElement('div');layer.id='sise-flight-layer';document.body.appendChild(layer);
-  const heroBox=pageRect(hero);
-  const starts=[
-   {x:.17,y:.20,w:.23,r:-16},
-   {x:.68,y:.13,w:.22,r:14},
-   {x:.42,y:.48,w:.24,r:-8},
-   {x:.78,y:.57,w:.19,r:19}
-  ];
-  items=cards.map((target,i)=>{
-   const src=target.currentSrc||target.src||target.getAttribute('src');
-   const img=document.createElement('img');img.className='sise-flight-bag';img.alt='';img.draggable=false;img.src=src;layer.appendChild(img);
-   target.classList.add('sise-flight-target');
-   return {img,target,start:starts[i],index:i};
-  });
-  started=true;
-  if('ResizeObserver'in window){resizeObs=new ResizeObserver(()=>paint());resizeObs.observe(hero);resizeObs.observe(grid)}
-  window.addEventListener('scroll',schedule,{passive:true});
-  window.addEventListener('resize',schedule,{passive:true});
-  paint();
+  items=sources.map((source,i)=>{
+   const card=cards[i],target=card&&card.querySelector('.im img');if(!target)return null;
+   const ghost=document.createElement('img');ghost.className='sise-flight-ghost';ghost.alt='';ghost.draggable=false;ghost.src=source.currentSrc||source.src;layer.appendChild(ghost);
+   return {source,ghost,target,index:i};
+  }).filter(Boolean);
+  if(!items.length)return;ready=true;
+  window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',schedule,{passive:true});paint();
  }
  function paint(){
-  if(!started||!items.length)return;
-  const h=pageRect(hero),g=pageRect(grid);
-  const from=Math.max(0,h.top+h.height*.12);
-  const to=Math.max(from+window.innerHeight*.6,g.top-window.innerHeight*.52);
-  const p=clamp((scrollY-from)/(to-from));
+  if(!ready)return;
+  const sr=rect(section),pr=rect(productSection),from=sr.top+Math.min(100,sr.height*.22),to=Math.max(from+innerHeight*.55,pr.top-innerHeight*.55),p=clamp((scrollY-from)/(to-from));
   items.forEach((it,i)=>{
-   const a=it.start,t=pageRect(it.target);
-   const targetW=Math.max(44,t.width),targetH=Math.max(55,t.height);
-   const startW=Math.min(window.innerWidth*.29,window.innerWidth<600?122:205);
-   const startH=startW*(targetH/Math.max(1,targetW));
-   const sx=h.left+h.width*a.x-startW/2, sy=h.top+h.height*a.y-startH/2;
-   const ex=t.left,ey=t.top;
-   const ease=p*p*(3-2*p);
-   const x=sx+(ex-sx)*ease,y=sy+(ey-sy)*ease;
-   const w=startW+(targetW-startW)*ease,hh=startH+(targetH-startH)*ease;
-   const spin=(1-ease)*360+(i%2?1:-1)*(1-ease)*24;
-   it.img.style.left=x+'px';it.img.style.top=y+'px';it.img.style.width=w+'px';it.img.style.height=hh+'px';
-   it.img.style.transform='rotate('+((a.r*(1-ease))+spin)+'deg)';
-   it.img.style.opacity=String(p<.94?1:clamp((1-p)/.06));
-   it.target.style.setProperty('opacity',String(p<.94?0:clamp((p-.94)/.06)),'important');
+   const a=rect(it.source),b=rect(it.target),ease=p*p*(3-2*p),x=a.left+(b.left-a.left)*ease,y=a.top+(b.top-a.top)*ease,w=a.width+(b.width-a.width)*ease,hh=a.height+(b.height-a.height)*ease,turn=(1-ease)*540;
+   it.ghost.style.left=x+'px';it.ghost.style.top=y+'px';it.ghost.style.width=w+'px';it.ghost.style.height=hh+'px';
+   it.ghost.style.transform='perspective(900px) rotateY('+turn+'deg) rotateZ('+(i%2?1:-1)*(1-ease)*7+'deg)';
+   it.ghost.style.opacity=String(p<.91?1:clamp((1-p)/.09));
+   it.target.style.opacity=p<.91?'0':String(clamp((p-.91)/.09));
+   it.source.style.opacity=p>.015?'0':'1';it.source.style.animationPlayState=p>.015?'paused':'running';
   });
  }
  function schedule(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;paint()})}
- const mo=new MutationObserver(()=>{if(!started){const heroNow=document.querySelector('.hero'),cardsNow=document.querySelector('.pc .im img');if(heroNow&&cardsNow)init()}});
- mo.observe(document.documentElement,{childList:true,subtree:true});
+ const mo=new MutationObserver(()=>{if(!ready)init()});mo.observe(document.documentElement,{childList:true,subtree:true});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
- setTimeout(init,900);setTimeout(init,2200);
+ setTimeout(init,600);setTimeout(init,1600);setTimeout(init,3000);
 })();
 </script>
-
 </body>
 </html>
