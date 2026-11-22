@@ -61,10 +61,10 @@ jobs:
           count = 0
           for page in ('index.html', 'admin.html'):
               html = Path(page).read_text(encoding='utf-8')
-              for attrs, body in re.findall(r'<script\\b([^>]*)>([\\s\\S]*?)</script\\s*>', html, re.I):
-                  if not body.strip() or re.search(r'\\bsrc\\s*=', attrs, re.I):
+              for attrs, body in re.findall(r"<script\b([^>]*)>([\s\S]*?)</script\s*>", html, re.I):
+                  if not body.strip() or re.search(r"\bsrc\s*=", attrs, re.I):
                       continue
-                  type_match = re.search(r'\\btype\\s*=\\s*["\\']([^"\\']+)["\\']', attrs, re.I)
+                  type_match = re.search(r"\btype\s*=\s*['\"]([^'\"]+)['\"]", attrs, re.I)
                   script_type = type_match.group(1).lower() if type_match else 'text/javascript'
                   if script_type not in ('text/javascript', 'application/javascript', 'module'):
                       continue
@@ -77,7 +77,7 @@ jobs:
               raise SystemExit('No inline JavaScript found in storefront or admin')
           print(f'Extracted {count} executable inline JavaScript block(s)')
           PY
-          find /tmp -maxdepth 1 -type f \\( -name 'sise-index.html-*.js' -o -name 'sise-index.html-*.mjs' -o -name 'sise-admin.html-*.js' -o -name 'sise-admin.html-*.mjs' \\) -print0 | while IFS= read -r -d '' file; do node --check "$file"; done
+          find /tmp -maxdepth 1 -type f \( -name 'sise-index.html-*.js' -o -name 'sise-index.html-*.mjs' -o -name 'sise-admin.html-*.js' -o -name 'sise-admin.html-*.mjs' \) -print0 | while IFS= read -r -d '' file; do node --check "$file"; done
       - name: Prepare isolated PostgreSQL fixture
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/checkout-fixture.sql
       - name: Apply migration in disposable PostgreSQL
