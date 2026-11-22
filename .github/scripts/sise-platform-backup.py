@@ -185,6 +185,14 @@ def main():
         bucket_summaries.append({
             "name": name,
             "public": bucket.get("public"),
+            "avif_autodetection": bucket.get("avif_autodetection"),
+            "file_size_limit": bucket.get("file_size_limit"),
+            "allowed_mime_types": bucket.get("allowed_mime_types"),
+            "type": bucket.get("type"),
+            "versioning_status": bucket.get("versioning_status"),
+            "lifecycle_configuration": bucket.get("lifecycle_configuration"),
+            "created_at": bucket.get("created_at"),
+            "updated_at": bucket.get("updated_at"),
             "object_count": len(objects),
             "objects": objects,
         })
