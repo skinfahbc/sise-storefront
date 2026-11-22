@@ -96,7 +96,7 @@ AUTH_USER_FIELDS = {
 }
 SENSITIVE_AUTH_KEY_PARTS = (
     "password", "token", "secret", "credential", "otp", "factor",
-    "session", "access_key", "refresh",
+    "session", "access_key", "refresh", "mfa",
 )
 
 
