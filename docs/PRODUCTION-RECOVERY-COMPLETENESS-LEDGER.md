@@ -51,7 +51,8 @@ The AI candidate at `supabase/migrations/202611140001_add_sise_ai_assistant.sql`
 
 - [ ] Recover the nine original migration SQL files from trusted SQL-editor exports, deployment artifacts, backups, or developer working copies. If unavailable, document the loss and keep the catalog baseline separate from migration history.
 - [ ] Reconcile the AI migration and all subsequent channel-separation/overload-removal changes against exact live function definitions and schema state.
-- [ ] Extend the baseline/recovery package to include Storage bucket configuration and `storage.objects` policy definitions (the current object export downloads bytes and a partial manifest, not a full Storage configuration restore).
+- [x] Capture Storage bucket configuration and `storage.objects` policy definitions in separate recovery SQL files; the platform backup now packages generated bucket SQL, the policy snapshot, and bucket/object metadata with downloaded object bytes. The public policy snapshot redacts the administrator UUID fail-closed.
+- [ ] Apply the packaged Storage configuration/policies and restore object bytes in an isolated Supabase-compatible target; verify counts, sizes, MIME rules, and access behavior.
 - [ ] Define and test Auth recovery. The current Auth Admin export is not a full Auth backup: it omits password hashes, sessions, refresh tokens, MFA secrets, and other managed runtime state. A reset/re-invitation procedure is required.
 - [ ] Build and test an isolated Supabase-compatible restore for database + Storage metadata/object bytes + Auth user recovery strategy. The PostgreSQL 17 fixture test is not a Supabase platform restore.
 - [ ] Run the actual scheduled/manual encrypted database and platform backup workflows using repository secrets, inspect the resulting artifacts, decrypt them in an isolated environment, and retain copies outside the 7-day GitHub artifact window.
