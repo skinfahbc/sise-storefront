@@ -107,3 +107,12 @@ The expanded Python unit test workflow previously failed on one incorrect JSON a
 ### Additional chat-token boundary check
 
 A separate read-only privilege inspection of `public.chat_messages` confirmed that `anon` and `authenticated` have column-level SELECT only for the public chat display fields; the `tokh` column is not SELECT-granted to either role. Both roles can INSERT `tokh` as part of guest message submission. This means the direct table REST read path does not expose the chat token hash. The separate `public.pm_list` / `public.pm_list_auth` RPC projection issue above remains valid and distinct.
+
+
+## Latest branch validation
+
+The expanded branch head `e7b64776ac93da30b4fb9c7ecf14e3c3c073a249` passed:
+- [SISE free validation — run 45012507644](https://github.com/skinfahbc/sise-storefront/actions/runs/45012507644): Python backup/restore verifier tests, workflow YAML validation, checkout/security smoke tests, production schema baseline smoke replay, and Storage baseline smoke replay all succeeded.
+- [Validate SISE static pages — run 45012507669](https://github.com/skinfahbc/sise-storefront/actions/runs/45012507669): success.
+
+The new manual Auth/Storage artifact-verification workflow is present and syntax-validated, but it has not yet been run against a real encrypted Production artifact. Actual backup and restore evidence still requires configured GitHub Actions secrets and a real backup run.
