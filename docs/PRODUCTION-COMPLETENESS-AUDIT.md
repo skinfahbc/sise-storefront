@@ -90,7 +90,7 @@ This is a table inventory, not yet a complete schema dump. A full rebuild source
 
 ## Security finding requiring review
 
-The connected Supabase table inspection returned a **critical RLS-disabled advisory** for `private.api_rate_limits`. The advisory recommends enabling RLS, but enabling it without appropriate policies can break intended rate-limit RPCs. No remediation was applied. Review the actual access path and grants, then choose a least-privilege policy or private-schema-only access model before changing it.
+The connected Supabase table inspection returned a **critical RLS-disabled advisory** for `private.api_rate_limits`. Follow-up read-only privilege checks showed that `anon`, `authenticated`, and `service_role` have no direct table privileges and cannot execute `private.consume_rate_limit`; the `postgres` owner has the expected privileges. This reduces evidence of direct API exposure, but RLS remains a defense-in-depth gap. Do not enable it blindly; first test the owner-executed rate-limit function and all dependent RPCs in isolation. Additional advisor findings include public/authenticated execution of several SECURITY DEFINER RPCs (requiring endpoint-by-endpoint authorization review), RLS-enabled tables with no policies (`public.pm_accounts` and `private.sise_otp_send_limits`), and disabled leaked-password protection. Details are recorded in [the read-only schema and security inventory](PRODUCTION-READONLY-SCHEMA-INVENTORY.md). No remediation was applied.
 
 ## Backup and disaster-recovery status
 
@@ -124,3 +124,13 @@ Do not mark SISE as the sole complete source until all of these are true:
 ## Safety record
 
 This audit used read-only repository and Supabase inventory operations. No production SQL, migration, Edge Function deployment, site deployment, or live data mutation was performed.
+
+
+## Follow-up verification — 2026-11-22
+
+- PR #66 head commit `b56fe7f59ab65248d232d2fe44d9435a1af31cb4` has completed `syntax`, both `validate` checks, `SISE free validation`, and `Validate SISE static pages` successfully. This is CI/static validation only, not a backup or restore proof.
+- Read-only catalog inspection captured application table columns, RLS states, policies, selected indexes, application triggers, Storage buckets and policies, PM RPC definitions, and relevant grants. See [PRODUCTION-READONLY-SCHEMA-INVENTORY.md](PRODUCTION-READONLY-SCHEMA-INVENTORY.md).
+- Kifara migration-path history was inspected. It contains only the four already archived historical snapshots and the grants-hardening source. It did not yield exact source for the other nine missing production migrations.
+- The AI assistant SQL file is not yet confirmed equivalent to production: its version differs, it contains a legacy two-argument `pm_list` definition, while production has a channel-aware three-argument function and `pm.channel`. Later channel-separation and overload-removal migrations must be reconciled before any baseline is considered rebuild-ready.
+
+This follow-up was read-only against production. No migration, DDL, RLS change, function change, deployment, or live-data mutation was performed.
