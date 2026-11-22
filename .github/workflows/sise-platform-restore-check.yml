@@ -1,0 +1,77 @@
+name: SISE Auth and Storage backup verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Source platform-backup workflow run ID"
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  verify-platform-backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate run ID and encryption secret
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          SOURCE_RUN_ID: ${{ inputs.run_id }}
+        run: |
+          set -euo pipefail
+          test -n "$BACKUP_ENCRYPTION_KEY" || { echo "Missing BACKUP_ENCRYPTION_KEY repository secret"; exit 1; }
+          [[ "$SOURCE_RUN_ID" =~ ^[0-9]+$ ]] || { echo "run_id must contain digits only"; exit 1; }
+
+      - name: Download encrypted platform backup
+        uses: actions/download-artifact@v4
+        with:
+          name: sise-encrypted-auth-storage-backup-${{ inputs.run_id }}
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/sise-platform-verify
+
+      - name: Decrypt and validate archive paths
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/sise-platform-verify"
+          ENCRYPTED="$WORK/sise-platform-backup.tar.gz.gpg"
+          DECRYPTED="$RUNNER_TEMP/sise-platform-backup.tar.gz"
+          EXTRACTED="$RUNNER_TEMP/sise-platform-verified"
+          test -s "$ENCRYPTED" || { echo "Encrypted platform backup is missing or empty"; exit 1; }
+          gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 \
+            --decrypt --output "$DECRYPTED" "$ENCRYPTED" \
+            3<<<"$BACKUP_ENCRYPTION_KEY"
+          gzip -t "$DECRYPTED"
+          tar -tzf "$DECRYPTED" > "$RUNNER_TEMP/platform-archive-list.txt"
+          python3 - "$RUNNER_TEMP/platform-archive-list.txt" <<'PY'
+          import sys
+          from pathlib import PurePosixPath
+
+          for raw in open(sys.argv[1], encoding="utf-8"):
+              name = raw.rstrip("\n")
+              path = PurePosixPath(name)
+              if path.is_absolute() or ".." in path.parts or not path.parts or path.parts[0] != "sise-platform-backup":
+                  raise SystemExit(f"Unsafe platform archive path: {name}")
+          PY
+          mkdir -p "$EXTRACTED"
+          tar -xzf "$DECRYPTED" -C "$EXTRACTED" --no-same-owner
+          test -d "$EXTRACTED/sise-platform-backup"
+
+      - name: Verify Auth fields, Storage objects, checksums and bucket policies
+        run: python3 .github/scripts/verify-platform-backup.py "$RUNNER_TEMP/sise-platform-verified/sise-platform-backup"
+
+      - name: Remove temporary backup files
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/sise-platform-verify" \
+                 "$RUNNER_TEMP/sise-platform-backup.tar.gz" \
+                 "$RUNNER_TEMP/sise-platform-verified" \
+                 "$RUNNER_TEMP/platform-archive-list.txt"
