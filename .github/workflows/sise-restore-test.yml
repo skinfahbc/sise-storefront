@@ -116,12 +116,12 @@ jobs:
           source, output = sys.argv[1], sys.argv[2]
           sql = open(source, encoding="utf-8").read()
           alter_pattern = re.compile(
-              r'^\\s*ALTER\\s+(?:ROLE|USER)\\s+'
+              r'^\s*ALTER\s+(?:ROLE|USER)\s+'
               r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
               re.IGNORECASE | re.MULTILINE,
           )
           create_pattern = re.compile(
-              r'^\\s*CREATE\\s+(?:ROLE|USER)\\s+'
+              r'^\s*CREATE\s+(?:ROLE|USER)\s+'
               r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
               re.IGNORECASE | re.MULTILINE,
           )
@@ -151,14 +151,14 @@ jobs:
                       "DO $bootstrap$ BEGIN "
                       f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{literal}') "
                       f"THEN CREATE ROLE {identifier} NOLOGIN; END IF; "
-                      "END $bootstrap$;\\n"
+                      "END $bootstrap$;\n"
                   )
 
           # The workflow pre-creates Supabase platform roles for schema GRANTs.
           # Remove their CREATE statements from the test copy, retaining ALTERs.
           filtered = []
           create_line = re.compile(
-              r'^\\s*CREATE\\s+(?:ROLE|USER)\\s+'
+              r'^\s*CREATE\s+(?:ROLE|USER)\s+'
               r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
               re.IGNORECASE,
           )
