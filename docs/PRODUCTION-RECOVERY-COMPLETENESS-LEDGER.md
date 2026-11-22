@@ -116,3 +116,11 @@ The expanded branch head `e7b64776ac93da30b4fb9c7ecf14e3c3c073a249` passed:
 - [Validate SISE static pages — run 45012507669](https://github.com/skinfahbc/sise-storefront/actions/runs/45012507669): success.
 
 The new manual Auth/Storage artifact-verification workflow is present and syntax-validated, but it has not yet been run against a real encrypted Production artifact. Actual backup and restore evidence still requires configured GitHub Actions secrets and a real backup run.
+
+
+### Additional SECURITY DEFINER review observations
+
+- `public.track_order(c)` returns a minimized order summary (code, status, created time, total and item title/color/quantity), not customer contact/address fields. It applies an IP-based rate limit, but still accepts legacy `K[0-9]{6}` and `K[A-F0-9]{8}` lookup formats in addition to the newer high-entropy `SI...` code. Retire the weaker legacy formats after confirming no valid outstanding orders depend on them, or add a second verification factor.
+- `public.pay_order(c,r)` changes an order from `new` to `pending_review`; it does not itself set an order to paid. Preserve the distinction between a customer-submitted payment reference and verified gateway settlement.
+- The live `public.pm_send` and `public.pm_send_auth` function bodies do not show an explicit database-side per-user rate limit or message-length bound. Check the complete client/Edge Function path and add server-side abuse controls if none exist.
+- `private.chat_mark_read_impl` and `private.chat_react_impl` are SECURITY DEFINER and grant EXECUTE to anon/authenticated at the database privilege layer. Their schema is `private`; whether they are callable through PostgREST depends on the project's exposed-schema configuration, which was not established by the read-only catalog check. Keep the public wrappers as the intended API and verify private schema is not exposed.
