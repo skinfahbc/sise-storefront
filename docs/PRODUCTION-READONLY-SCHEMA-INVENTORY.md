@@ -155,3 +155,9 @@ The two no-policy tables appear intended to remain closed to direct access and b
 - Active diagnostic/test functions: `sise-ip-diagnostic` v5, `sise-otpy-check` v1, `sise-otpy-send-test` v1, and `sise-otpy-verify-test` v1.
 
 This section is an inventory only. It does not contain function bodies, user data, secrets, or authorization to change production.
+
+## Production schema baseline snapshot (2026-11-22)
+
+A read-only catalog snapshot has now been committed at `supabase/baselines/production-schema-baseline.sql`, with scope and recovery limitations documented in `docs/PRODUCTION-SCHEMA-BASELINE-RECOVERY.md`. It captures application-owned `public` and `private` table definitions, constraints, RLS flags, sequences, indexes, application functions, policies, triggers, schema/table/function grants. Administrator UUIDs in RLS policy expressions are intentionally redacted to `NULL::uuid` (fail-closed); they must be configured explicitly before a controlled restore.
+
+This is not an original migration, has not yet been replay-tested, and is not a complete disaster-recovery backup. It excludes all application rows, Auth identities/secrets, Storage objects and provider-managed configuration. No production changes were made during capture.
