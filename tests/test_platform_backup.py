@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import hashlib
 import importlib.util
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,6 +90,26 @@ class StorageRecoveryExportTests(unittest.TestCase):
                     "public": True,
                     "allowed_mime_types": ["image/png"],
                 }])
+
+    def test_download_records_sha256_and_byte_count(self):
+        payload = b"SISE storage test object"
+        class FakeResponse:
+            def __init__(self):
+                self.chunks = [payload[:8], payload[8:], b""]
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self, size):
+                return self.chunks.pop(0)
+
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory) / "object.bin"
+            with patch.object(backup, "urlopen", return_value=FakeResponse()):
+                integrity = backup.download_object("chat", "object.bin", destination)
+            self.assertEqual(destination.read_bytes(), payload)
+            self.assertEqual(integrity["size_bytes"], len(payload))
+            self.assertEqual(integrity["sha256"], hashlib.sha256(payload).hexdigest())
 
     def test_rejects_invalid_bucket_mime_types(self):
         with tempfile.TemporaryDirectory() as directory:
