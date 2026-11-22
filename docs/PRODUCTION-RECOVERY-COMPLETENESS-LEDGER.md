@@ -102,3 +102,8 @@ This branch work has not changed Production database schema/data, migration hist
 - Storage backup fails closed if the current bucket set differs from the reviewed Storage object-policy snapshot.
 
 The expanded Python unit test workflow previously failed on one incorrect JSON assertion in run [45011953437](https://github.com/skinfahbc/sise-storefront/actions/runs/45011953437); the assertion was corrected, and additional tests were added afterward. No successful CI result for the latest expanded test suite has yet been verified. Do not mark these new controls fully validated until the workflow passes on the current branch head.
+
+
+### Additional chat-token boundary check
+
+A separate read-only privilege inspection of `public.chat_messages` confirmed that `anon` and `authenticated` have column-level SELECT only for the public chat display fields; the `tokh` column is not SELECT-granted to either role. Both roles can INSERT `tokh` as part of guest message submission. This means the direct table REST read path does not expose the chat token hash. The separate `public.pm_list` / `public.pm_list_auth` RPC projection issue above remains valid and distinct.
