@@ -87,6 +87,42 @@ def safe_destination(root, relative):
     return target
 
 
+AUTH_USER_FIELDS = {
+    "id", "aud", "role", "email", "phone", "created_at", "updated_at",
+    "confirmed_at", "email_confirmed_at", "phone_confirmed_at",
+    "last_sign_in_at", "app_metadata", "user_metadata", "identities",
+    "is_anonymous", "is_sso_user", "invited_at",
+}
+SENSITIVE_AUTH_KEY_PARTS = (
+    "password", "token", "secret", "credential", "otp", "factor",
+    "session", "access_key", "refresh",
+)
+
+
+def sanitize_auth_value(value):
+    if isinstance(value, dict):
+        cleaned = {}
+        for key, item in value.items():
+            normalized = str(key).lower()
+            if any(part in normalized for part in SENSITIVE_AUTH_KEY_PARTS):
+                continue
+            cleaned[key] = sanitize_auth_value(item)
+        return cleaned
+    if isinstance(value, list):
+        return [sanitize_auth_value(item) for item in value]
+    return value
+
+
+def sanitize_auth_user(user):
+    if not isinstance(user, dict):
+        raise RuntimeError("Auth API returned a non-object user record")
+    return {
+        key: sanitize_auth_value(value)
+        for key, value in user.items()
+        if key in AUTH_USER_FIELDS
+    }
+
+
 def export_auth():
     users = []
     page = 1
@@ -99,7 +135,7 @@ def export_auth():
         batch = result.get("users", []) if isinstance(result, dict) else []
         if not isinstance(batch, list):
             raise RuntimeError("Unexpected Auth users response")
-        users.extend(batch)
+        users.extend(sanitize_auth_user(user) for user in batch)
         if len(batch) < per_page:
             break
         page += 1
