@@ -218,7 +218,7 @@ def export_storage_recovery_files(buckets):
             "type=EXCLUDED.type, versioning_status=EXCLUDED.versioning_status, "
             "lifecycle_configuration=EXCLUDED.lifecycle_configuration;"
         )
-    (storage_dir / "buckets.sql").write_text("\\n".join(statements) + "\\n", encoding="utf-8")
+    (storage_dir / "buckets.sql").write_text("\n".join(statements) + "\n", encoding="utf-8")
 
     policy_source = Path(__file__).resolve().parents[2] / "supabase" / "baselines" / "storage-object-policies.sql"
     if not policy_source.is_file():
