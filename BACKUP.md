@@ -12,7 +12,7 @@ Required GitHub Actions secrets:
 
 The separate workflow `SISE encrypted Auth and Storage backup` runs daily at 03:20 UTC and can be started manually. It:
 - Exports Auth user records through the server-side Auth Admin API.
-- Downloads the actual objects from every Storage bucket and writes a manifest with bucket/object metadata.
+- Downloads the actual objects from every Storage bucket; records bucket configuration (visibility, MIME allowlist, size limits, type, versioning and lifecycle settings) plus object metadata; and emits isolated-restore SQL for bucket settings and Storage object RLS policies.
 - Encrypts the complete archive with GPG AES-256 before uploading it.
 - Uploads only the encrypted artifact and retains it for 7 days.
 
@@ -21,7 +21,7 @@ Additional required GitHub Actions secret:
 
 **Auth limitations:** the Auth Admin API export does not include passwords/password hashes, active sessions, refresh tokens, MFA secrets, or all runtime Auth state. Restored users may need password resets or invitations. This is a user-record export, not a complete point-in-time clone of Supabase Auth.
 
-**Storage scope:** actual file bytes from all buckets are downloaded. This is separate from the database dump, which contains Storage metadata but not the file contents.
+**Storage scope:** actual file bytes from all buckets are downloaded. The encrypted platform archive also includes a generated `storage/buckets.sql`, the captured `storage/object-policies.sql`, and a JSON manifest with bucket/object metadata. The SQL requires the Supabase Storage schema to exist first. The administrator UUID in the public policy snapshot is redacted to `NULL::uuid` (fail-closed) and must be deliberately replaced for a controlled restore. The backup still needs an end-to-end restore test against an isolated Supabase-compatible target.
 
 ## Retention and recovery
 
