@@ -12,7 +12,7 @@ Required GitHub Actions secrets:
 
 The separate workflow `SISE encrypted Auth and Storage backup` runs daily at 03:20 UTC and can be started manually. It:
 - Exports an allowlisted set of Auth user/profile/identity fields through the server-side Auth Admin API and recursively strips password, token, secret, OTP, credential, session and MFA-factor fields.
-- Downloads the actual objects from every Storage bucket; records bucket configuration (visibility, MIME allowlist, size limits, type, versioning and lifecycle settings) plus object metadata; and emits isolated-restore SQL for bucket settings and Storage object RLS policies.
+- Downloads the actual objects from every Storage bucket; records bucket configuration (visibility, MIME allowlist, size limits, type, versioning and lifecycle settings), object metadata, per-object SHA-256 checksums and byte counts; and emits isolated-restore SQL for bucket settings and Storage object RLS policies.
 - Encrypts the complete archive with GPG AES-256 before uploading it.
 - Uploads only the encrypted artifact and retains it for 7 days.
 
