@@ -53,6 +53,31 @@ class StorageRecoveryExportTests(unittest.TestCase):
             self.assertIn("NULL::uuid", policy_sql)
             self.assertNotIn("7a52dd4c-f75a-4e1c-9b49-230b84c4fec8", policy_sql)
 
+    def test_auth_export_strips_password_tokens_and_mfa(self):
+        user = {
+            "id": "user-1",
+            "email": "customer@example.test",
+            "encrypted_password": "must-not-export",
+            "confirmation_token": "must-not-export",
+            "refresh_token": "must-not-export",
+            "factors": [{"factor_type": "totp", "secret": "must-not-export"}],
+            "app_metadata": {"provider": "email", "access_token": "must-not-export"},
+            "user_metadata": {"display_name": "Customer", "api_secret": "must-not-export"},
+            "identities": [{
+                "provider": "google",
+                "identity_data": {"email": "customer@example.test", "sub": "provider-user"},
+                "identity_token": "must-not-export",
+            }],
+        }
+        cleaned = backup.sanitize_auth_user(user)
+        serialized = str(cleaned)
+        self.assertEqual(cleaned["email"], "customer@example.test")
+        self.assertEqual(cleaned["app_metadata"]["provider"], "email")
+        self.assertEqual(cleaned["identities"][0]["provider"], "google")
+        for forbidden in ("encrypted_password", "confirmation_token", "refresh_token",
+                          "factors", "secret", "access_token", "identity_token"):
+            self.assertNotIn(forbidden, serialized)
+
     def test_rejects_invalid_bucket_mime_types(self):
         with tempfile.TemporaryDirectory() as directory:
             backup.OUT = Path(directory)
