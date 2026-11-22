@@ -47,7 +47,7 @@ class StorageRecoveryExportTests(unittest.TestCase):
             self.assertIn("'chat', 'chat', TRUE, FALSE, 3145728", bucket_sql)
             self.assertIn("'media', 'media', TRUE, FALSE, 15728640", bucket_sql)
             self.assertIn("'image/svg+xml'", bucket_sql)
-            self.assertIn("'rules'", bucket_sql)
+            self.assertIn('"rules"', bucket_sql)
             self.assertIn('CREATE POLICY "chat img read"', policy_sql)
             self.assertIn('CREATE POLICY "media write"', policy_sql)
             self.assertIn("NULL::uuid", policy_sql)
