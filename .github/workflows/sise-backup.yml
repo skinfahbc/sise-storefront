@@ -30,6 +30,16 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           set -euo pipefail
+          python3 - "$SUPABASE_DB_URL" <<'PY'
+          import sys
+          from urllib.parse import urlparse
+
+          expected = "vwprdviufqukdvcroynt"
+          parsed = urlparse(sys.argv[1])
+          target = (parsed.hostname or "") + " " + (parsed.username or "")
+          if expected not in target:
+              raise SystemExit("SUPABASE_DB_URL does not identify the configured SISE production project")
+          PY
           mkdir -p "$RUNNER_TEMP/sise-backup"
           supabase db dump --db-url "$SUPABASE_DB_URL" --file "$RUNNER_TEMP/sise-backup/schema.sql"
           supabase db dump --db-url "$SUPABASE_DB_URL" --data-only --file "$RUNNER_TEMP/sise-backup/data.sql"
