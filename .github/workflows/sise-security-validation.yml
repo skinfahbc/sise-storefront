@@ -1,14 +1,21 @@
 name: SISE free validation
 on:
+  push:
+    branches:
+      - integration/kifara-security-backup
   pull_request:
+    branches:
+      - main
     paths:
       - 'index.html'
       - 'admin.html'
-      - 'build.sh'
       - 'supabase/migrations/**'
+      - 'docs/archive/kifara-applied-migrations/**'
       - 'tests/**'
-      - '.github/workflows/sise-security-validation.yml'
-      - '.github/workflows/sise-backup.yml'
+      - '.github/scripts/**'
+      - '.github/workflows/**'
+      - 'SECURITY.md'
+      - 'BACKUP.md'
 permissions:
   contents: read
 jobs:
@@ -30,8 +37,21 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
     steps:
       - uses: actions/checkout@v4
-      - name: Validate encrypted backup workflow YAML
-        run: ruby -e "require 'yaml'; YAML.load_file('.github/workflows/sise-backup.yml'); puts 'Backup workflow YAML parsed'"
+      - name: Validate all imported workflow YAML files
+        run: |
+          ruby - <<'RUBY'
+          require 'yaml'
+          files = %w[
+            .github/workflows/sise-backup.yml
+            .github/workflows/sise-platform-backup.yml
+            .github/workflows/sise-restore-check.yml
+            .github/workflows/sise-restore-test.yml
+            .github/workflows/sise-security-validation.yml
+          ]
+          files.each { |file| YAML.load_file(file); puts "PASS: #{file}" }
+          RUBY
+      - name: Check platform backup script syntax
+        run: python3 -m py_compile .github/scripts/sise-platform-backup.py
       - name: Check inline JavaScript syntax
         run: |
           python3 - <<'PY'
@@ -49,26 +69,16 @@ jobs:
           print(f"Extracted {len(scripts)} inline script(s)")
           PY
           for file in /tmp/sise-inline-*.js; do node --check "$file"; done
-      - name: Verify legacy build is safely blocked
-        run: |
-          before="$(sha256sum index.html | cut -d' ' -f1)"
-          if bash build.sh >/tmp/sise-build.log 2>&1; then
-            echo "Legacy build unexpectedly succeeded"
-            exit 1
-          fi
-          grep -q "Legacy build blocked" /tmp/sise-build.log
-          after="$(sha256sum index.html | cut -d' ' -f1)"
-          test "$before" = "$after"
       - name: Prepare isolated PostgreSQL fixture
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/checkout-fixture.sql
       - name: Apply migration in disposable PostgreSQL
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261112111000_sise_secure_checkout.sql
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/archive/kifara-applied-migrations/20261112111000_sise_secure_checkout.sql
       - name: Apply post-deploy permission lockdown migration
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261112112000_sise_lockdown_direct_orders.sql
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/archive/kifara-applied-migrations/20261112112000_sise_lockdown_direct_orders.sql
       - name: Apply admin, chat and storage hardening migration
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261112130000_sise_admin_chat_storage_hardening.sql
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/archive/kifara-applied-migrations/20261112130000_sise_admin_chat_storage_hardening.sql
       - name: Apply guest chat rate-limit migration
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261112143000_sise_chat_rate_limit.sql
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/archive/kifara-applied-migrations/20261112143000_sise_chat_rate_limit.sql
       - name: Check admin inline JavaScript syntax
         run: |
           python3 - <<'PY'
