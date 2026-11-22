@@ -94,3 +94,5 @@ jobs:
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/checkout-smoke.sql
       - name: Smoke-test read-only production schema baseline
         run: bash tests/production-baseline-smoke.sh
+      - name: Smoke-test read-only Storage recovery baseline
+        run: bash tests/storage-baseline-smoke.sh
