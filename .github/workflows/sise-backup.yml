@@ -45,6 +45,7 @@ jobs:
           supabase db dump --db-url "$SUPABASE_DB_URL" --data-only --file "$RUNNER_TEMP/sise-backup/data.sql"
           supabase db dump --db-url "$SUPABASE_DB_URL" --role-only --file "$RUNNER_TEMP/sise-backup/roles.sql"
           printf 'Project: vwprdviufqukdvcroynt\nCreated UTC: %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > "$RUNNER_TEMP/sise-backup/README.txt"
+          (cd "$RUNNER_TEMP/sise-backup" && sha256sum schema.sql data.sql roles.sql README.txt > SHA256SUMS)
           tar -C "$RUNNER_TEMP" -czf "$RUNNER_TEMP/sise-database-backup.tar.gz" sise-backup
 
       - name: Encrypt archive before artifact upload
