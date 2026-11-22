@@ -249,7 +249,7 @@ begin
   get diagnostics v_count = row_count;
   return v_count;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION private.chat_react_impl(p_id bigint, p_uid text, p_tok text, p_emoji text)
@@ -289,7 +289,7 @@ begin
   on conflict (message_id, uid, emoji) do nothing;
   return 'added';
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION private.consume_rate_limit(p_key text, p_limit integer, p_window_seconds integer)
@@ -310,7 +310,7 @@ begin
   returning hits into v_hits;
   return v_hits<=p_limit;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.chat_delete(p_id bigint, p_uid text, p_tok text)
@@ -326,7 +326,7 @@ AS $function$
                                                    and tokh = encode(sha256(convert_to(p_tok, 'UTF8')), 'hex');
                                                      get diagnostics n = row_count;
                                                        return n > 0;
-                                                       end $function$
+                                                       end $function$;
 
 
 CREATE OR REPLACE FUNCTION public.chat_edit(p_id bigint, p_uid text, p_tok text, p_text text)
@@ -343,7 +343,7 @@ AS $function$
                                      and (char_length(trim(p_text)) > 0 or image is not null);
                                        get diagnostics n = row_count;
                                          return n > 0;
-                                         end $function$
+                                         end $function$;
 
 
 CREATE OR REPLACE FUNCTION public.chat_mark_read(p_ids bigint[], p_uid text, p_tok text)
@@ -352,7 +352,7 @@ CREATE OR REPLACE FUNCTION public.chat_mark_read(p_ids bigint[], p_uid text, p_t
  SET search_path TO 'pg_catalog', 'public'
 AS $function$
   select private.chat_mark_read_impl(p_ids, p_uid, p_tok);
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.chat_react(p_id bigint, p_uid text, p_tok text, p_emoji text)
@@ -361,7 +361,7 @@ CREATE OR REPLACE FUNCTION public.chat_react(p_id bigint, p_uid text, p_tok text
  SET search_path TO 'pg_catalog', 'public'
 AS $function$
   select private.chat_react_impl(p_id, p_uid, p_tok, p_emoji);
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.create_order(p_payload jsonb)
@@ -490,7 +490,7 @@ begin
   insert into public.orders(code,data) values(v_code,v_order);
   return v_order;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.pay_order(c text, r text)
@@ -511,7 +511,7 @@ begin
   get diagnostics v_count=row_count;
   return v_count=1;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.pm_list(p_uid text, p_tok text, p_channel text DEFAULT 'management'::text)
@@ -533,7 +533,7 @@ begin
  order by p.id
  limit 300;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.pm_list_auth(p_channel text DEFAULT 'management'::text)
@@ -552,7 +552,7 @@ begin
     where p.uid = v_uid and p.channel = coalesce(p_channel,'management')
     order by p.id limit 300;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.pm_register_account()
@@ -572,7 +572,7 @@ begin
   returning pm_uid into v_uid;
   return v_uid;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.pm_send(p_uid text, p_tok text, p_name text, p_text text, p_image text DEFAULT NULL::text, p_channel text DEFAULT 'management'::text)
@@ -593,7 +593,7 @@ begin
  returning id into new_id;
  return new_id;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.pm_send_auth(p_name text, p_text text, p_image text DEFAULT NULL::text, p_channel text DEFAULT 'management'::text)
@@ -614,7 +614,7 @@ begin
   returning id into new_id;
   return new_id;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.sise_limit_guest_chat()
@@ -661,7 +661,7 @@ AS $function$
 
         RETURN NEW;
       END
-      $function$
+      $function$;
 
 
 CREATE OR REPLACE FUNCTION public.sise_otp_take_send(p_phone_hash text, p_ip_hash text)
@@ -726,7 +726,7 @@ begin
 
   return coalesce(v_allowed, false);
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.stock_on_order()
@@ -743,7 +743,7 @@ begin
   end loop;
   return new;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.stock_on_status()
@@ -766,7 +766,7 @@ begin
   end if;
   return new;
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.track_order(c text)
@@ -803,7 +803,7 @@ begin
     limit 1
   );
 end;
-$function$
+$function$;
 
 
 -- RLS policies (admin UUID placeholders are fail-closed)
