@@ -5,6 +5,7 @@ This intentionally does not export passwords, active sessions, MFA secrets, or
 other Supabase-managed runtime state. Restoring Auth users may require password
 resets / re-invitations. Storage objects are downloaded byte-for-byte.
 """
+import hashlib
 import json
 import os
 import re
@@ -55,6 +56,8 @@ def download_object(bucket, object_path, destination):
     )
     for attempt in range(4):
         try:
+            digest = hashlib.sha256()
+            size_bytes = 0
             with urlopen(req, timeout=180) as response:
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 with destination.open("wb") as output:
@@ -63,7 +66,9 @@ def download_object(bucket, object_path, destination):
                         if not chunk:
                             break
                         output.write(chunk)
-            return
+                        digest.update(chunk)
+                        size_bytes += len(chunk)
+            return {"sha256": digest.hexdigest(), "size_bytes": size_bytes}
         except HTTPError as exc:
             if exc.code in (429, 500, 502, 503, 504) and attempt < 3:
                 time.sleep(2 ** attempt)
@@ -185,9 +190,11 @@ def export_bucket(bucket):
                     continue
                 seen.add(object_path)
                 destination = safe_destination(bucket_root, object_path)
-                download_object(bucket, object_path, destination)
+                integrity = download_object(bucket, object_path, destination)
                 manifest.append({
                     "path": object_path,
+                    "sha256": integrity["sha256"],
+                    "size_bytes": integrity["size_bytes"],
                     "metadata": entry.get("metadata"),
                     "created_at": entry.get("created_at"),
                     "updated_at": entry.get("updated_at"),
@@ -284,12 +291,14 @@ def main():
     user_count = export_auth()
     bucket_summaries = []
     total_objects = 0
+    total_storage_bytes = 0
     for bucket in buckets:
         name = bucket.get("name")
         if not isinstance(name, str) or not name:
             raise RuntimeError("Storage returned a bucket without a name")
         objects = export_bucket(name)
         total_objects += len(objects)
+        total_storage_bytes += sum(item["size_bytes"] for item in objects)
         bucket_summaries.append({
             "name": name,
             "public": bucket.get("public"),
@@ -311,6 +320,8 @@ def main():
         "auth_user_count": user_count,
         "storage_bucket_count": len(buckets),
         "storage_object_count": total_objects,
+        "storage_total_bytes": total_storage_bytes,
+        "storage_checksum_algorithm": "sha256",
         "buckets": bucket_summaries,
         "auth_limitations": [
             "Passwords and password hashes are not exported.",
