@@ -56,6 +56,7 @@ jobs:
           grep -Fxq "sise-backup/data.sql" "$RUNNER_TEMP/archive-list.txt"
           grep -Fxq "sise-backup/roles.sql" "$RUNNER_TEMP/archive-list.txt"
           grep -Fxq "sise-backup/README.txt" "$RUNNER_TEMP/archive-list.txt"
+          grep -Fxq "sise-backup/SHA256SUMS" "$RUNNER_TEMP/archive-list.txt"
 
           mkdir -p "$EXTRACTED"
           tar -xzf "$DECRYPTED" -C "$EXTRACTED" --no-same-owner
@@ -63,6 +64,8 @@ jobs:
           test -f "$EXTRACTED/sise-backup/data.sql"
           test -f "$EXTRACTED/sise-backup/roles.sql"
           test -f "$EXTRACTED/sise-backup/README.txt"
+          test -s "$EXTRACTED/sise-backup/SHA256SUMS"
+          (cd "$EXTRACTED/sise-backup" && sha256sum -c SHA256SUMS)
 
           echo "PASS: decryption, gzip integrity, tar integrity, and all expected dump files verified."
           rm -rf "$WORK" "$DECRYPTED" "$EXTRACTED" "$RUNNER_TEMP/archive-list.txt"
