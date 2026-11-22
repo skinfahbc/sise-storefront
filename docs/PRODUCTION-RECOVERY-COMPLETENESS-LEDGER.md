@@ -124,3 +124,8 @@ The new manual Auth/Storage artifact-verification workflow is present and syntax
 - `public.pay_order(c,r)` changes an order from `new` to `pending_review`; it does not itself set an order to paid. Preserve the distinction between a customer-submitted payment reference and verified gateway settlement.
 - The live `public.pm_send` and `public.pm_send_auth` function bodies do not show an explicit database-side per-user rate limit or message-length bound. Check the complete client/Edge Function path and add server-side abuse controls if none exist.
 - `private.chat_mark_read_impl` and `private.chat_react_impl` are SECURITY DEFINER and grant EXECUTE to anon/authenticated at the database privilege layer. Their schema is `private`; whether they are callable through PostgREST depends on the project's exposed-schema configuration, which was not established by the read-only catalog check. Keep the public wrappers as the intended API and verify private schema is not exposed.
+
+
+## Search for missing historical SQL sources
+
+On 2026-11-22, the nine exact migration identifiers were also searched in the available prior-conversation context and Library files. No original SQL migration contents or migration source files were recovered. This does not prove no copy exists elsewhere (developer machines, CI artifacts, database backup archives, or SQL-editor exports may still contain them). The nine originals remain unrecovered; no synthetic files have been mislabeled as historical migrations.
