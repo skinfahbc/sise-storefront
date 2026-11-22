@@ -92,13 +92,14 @@ jobs:
           gzip -t "$DECRYPTED"
           mkdir -p "$RUNNER_TEMP/sise-restore-extracted"
           tar -xzf "$DECRYPTED" -C "$RUNNER_TEMP/sise-restore-extracted" --no-same-owner
-          for file in schema.sql data.sql roles.sql; do
+          for file in schema.sql data.sql roles.sql README.txt SHA256SUMS; do
             test -s "$RUNNER_TEMP/sise-restore-extracted/sise-backup/$file" || {
               echo "Required dump file is missing or empty: $file"
               exit 1
             }
           done
-          echo "PASS: encrypted backup decrypted and all SQL dump files are present."
+          (cd "$RUNNER_TEMP/sise-restore-extracted/sise-backup" && sha256sum -c SHA256SUMS)
+          echo "PASS: encrypted backup decrypted, SQL dumps extracted, and SHA-256 checksums verified."
 
       - name: Restore roles, schema and data into temporary PostgreSQL
         run: |
