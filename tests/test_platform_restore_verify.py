@@ -21,7 +21,7 @@ class PlatformBackupVerificationTests(unittest.TestCase):
         payload = b"SISE object bytes"
         (root / "storage" / "chat" / "photo.png").write_bytes(payload)
         (root / "auth" / "users.json").write_text(
-            json.dumps({"users": [{"id": "u1", "email": "customer@example.test"}]}),
+            json.dumps({"count": 1, "users": [{"id": "u1", "email": "customer@example.test"}]}),
             encoding="utf-8",
         )
         (root / "storage" / "buckets.sql").write_text("INSERT INTO storage.buckets ...;", encoding="utf-8")
@@ -74,6 +74,7 @@ class PlatformBackupVerificationTests(unittest.TestCase):
             root = self.build_fixture(directory)
             auth_path = root / "auth" / "users.json"
             auth_path.write_text(json.dumps({
+                "count": 1,
                 "users": [{"id": "u1", "email": "customer@example.test", "api_token": "no"}]
             }))
             with self.assertRaisesRegex(SystemExit, "forbidden credential"):
