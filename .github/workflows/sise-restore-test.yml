@@ -6,7 +6,6 @@ on:
       run_id:
         description: "Source backup workflow run ID"
         required: true
-        default: "43220293999"
 
 permissions:
   actions: read
