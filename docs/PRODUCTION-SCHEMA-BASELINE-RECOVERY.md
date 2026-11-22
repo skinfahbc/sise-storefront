@@ -7,7 +7,7 @@
 - No application row data, customer data, Auth identities/password hashes/sessions/MFA, Storage object bytes, Vault secrets, API keys, environment secrets, project-level Auth/provider configuration, cron jobs, publications or Supabase-managed internals are included.
 - RLS admin UUID literals were redacted to `NULL::uuid` so this public repository does not disclose the administrator's auth UUID. Before a controlled restore, replace those placeholders with the intended administrator UUID; until then those admin policies fail closed.
 - The baseline includes application-owned `public` and `private` tables, constraints, RLS flags, sequences, secondary indexes, app functions, policies, triggers, and captured grants. It deliberately excludes the managed `storage` schema and Supabase platform internals.
-- It has **not** been replay-tested yet. It may depend on Supabase-managed schemas/roles/extensions (for example `auth.users`) and must be validated in a disposable Supabase-compatible environment before being treated as a recovery artifact.
+- It passed an isolated PostgreSQL 17 smoke replay in GitHub Actions run [45011084602](https://github.com/skinfahbc/sise-storefront/actions/runs/45011084602), using minimal stubs for Supabase Auth (`auth.users`, `auth.uid`) and pgcrypto. The smoke test verified 13 application tables, at least 19 functions, 3 triggers, at least 20 policies, 5 sequences, and 12 RLS-enabled tables. This is a structural/syntax smoke test only, not a full Supabase restore or proof that every runtime dependency and grant behaves identically to production.
 - Do not run this against production. It is intended for a fresh isolated target only.
 
 ## Remaining recovery work
