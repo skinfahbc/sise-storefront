@@ -78,6 +78,16 @@ class StorageRecoveryExportTests(unittest.TestCase):
                           "factors", "secret", "access_token", "identity_token"):
             self.assertNotIn(forbidden, serialized)
 
+    def test_fails_when_bucket_set_differs_from_policy_snapshot(self):
+        with tempfile.TemporaryDirectory() as directory:
+            backup.OUT = Path(directory)
+            with self.assertRaisesRegex(RuntimeError, "bucket set differs"):
+                backup.export_storage_recovery_files([{
+                    "name": "unexpected",
+                    "public": True,
+                    "allowed_mime_types": ["image/png"],
+                }])
+
     def test_rejects_invalid_bucket_mime_types(self):
         with tempfile.TemporaryDirectory() as directory:
             backup.OUT = Path(directory)
