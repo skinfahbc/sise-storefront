@@ -2,7 +2,7 @@
 
 ## Database backup
 
-The workflow `SISE encrypted database backup` runs daily at 03:00 UTC and can be started manually. It exports the application database schema, data, and roles, encrypts the archive with GPG AES-256, and uploads only the encrypted artifact. Artifact retention is 7 days.
+The workflow `SISE encrypted database backup` runs daily at 03:00 UTC and can be started manually. It exports the application database schema, data, and roles, creates a SHA-256 manifest for the schema/data/roles/README files, encrypts the archive with GPG AES-256, and uploads only the encrypted artifact. Artifact retention is 7 days.
 
 Required GitHub Actions secrets:
 - `SUPABASE_DB_URL`: PostgreSQL connection URI from Supabase Dashboard → Project → Connect. Percent-encode special characters in the password.
