@@ -1,0 +1,7 @@
+project_id = "vwprdviufqukdvcroynt"
+
+[functions.sise-otpy-auth]
+verify_jwt = false
+
+[functions.sise-ai-chat]
+verify_jwt = false
