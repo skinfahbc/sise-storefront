@@ -109,3 +109,52 @@ These checks establish repository/static validation only. They do not prove a re
 ## Safety record
 
 All database operations for this inventory were SELECT/catalog/advisor reads. No production SQL mutation, migration, Edge Function deployment, site deployment, or live-data change was performed.
+
+
+## Function execution inventory — follow-up read-only catalog query
+
+The current application function inventory also records the execution mode, search path, and ACLs. The following functions are marked `SECURITY DEFINER` in the live catalog:
+
+| Schema | Function | Key observation |
+|---|---|---|
+| `private` | `chat_mark_read_impl(bigint[],text,text)` | Fixed search path `pg_catalog, public`; ACL includes anon/authenticated |
+| `private` | `chat_react_impl(bigint,text,text,text)` | Fixed search path `pg_catalog, public`; ACL includes anon/authenticated |
+| `private` | `consume_rate_limit(text,integer,integer)` | Fixed empty search path; ACL limited to postgres |
+| `public` | `chat_delete(bigint,text,text)` | Guest/authenticated executable; token validation must be reviewed |
+| `public` | `chat_edit(bigint,text,text,text)` | Guest/authenticated executable; token validation must be reviewed |
+| `public` | `create_order(jsonb)` | Guest/authenticated executable; checkout validation and abuse controls must be reviewed |
+| `public` | `pay_order(text,text)` | Guest/authenticated executable; payment reference/status rules must be reviewed |
+| `public` | `pm_list(text,text,text)` | ACL includes PUBLIC; token/channel authorization must be reviewed |
+| `public` | `pm_list_auth(text)` | Authenticated executable; account/channel ownership must be reviewed |
+| `public` | `pm_register_account()` | Authenticated executable; account binding must be reviewed |
+| `public` | `pm_send(text,text,text,text,text,text)` | ACL includes PUBLIC; token/channel authorization must be reviewed |
+| `public` | `pm_send_auth(text,text,text,text)` | Authenticated executable; account/channel ownership must be reviewed |
+| `public` | `sise_limit_guest_chat()` | Trigger function; not a direct API endpoint |
+| `public` | `sise_otp_take_send(text,text)` | ACL limited to postgres/service_role in the inspected catalog |
+| `public` | `stock_on_order()` | Trigger function; not a direct API endpoint |
+| `public` | `stock_on_status()` | Trigger function; not a direct API endpoint |
+| `public` | `track_order(text)` | Guest/authenticated executable; response must not expose customer PII |
+
+The live catalog also contains `chat_mark_read(bigint[],text,text)` and `chat_react(bigint,text,text,text)` as SECURITY INVOKER wrappers. Their privileged implementations are in the private schema. These wrapper/implementation pairs must be reviewed together.
+
+Supabase advisors currently report seven guest-callable SECURITY DEFINER RPCs (`chat_delete`, `chat_edit`, `create_order`, `pay_order`, `pm_list`, `pm_send`, `track_order`) and ten authenticated-callable SECURITY DEFINER RPCs. These are review findings, not a basis for blanket revocation: the functions are part of existing application flows and require endpoint-by-endpoint authorization tests before any ACL or security-mode change.
+
+## Additional advisor results
+
+Read-only security advisor results on 2026-11-22 also reported:
+
+- `public.pm_accounts`: RLS enabled, no direct policies.
+- `private.sise_otp_send_limits`: RLS enabled, no direct policies.
+- Auth leaked-password protection: disabled.
+
+The two no-policy tables appear intended to remain closed to direct access and be used through privileged function paths. Do not add broad policies merely to silence the advisor. Enabling leaked-password protection is an Auth project-setting change and should be handled separately from repository consolidation.
+
+## Current live configuration facts
+
+- Supabase project status: `ACTIVE_HEALTHY`; PostgreSQL major version 17.
+- Public buckets: `chat` (3 MiB limit; JPEG/PNG/WebP) and `media` (15 MiB limit; JPEG/PNG/WebP/SVG/GIF/MP4/WebM).
+- Storage object policies: public read for both buckets; anon/authenticated insert for `chat`; authenticated admin-only writes for `media`.
+- Active application Edge Functions: `sise-ai-chat` v26 and `sise-otpy-auth` v8.
+- Active diagnostic/test functions: `sise-ip-diagnostic` v5, `sise-otpy-check` v1, `sise-otpy-send-test` v1, and `sise-otpy-verify-test` v1.
+
+This section is an inventory only. It does not contain function bodies, user data, secrets, or authorization to change production.
