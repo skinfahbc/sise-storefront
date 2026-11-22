@@ -11,6 +11,12 @@
 -- triggers and captured grants. Review roles/extensions and managed dependencies before replay.
 
 CREATE SCHEMA IF NOT EXISTS private;
+ALTER SCHEMA public OWNER TO pg_database_owner;
+ALTER SCHEMA private OWNER TO postgres;
+GRANT USAGE ON SCHEMA public TO anon, authenticated, postgres, service_role;
+GRANT CREATE ON SCHEMA public TO pg_database_owner;
+GRANT USAGE ON SCHEMA private TO anon, authenticated, service_role;
+GRANT CREATE ON SCHEMA private TO postgres;
 
 CREATE TABLE IF NOT EXISTS private.api_rate_limits (
   rate_key text NOT NULL,
