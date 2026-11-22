@@ -61,6 +61,7 @@ class StorageRecoveryExportTests(unittest.TestCase):
             "confirmation_token": "must-not-export",
             "refresh_token": "must-not-export",
             "factors": [{"factor_type": "totp", "secret": "must-not-export"}],
+            "mfa": {"enabled": True, "secret": "must-not-export"},
             "app_metadata": {"provider": "email", "access_token": "must-not-export"},
             "user_metadata": {"display_name": "Customer", "api_secret": "must-not-export"},
             "identities": [{
