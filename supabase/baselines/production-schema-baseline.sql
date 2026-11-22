@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS private.api_rate_limits (
 );
 ALTER TABLE private.api_rate_limits OWNER TO postgres;
 ALTER TABLE private.api_rate_limits DISABLE ROW LEVEL SECURITY;
-ALTER TABLE private.api_rate_limits DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE private.api_rate_limits NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS private.sise_otp_send_limits (
   phone_hash text NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS private.sise_otp_send_limits (
 );
 ALTER TABLE private.sise_otp_send_limits OWNER TO postgres;
 ALTER TABLE private.sise_otp_send_limits ENABLE ROW LEVEL SECURITY;
-ALTER TABLE private.sise_otp_send_limits DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE private.sise_otp_send_limits NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.chat_messages (
   id bigint NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS public.chat_messages (
 );
 ALTER TABLE public.chat_messages OWNER TO postgres;
 ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.chat_messages DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.chat_messages NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.chat_reactions (
   id bigint NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS public.chat_reactions (
 );
 ALTER TABLE public.chat_reactions OWNER TO postgres;
 ALTER TABLE public.chat_reactions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.chat_reactions DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.chat_reactions NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.chat_reads (
   message_id bigint NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS public.chat_reads (
 );
 ALTER TABLE public.chat_reads OWNER TO postgres;
 ALTER TABLE public.chat_reads ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.chat_reads DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.chat_reads NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.draw_entries (
   id bigint NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS public.draw_entries (
 );
 ALTER TABLE public.draw_entries OWNER TO postgres;
 ALTER TABLE public.draw_entries ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.draw_entries DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.draw_entries NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.orders (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
 );
 ALTER TABLE public.orders OWNER TO postgres;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.orders DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.orders NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.pm (
   id bigint NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS public.pm (
 );
 ALTER TABLE public.pm OWNER TO postgres;
 ALTER TABLE public.pm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.pm DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.pm NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.pm_accounts (
   auth_user_id uuid NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS public.pm_accounts (
 );
 ALTER TABLE public.pm_accounts OWNER TO postgres;
 ALTER TABLE public.pm_accounts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.pm_accounts DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.pm_accounts NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.site (
   id text NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS public.site (
 );
 ALTER TABLE public.site OWNER TO postgres;
 ALTER TABLE public.site ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.site DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.site NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.stock (
   pid text NOT NULL,
@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS public.stock (
 );
 ALTER TABLE public.stock OWNER TO postgres;
 ALTER TABLE public.stock ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.stock DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.stock NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.stock_notify (
   id bigint NOT NULL,
@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS public.stock_notify (
 );
 ALTER TABLE public.stock_notify OWNER TO postgres;
 ALTER TABLE public.stock_notify ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.stock_notify DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.stock_notify NO FORCE ROW LEVEL SECURITY;
 
 CREATE TABLE IF NOT EXISTS public.story_comments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS public.story_comments (
 );
 ALTER TABLE public.story_comments OWNER TO postgres;
 ALTER TABLE public.story_comments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.story_comments DISABLE FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.story_comments NO FORCE ROW LEVEL SECURITY;
 
 -- Sequences and defaults
 CREATE SEQUENCE IF NOT EXISTS public.chat_reactions_id_seq;
