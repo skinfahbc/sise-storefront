@@ -7,6 +7,7 @@ resets / re-invitations. Storage objects are downloaded byte-for-byte.
 """
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path, PurePosixPath
@@ -259,9 +260,15 @@ def export_storage_recovery_files(buckets):
     policy_source = Path(__file__).resolve().parents[2] / "supabase" / "baselines" / "storage-object-policies.sql"
     if not policy_source.is_file():
         raise RuntimeError("Storage object policy recovery baseline is missing from the checkout")
-    (storage_dir / "object-policies.sql").write_text(
-        policy_source.read_text(encoding="utf-8"), encoding="utf-8"
-    )
+    policy_sql = policy_source.read_text(encoding="utf-8")
+    policy_bucket_ids = set(re.findall(r"bucket_id\\s*=\\s*'([^']+)'", policy_sql))
+    actual_bucket_ids = {bucket["name"] for bucket in buckets}
+    if actual_bucket_ids != policy_bucket_ids:
+        raise RuntimeError(
+            "Storage bucket set differs from the reviewed object-policy snapshot; "
+            "update the policy baseline before claiming a complete platform backup"
+        )
+    (storage_dir / "object-policies.sql").write_text(policy_sql, encoding="utf-8")
 
 
 def main():
