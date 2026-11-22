@@ -80,6 +80,15 @@ Performance advisor findings observed 2026-11-22:
 
 Advisor warnings are review findings, not automatic instructions to revoke access or alter policies. Function-by-function analysis and isolated regression tests are required.
 
+### Specific RPC review observation — private-message token verifier
+
+A read-only inspection of the live function definitions on 2026-11-22 found that `public.pm_list(p_uid,p_tok,p_channel)` returns `SETOF public.pm` and explicitly selects the `tokh` column. `public.pm_list_auth(p_channel)` returns `p.*`, which also includes `tokh`. For guest messages, `tokh` contains a SHA-256 token verifier; returning it to the caller is unnecessary and may enable offline guessing if a guest token is weak or reused. The function checks the supplied token before returning rows, but that does not justify returning the verifier.
+
+- [ ] Treat this as a priority API-hardening item: design a backward-compatible response projection that omits `tokh`, inspect all frontend callers/types, and regression-test guest and authenticated private-message flows before proposing a migration.
+- [ ] Inspect the other SECURITY DEFINER RPCs and confirm each returns only the minimum required fields. `track_order` currently returns order code/status/time/total and item title/color/quantity (not customer name, phone, or address), and has an IP rate limit; preserve that minimization in tests.
+
+Do not hot-edit the live functions. The historical migration chain is incomplete, so any future remediation must be a new, properly versioned migration with isolated tests and an explicit Production approval.
+
 ## Operational safety boundary
 
 This branch work has not changed Production database schema/data, migration history, RLS/grants, Auth settings, Storage policies/objects, Edge Functions, or the live website. No PR merge or deployment is authorized by this ledger. Production changes require a separate explicit approval after an isolated test and a verified rollback/backup plan.
