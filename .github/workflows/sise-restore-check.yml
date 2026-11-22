@@ -6,7 +6,6 @@ on:
       run_id:
         description: "GitHub Actions run ID that contains the encrypted backup"
         required: true
-        default: "43220293999"
 
 permissions:
   actions: read
