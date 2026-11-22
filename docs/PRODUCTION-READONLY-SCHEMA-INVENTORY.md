@@ -178,3 +178,24 @@ Latest branch-head PR-triggered CI before this addendum:
 The workflow that performs Supabase database dumps is pinned to CLI `v2.stable` pending a separately tested migration to CLI v3. The CLI v3 breaking-change notice changes hosted database command defaults and flags; see the [Supabase CLI v3 breaking-change notice](https://supabase.com/changelog/cli-v3-local-default).
 
 These CI results are repository/fixture checks only. They do not prove a real encrypted Production backup, full Auth/Storage recovery, or a full isolated Supabase restore. No Production changes were made.
+
+
+## Storage recovery catalog capture — 2026-11-22
+
+Read-only catalog/API inspection now captures:
+- `chat`: public bucket, 3 MiB limit, JPEG/PNG/WebP, standard bucket type, versioning disabled.
+- `media`: public bucket, 15 MiB limit, JPEG/PNG/WebP/SVG/GIF/MP4/WebM, standard bucket type, versioning disabled.
+- Both `storage.buckets` and `storage.objects` have RLS enabled.
+- Four `storage.objects` policies were captured: public SELECT for each bucket, anon/authenticated INSERT for `chat`, and authenticated admin-only ALL for `media`.
+- The media-admin Auth UUID is redacted as `NULL::uuid` in public recovery SQL, making that policy fail closed until an authorized restore operator supplies the intended UUID.
+
+Recovery files:
+- `supabase/baselines/storage-recovery-baseline.sql` — isolated baseline for bucket settings and policies.
+- `supabase/baselines/storage-object-policies.sql` — policy-only snapshot for packaging with platform backups.
+- `.github/scripts/sise-platform-backup.py` now writes generated `storage/buckets.sql`, `storage/object-policies.sql`, and bucket/object metadata into the encrypted platform archive.
+
+The archive export is not yet a proven Storage restore. Apply it only after the Storage schema exists on an isolated target, then verify object counts, byte sizes, MIME restrictions and access behavior.
+
+## Additional RPC finding — 2026-11-22
+
+Read-only inspection found `public.pm_list` selects and returns `tokh` as part of `SETOF public.pm`; `public.pm_list_auth` returns `p.*`, also including `tokh`. For guest rows this is a SHA-256 token verifier. It is unnecessary in the response and should be removed through a compatibility-reviewed RPC projection after frontend caller review and isolated regression tests. No live function was changed.
