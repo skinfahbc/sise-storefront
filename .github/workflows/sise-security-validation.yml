@@ -46,12 +46,13 @@ jobs:
             .github/workflows/sise-platform-backup.yml
             .github/workflows/sise-restore-check.yml
             .github/workflows/sise-restore-test.yml
+            .github/workflows/sise-platform-restore-check.yml
             .github/workflows/sise-security-validation.yml
           ]
           files.each { |file| YAML.load_file(file); puts "PASS: #{file}" }
           RUBY
-      - name: Check platform backup script syntax
-        run: python3 -m py_compile .github/scripts/sise-platform-backup.py
+      - name: Check backup and restore verifier script syntax
+        run: python3 -m py_compile .github/scripts/sise-platform-backup.py .github/scripts/verify-platform-backup.py
       - name: Run Python backup and recovery unit tests
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Check inline JavaScript syntax
