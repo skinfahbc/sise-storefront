@@ -85,5 +85,7 @@ jobs:
               Path(f'/tmp/sise-admin-inline-{i}.js').write_text(script, encoding='utf-8')
           PY
           for file in /tmp/sise-admin-inline-*.js; do node --check "$file"; done
+      - name: Apply public Data API grants hardening migration
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261113083642_sise_public_api_grants_hardening.sql
       - name: Test checkout, stock, tracking, chat rate limits and permissions
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/checkout-smoke.sql
