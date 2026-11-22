@@ -115,18 +115,34 @@ jobs:
 
           source, output = sys.argv[1], sys.argv[2]
           sql = open(source, encoding="utf-8").read()
-          pattern = re.compile(
-              r'^\s*ALTER\s+(?:ROLE|USER)\s+'
+          alter_pattern = re.compile(
+              r'^\\s*ALTER\\s+(?:ROLE|USER)\\s+'
               r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
               re.IGNORECASE | re.MULTILINE,
           )
-          names = set()
-          for quoted, bare in pattern.findall(sql):
-              names.add((quoted.replace('""', '"') if quoted else bare))
+          create_pattern = re.compile(
+              r'^\\s*CREATE\\s+(?:ROLE|USER)\\s+'
+              r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
+              re.IGNORECASE | re.MULTILINE,
+          )
 
-          if not names:
-              raise SystemExit("No ALTER ROLE/USER statements found in roles.sql")
+          def names_from(pattern, source):
+              return {
+                  quoted.replace('""', '"') if quoted else bare
+                  for quoted, bare in pattern.findall(source)
+              }
 
+          altered = names_from(alter_pattern, sql)
+          created = names_from(create_pattern, sql)
+          platform = {
+              'anon', 'authenticated', 'service_role', 'authenticator',
+              'supabase_admin', 'supabase_auth_admin', 'supabase_storage_admin',
+              'dashboard_user', 'pgbouncer'
+          }
+
+          # Bootstrap only roles altered by the dump but not created by it.
+          # Otherwise CREATE ROLE later in roles.sql would fail as a duplicate.
+          names = altered - created - platform
           with open(output, "w", encoding="utf-8") as out:
               for name in sorted(names):
                   literal = name.replace("'", "''")
@@ -135,9 +151,34 @@ jobs:
                       "DO $bootstrap$ BEGIN "
                       f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{literal}') "
                       f"THEN CREATE ROLE {identifier} NOLOGIN; END IF; "
-                      "END $bootstrap$;\n"
+                      "END $bootstrap$;\\n"
                   )
-          print(f"Prepared isolated role bootstrap for {len(names)} required roles.")
+
+          # The workflow pre-creates Supabase platform roles for schema GRANTs.
+          # Remove their CREATE statements from the test copy, retaining ALTERs.
+          filtered = []
+          create_line = re.compile(
+              r'^\\s*CREATE\\s+(?:ROLE|USER)\\s+'
+              r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
+              re.IGNORECASE,
+          )
+          removed_platform = 0
+          for line in sql.splitlines(keepends=True):
+              match = create_line.match(line)
+              if match:
+                  name = match.group(1).replace('""', '"') if match.group(1) else match.group(2)
+                  if name in platform:
+                      removed_platform += 1
+                      continue
+              filtered.append(line)
+
+          roles_test = output + '.roles.sql'
+          with open(roles_test, "w", encoding="utf-8") as out:
+              out.writelines(filtered)
+          print(
+              f"Prepared role bootstrap for {len(names)} missing custom roles; "
+              f"removed {removed_platform} duplicate platform-role CREATE statement(s)."
+          )
           PY
 
           # Supabase platform roles can be referenced by GRANT statements in
@@ -287,7 +328,9 @@ jobs:
           # The original Supabase database URL is never used by this workflow.
           psql -v ON_ERROR_STOP=1 --single-transaction --set=VERBOSITY=terse \
             --file "$BOOTSTRAP" \
-            --file "$DUMP/roles.sql" \
+            --file "$BOOTSTRAP.roles.sql"
+
+          psql -v ON_ERROR_STOP=1 --single-transaction --set=VERBOSITY=terse \
             --file "$RUNNER_TEMP/sise-schema-test.sql" \
             --command "SET session_replication_role = replica" \
             --file "$DATA_TEST"
