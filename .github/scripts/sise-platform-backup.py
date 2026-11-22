@@ -164,6 +164,70 @@ def export_bucket(bucket):
     return manifest
 
 
+def sql_literal(value):
+    if value is None:
+        return "NULL"
+    return "'" + str(value).replace("'", "''") + "'"
+
+
+def export_storage_recovery_files(buckets):
+    storage_dir = OUT / "storage"
+    storage_dir.mkdir(parents=True, exist_ok=True)
+    statements = [
+        "-- Generated from the Storage bucket API during this backup.",
+        "-- Apply only after Supabase Storage schema is installed on an isolated target.",
+    ]
+    for bucket in buckets:
+        name = bucket.get("name")
+        if not isinstance(name, str) or not name:
+            raise RuntimeError("Storage returned a bucket without a name")
+        mime_types = bucket.get("allowed_mime_types")
+        if mime_types is None:
+            mime_sql = "NULL"
+        elif isinstance(mime_types, list) and all(isinstance(item, str) for item in mime_types):
+            mime_sql = "ARRAY[" + ", ".join(sql_literal(item) for item in mime_types) + "]::text[]"
+        else:
+            raise RuntimeError(f"Storage returned invalid MIME types for bucket {name}")
+        lifecycle = bucket.get("lifecycle_configuration")
+        lifecycle_sql = "NULL" if lifecycle is None else sql_literal(
+            json.dumps(lifecycle, ensure_ascii=False, separators=(",", ":"))
+        ) + "::jsonb"
+        file_limit = bucket.get("file_size_limit")
+        if file_limit is not None and (not isinstance(file_limit, int) or file_limit < 0):
+            raise RuntimeError(f"Storage returned invalid file size limit for bucket {name}")
+        statements.append(
+            "INSERT INTO storage.buckets "
+            "(id, name, public, avif_autodetection, file_size_limit, allowed_mime_types, "
+            "type, versioning_status, lifecycle_configuration) VALUES ("
+            + ", ".join([
+                sql_literal(name),
+                sql_literal(name),
+                "TRUE" if bucket.get("public") is True else "FALSE",
+                "TRUE" if bucket.get("avif_autodetection") is True else "FALSE",
+                "NULL" if file_limit is None else str(file_limit),
+                mime_sql,
+                sql_literal(bucket.get("type") or "STANDARD"),
+                sql_literal(bucket.get("versioning_status") or "DISABLED"),
+                lifecycle_sql,
+            ])
+            + ") ON CONFLICT (id) DO UPDATE SET "
+            "name=EXCLUDED.name, public=EXCLUDED.public, "
+            "avif_autodetection=EXCLUDED.avif_autodetection, "
+            "file_size_limit=EXCLUDED.file_size_limit, "
+            "allowed_mime_types=EXCLUDED.allowed_mime_types, "
+            "type=EXCLUDED.type, versioning_status=EXCLUDED.versioning_status, "
+            "lifecycle_configuration=EXCLUDED.lifecycle_configuration;"
+        )
+    (storage_dir / "buckets.sql").write_text("\\n".join(statements) + "\\n", encoding="utf-8")
+
+    policy_source = Path(__file__).resolve().parents[2] / "supabase" / "baselines" / "storage-object-policies.sql"
+    if not policy_source.is_file():
+        raise RuntimeError("Storage object policy recovery baseline is missing from the checkout")
+    (storage_dir / "object-policies.sql").write_text(
+        policy_source.read_text(encoding="utf-8"), encoding="utf-8"
+    )
+
+
 def main():
     host = urlparse(BASE_URL).hostname
     if host != f"{EXPECTED_PROJECT_REF}.supabase.co":
@@ -172,6 +236,7 @@ def main():
     buckets = request_json("GET", "/storage/v1/bucket")
     if not isinstance(buckets, list):
         raise RuntimeError("Unexpected Storage buckets response")
+    export_storage_recovery_files(buckets)
 
     user_count = export_auth()
     bucket_summaries = []
