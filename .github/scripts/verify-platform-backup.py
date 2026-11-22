@@ -61,6 +61,8 @@ def verify(root):
     users = auth.get("users")
     if not isinstance(users, list) or len(users) != manifest.get("auth_user_count"):
         fail("Auth user count does not match the manifest")
+    if auth.get("count") != len(users):
+        fail("Auth users.json count field does not match its user array")
     inspect_auth(users)
 
     bucket_entries = manifest.get("buckets")
