@@ -98,18 +98,15 @@ The remaining nine migrations should be recovered from any surviving SQL-editor 
 
 ## CI state
 
-For PR #66 head commit `b56fe7f59ab65248d232d2fe44d9435a1af31cb4`, the latest observed checks completed successfully:
-- `syntax`
-- `validate` (two jobs)
-- `SISE free validation`
-- `Validate SISE static pages`
+For PR #66 head commit `616aa8575ab34a6bba8be7097bc4e3f01bad479f`, the latest observed PR-triggered workflow runs completed successfully:
+- `Validate SISE static pages` — run `45007098721`, success.
+- `SISE free validation` — run `45007098722`, success.
 
-These checks establish repository/static validation only. They do not prove a real encrypted backup, full restore, Auth/Storage recovery, or production end-to-end behavior.
+The combined commit-status endpoint returned no additional status entries. These checks establish repository/static validation only. They do not prove a real encrypted backup, full restore, Auth/Storage recovery, or production end-to-end behavior.
 
 ## Safety record
 
 All database operations for this inventory were SELECT/catalog/advisor reads. No production SQL mutation, migration, Edge Function deployment, site deployment, or live-data change was performed.
-
 
 ## Function execution inventory — follow-up read-only catalog query
 
