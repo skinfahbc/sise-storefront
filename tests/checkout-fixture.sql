@@ -25,6 +25,7 @@ create table public.chat_messages (
   avatar text,
   text text,
   image text,
+  tokh text,
   is_admin boolean not null default false,
   edited boolean,
   reply_to bigint,
@@ -39,20 +40,19 @@ create table public.stock_notify (
   id bigserial primary key
 );
 create table public.story_comments (
-  id bigserial primary key,
+  id uuid primary key default gen_random_uuid(),
   story_id text,
   name text,
   text text,
-  avatar text,
-  uid text,
-  is_admin boolean,
-  edited boolean,
-  reply_to bigint,
-  rname text,
-  rtext text,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  avatar text
 );
 alter table public.story_comments enable row level security;
+alter table public.chat_messages enable row level security;
+create policy "chat read" on public.chat_messages for select to public using (true);
+create policy "chat insert" on public.chat_messages for insert to anon, authenticated with check (is_admin = false);
+create policy "sc read" on public.story_comments for select to public using (true);
+create policy "sc insert" on public.story_comments for insert to anon, authenticated with check (true);
 
 alter table public.orders enable row level security;
 create policy "orders insert" on public.orders for insert to anon, authenticated with check (true);
