@@ -92,3 +92,13 @@ Do not hot-edit the live functions. The historical migration chain is incomplete
 ## Operational safety boundary
 
 This branch work has not changed Production database schema/data, migration history, RLS/grants, Auth settings, Storage policies/objects, Edge Functions, or the live website. No PR merge or deployment is authorized by this ledger. Production changes require a separate explicit approval after an isolated test and a verified rollback/backup plan.
+
+
+## Backup integrity controls added to this branch
+
+- Database backup workflow now writes `SHA256SUMS` for schema, data, roles and README before encryption; both artifact verification and isolated database restore workflows verify this manifest.
+- Platform backup now writes per-object SHA-256 checksums and byte counts into the Storage manifest, alongside total object count/bytes.
+- Auth export uses an explicit allowlist of account/profile/identity fields and recursively removes fields whose keys indicate password, token, secret, credential, OTP, session, or MFA material.
+- Storage backup fails closed if the current bucket set differs from the reviewed Storage object-policy snapshot.
+
+The expanded Python unit test workflow previously failed on one incorrect JSON assertion in run [45011953437](https://github.com/skinfahbc/sise-storefront/actions/runs/45011953437); the assertion was corrected, and additional tests were added afterward. No successful CI result for the latest expanded test suite has yet been verified. Do not mark these new controls fully validated until the workflow passes on the current branch head.
