@@ -261,7 +261,7 @@ def export_storage_recovery_files(buckets):
     if not policy_source.is_file():
         raise RuntimeError("Storage object policy recovery baseline is missing from the checkout")
     policy_sql = policy_source.read_text(encoding="utf-8")
-    policy_bucket_ids = set(re.findall(r"bucket_id\\s*=\\s*'([^']+)'", policy_sql))
+    policy_bucket_ids = set(re.findall(r"bucket_id\s*=\s*'([^']+)', policy_sql))
     actual_bucket_ids = {bucket["name"] for bucket in buckets}
     if actual_bucket_ids != policy_bucket_ids:
         raise RuntimeError(
