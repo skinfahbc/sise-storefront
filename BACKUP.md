@@ -21,6 +21,8 @@ Additional required GitHub Actions secret:
 
 **Auth limitations:** the Auth Admin API export does not include passwords/password hashes, active sessions, refresh tokens, MFA secrets, or all runtime Auth state. Restored users may need password resets or invitations. This is a user-record export, not a complete point-in-time clone of Supabase Auth.
 
+**Platform artifact verification:** after the Auth/Storage backup workflow completes, run the manual workflow **SISE Auth and Storage backup verification** and provide that backup run's ID. It decrypts the artifact in GitHub Actions, rejects unsafe archive paths, verifies the Auth field allowlist, validates bucket/policy coverage, and checks every Storage object's SHA-256 and byte count. This is an integrity check, not an Auth/Storage restore.
+
 **Storage scope:** actual file bytes from all buckets are downloaded. The encrypted platform archive also includes a generated `storage/buckets.sql`, the captured `storage/object-policies.sql`, and a JSON manifest with bucket/object metadata. The SQL requires the Supabase Storage schema to exist first. The exporter fails closed if the live bucket set differs from the reviewed object-policy snapshot, so a newly added bucket cannot silently pass as a complete backup. The administrator UUID in the public policy snapshot is redacted to `NULL::uuid` (fail-closed) and must be deliberately replaced for a controlled restore. The backup still needs an end-to-end restore test against an isolated Supabase-compatible target.
 
 ## Retention and recovery
