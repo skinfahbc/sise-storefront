@@ -92,3 +92,5 @@ jobs:
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261113083642_sise_public_api_grants_hardening.sql
       - name: Test checkout, stock, tracking, chat rate limits and permissions
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/checkout-smoke.sql
+      - name: Smoke-test read-only production schema baseline
+        run: bash tests/production-baseline-smoke.sh
