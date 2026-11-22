@@ -52,8 +52,8 @@ jobs:
           RUBY
       - name: Check platform backup script syntax
         run: python3 -m py_compile .github/scripts/sise-platform-backup.py
-      - name: Unit-test Storage backup recovery export
-        run: python3 tests/test_platform_backup.py
+      - name: Run Python backup and recovery unit tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Check inline JavaScript syntax
         run: |
           python3 - <<'PY'
