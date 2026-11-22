@@ -11,12 +11,13 @@ import sys
 import time
 from pathlib import Path, PurePosixPath
 from urllib.error import HTTPError, URLError
-from urllib.parse import quote, urlencode
+from urllib.parse import quote, urlencode, urlparse
 from urllib.request import Request, urlopen
 
 BASE_URL = os.environ["SUPABASE_URL"].rstrip("/")
 API_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 OUT = Path(os.environ.get("BACKUP_DIR", "sise-platform-backup"))
+EXPECTED_PROJECT_REF = "vwprdviufqukdvcroynt"
 HEADERS = {"apikey": API_KEY, "Authorization": f"Bearer {API_KEY}"}
 
 
@@ -164,6 +165,9 @@ def export_bucket(bucket):
 
 
 def main():
+    host = urlparse(BASE_URL).hostname
+    if host != f"{EXPECTED_PROJECT_REF}.supabase.co":
+        raise RuntimeError("SUPABASE_URL does not match the configured SISE production project")
     OUT.mkdir(parents=True, exist_ok=True)
     buckets = request_json("GET", "/storage/v1/bucket")
     if not isinstance(buckets, list):
@@ -186,7 +190,7 @@ def main():
         })
 
     manifest = {
-        "project_ref": "vwprdviufqukdvcroynt",
+        "project_ref": EXPECTED_PROJECT_REF,
         "exported_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "auth_user_count": user_count,
         "storage_bucket_count": len(buckets),
