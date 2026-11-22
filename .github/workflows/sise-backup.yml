@@ -23,7 +23,7 @@ jobs:
 
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: v2.stable
 
       - name: Export database schema, data and roles
         env:
