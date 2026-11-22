@@ -1,0 +1,52 @@
+name: SISE encrypted Auth and Storage backup
+
+on:
+  schedule:
+    - cron: '20 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  platform-backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check required secrets
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          test -n "$SUPABASE_SERVICE_ROLE_KEY" || { echo "Missing SUPABASE_SERVICE_ROLE_KEY repository secret"; exit 1; }
+          test -n "$BACKUP_ENCRYPTION_KEY" || { echo "Missing BACKUP_ENCRYPTION_KEY repository secret"; exit 1; }
+
+      - uses: actions/checkout@v4
+
+      - name: Export Auth users and Storage objects
+        env:
+          SUPABASE_URL: https://vwprdviufqukdvcroynt.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BACKUP_DIR: ${{ runner.temp }}/sise-platform-backup
+        run: python3 .github/scripts/sise-platform-backup.py
+
+      - name: Archive and encrypt platform backup
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          set -euo pipefail
+          tar -C "$RUNNER_TEMP" -czf "$RUNNER_TEMP/sise-platform-backup.tar.gz" sise-platform-backup
+          gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 \
+            --symmetric --cipher-algo AES256 \
+            --output "$RUNNER_TEMP/sise-platform-backup.tar.gz.gpg" \
+            "$RUNNER_TEMP/sise-platform-backup.tar.gz" \
+            3<<<"$BACKUP_ENCRYPTION_KEY"
+          rm -rf "$RUNNER_TEMP/sise-platform-backup" "$RUNNER_TEMP/sise-platform-backup.tar.gz"
+
+      - name: Upload encrypted platform backup only
+        uses: actions/upload-artifact@v4
+        with:
+          name: sise-encrypted-auth-storage-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/sise-platform-backup.tar.gz.gpg
+          if-no-files-found: error
+          retention-days: 7
