@@ -30,6 +30,9 @@ jobs:
           BACKUP_DIR: ${{ runner.temp }}/sise-platform-backup
         run: python3 .github/scripts/sise-platform-backup.py
 
+      - name: Verify exported Auth and Storage data before encryption
+        run: python3 .github/scripts/verify-platform-backup.py "$RUNNER_TEMP/sise-platform-backup"
+
       - name: Archive and encrypt platform backup
         env:
           BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
