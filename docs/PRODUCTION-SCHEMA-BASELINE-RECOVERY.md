@@ -16,7 +16,7 @@ The current verified checklist and exact 17-entry Production migration reconcili
 
 1. Recover the nine original migration SQL sources; four timestamp-mismatched historical snapshots remain archive-only.
 2. Prove the AI migration sequence against the live channel-aware `pm_list` signature and `pm.channel`.
-3. Add Storage bucket configuration and object-policy recovery to the current object-byte export.
+3. Apply and verify the newly captured Storage bucket configuration and object-policy exports alongside object bytes in an isolated Supabase-compatible target.
 4. Define Auth identity recovery/reset strategy; current Auth export deliberately omits password hashes, sessions, refresh tokens, MFA secrets and other managed state.
 5. Run real encrypted database and platform backups with configured GitHub secrets, then decrypt and restore them in an isolated Supabase-compatible environment. Current CI fixture tests are not a real platform restore.
 6. Review exposed SECURITY DEFINER RPCs, RLS/grants, Auth password protection, and performance advisories function-by-function before any production remediation.
