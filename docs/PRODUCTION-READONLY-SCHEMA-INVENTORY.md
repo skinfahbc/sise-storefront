@@ -163,3 +163,18 @@ A read-only catalog snapshot has now been committed at `supabase/baselines/produ
 This is not an original migration, has not yet been replay-tested, and is not a complete disaster-recovery backup. It excludes all application rows, Auth identities/secrets, Storage objects and provider-managed configuration. No production changes were made during capture.
 
 Baseline replay validation: the new isolated PostgreSQL 17 smoke test passed in GitHub Actions run [45011084602](https://github.com/skinfahbc/sise-storefront/actions/runs/45011084602). It validates structural creation with minimal Auth stubs; it is not a full Supabase/Auth/Storage restore drill.
+
+
+## Recovery completeness update — 2026-11-22
+
+The schema snapshot and its PostgreSQL 17 smoke replay are now present in this branch. The exact 17-entry Production migration ledger has been reconciled in [PRODUCTION-RECOVERY-COMPLETENESS-LEDGER.md](PRODUCTION-RECOVERY-COMPLETENESS-LEDGER.md): 3 exact versioned migration files, 4 archived snapshots with mismatched timestamps, 1 AI migration candidate whose equivalence is unproven, and 9 original SQL sources not recovered.
+
+The latest read-only Supabase advisor snapshot (2026-11-22) reports 7 anon-callable and 10 authenticated-callable SECURITY DEFINER RPC findings, two RLS-enabled tables with no policies, and leaked-password protection disabled. Performance findings include 15 RLS init-plan warnings, 2 overlapping permissive-policy warnings, and 2 unused-index notices. These findings require endpoint-by-endpoint review; they are not a safe blanket-revocation plan.
+
+Latest branch-head PR-triggered CI before this addendum:
+- Static page validation: run [45011153585](https://github.com/skinfahbc/sise-storefront/actions/runs/45011153585), success.
+- SISE free validation: run [45011153570](https://github.com/skinfahbc/sise-storefront/actions/runs/45011153570), success.
+
+The workflow that performs Supabase database dumps is pinned to CLI `v2.stable` pending a separately tested migration to CLI v3. The CLI v3 breaking-change notice changes hosted database command defaults and flags; see the [Supabase CLI v3 breaking-change notice](https://supabase.com/changelog/cli-v3-local-default).
+
+These CI results are repository/fixture checks only. They do not prove a real encrypted Production backup, full Auth/Storage recovery, or a full isolated Supabase restore. No Production changes were made.
