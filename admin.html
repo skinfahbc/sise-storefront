@@ -2621,7 +2621,7 @@ accounting(){
    const postedExpenses=(expenses||[]).filter(x=>x.status==='posted').reduce((n,x)=>n+(+x.amount_irr||0),0);
    const postedSales=(sales||[]).reduce((n,x)=>n+(+x.total_irr||0),0);
    stats.innerHTML='';
-   [[(accounts||[]).length,'سرفصل حساب'],[(cash||[]).length,'صندوق و بانک'],[(products||[]).length,'کالای متصل'],[fmt(postedSales),'فروش حضوری قطعی'],[fmt(postedExpenses),'هزینه قطعی'],(journals||[]).length+'','سند دفتر روزنامه'].forEach(([v,l])=>{
+   [[(accounts||[]).length,'سرفصل حساب'],[(cash||[]).length,'صندوق و بانک'],[(products||[]).length,'کالای متصل'],[fmt(postedSales),'فروش حضوری قطعی'],[fmt(postedExpenses),'هزینه قطعی'],[(journals||[]).length,'اسناد دفتر روزنامه'],'سند دفتر روزنامه'].forEach(([v,l])=>{
     stats.append(h('div',{class:'ac glass',style:{padding:'13px',minWidth:'0'}},h('small',{class:'fh'},l),h('div',{style:{fontSize:'17px',fontWeight:'800',marginTop:'4px',overflowWrap:'anywhere'}},String(v))));
    });
    cashList.innerHTML='';
