@@ -2551,111 +2551,38 @@ users(){
 _users_old(){return[card('',S.users.length?h('div',{class:'lst'},S.users.map(u=>h('div',{class:'cmt'},h('span',{},`${uName(u)} · ${u.phone}${u.landline?' · ثابت: '+u.landline:''}${u.postal?' · کدپستی: '+u.postal:''}`),h('small',{},new Date(u.created).toLocaleDateString('fa-IR'))))):h('small',{class:'fh'},'کاربری ثبت‌نام نکرده است.'))]},
 
 accounting(){
- const wrap=h('div',{class:'accounting-pro',style:{display:'grid',gap:'14px'}});
- const head=h('header',{class:'ac glass',style:{padding:'18px'}},
-  h('div',{class:'row',style:{justifyContent:'space-between',alignItems:'center',flexWrap:'wrap'}},
-   h('div',{},h('small',{class:'fh'},'SISE · FINANCE CONTROL'),h('h2',{style:{margin:'4px 0'}},'حسابداری فروشگاه'),h('small',{class:'fh'},'تمام مبالغ به ریال · یک انبار مرکزی')),
-   h('button',{class:'btn sec',type:'button',onclick:()=>load()},I('refresh-cw',16),'به‌روزرسانی')),
-  h('p',{class:'fh',style:{margin:'8px 0 0'}},'ثبت‌های اولیه در این نسخه به‌صورت پیش‌نویس ذخیره می‌شوند؛ تا زمان تکمیل سند دوطرفه، هیچ مبلغی به مانده قطعی یا سود و زیان منتقل نمی‌شود.'));
- const notice=h('div',{class:'ac glass',style:{padding:'12px 16px',fontSize:'13px',color:'var(--muted)'}},'در حال دریافت اطلاعات حسابداری…');
- const stats=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(145px,1fr))',gap:'10px'}});
- const expenseList=h('div',{style:{display:'grid',gap:'8px'}});
- const partyList=h('div',{style:{display:'grid',gap:'8px'}});
- const cashList=h('div',{style:{display:'grid',gap:'8px'}});
- const journalList=h('div',{style:{display:'grid',gap:'8px'}});
- const productList=h('div',{style:{display:'grid',gap:'8px'}});
- const panel=(title,desc,...children)=>h('section',{class:'ac glass',style:{padding:'16px',display:'grid',gap:'10px'}},
-  h('div',{},h('h3',{style:{margin:'0 0 3px'}},title),desc?h('small',{class:'fh'},desc):null),...children);
- const field=(label,type,placeholder,required=true)=>{const el=h('input',{class:'in',type,placeholder:placeholder||'',required,min:type==='number'?'1':null,inputmode:type==='number'?'numeric':null});return{el,node:h('label',{class:'f'},h('span',{class:'fl'},label),el)}};
- const expenseCategory=field('دسته هزینه','text','مثلاً بسته‌بندی، تبلیغات، ارسال');
- const expenseDesc=field('شرح هزینه','text','توضیح کوتاه هزینه');
- const expenseAmount=field('مبلغ به ریال','number','مثلاً 2500000');
- const expenseForm=h('form',{style:{display:'grid',gap:'9px'},onsubmit:async e=>{
-  e.preventDefault();const b=e.submitter;if(b){b.disabled=true;b.textContent='در حال ذخیره…'}
-  try{
-   const amount=Math.round(Number(expenseAmount.el.value));
-   if(!Number.isSafeInteger(amount)||amount<=0)throw new Error('مبلغ معتبر وارد کنید');
-   await sbFetch('/rest/v1/accounting_expenses',{method:'POST',auth:true,headers:{Prefer:'return=representation'},body:{
-    expense_number:'EXP-'+Date.now().toString(36).toUpperCase(),expense_date:new Date().toISOString().slice(0,10),
-    category:expenseCategory.el.value.trim(),description:expenseDesc.el.value.trim(),amount_irr:amount,status:'draft'
-   }});
-   e.target.reset();toast('پیش‌نویس هزینه ذخیره شد');await load();
-  }catch(err){toast('ثبت هزینه انجام نشد: '+err.message)}
-  finally{if(b){b.disabled=false;b.textContent='ذخیره پیش‌نویس هزینه'}}
- }},expenseCategory.node,expenseDesc.node,expenseAmount.node,h('button',{class:'btn',type:'submit'},I('plus',16),'ذخیره پیش‌نویس هزینه'));
- const partyName=field('نام شخص / شرکت','text','نام مشتری یا تأمین‌کننده');
- const partyPhone=field('شماره تماس','tel','اختیاری',false);
- const partyType=h('select',{class:'in'},h('option',{value:'customer'},'مشتری'),h('option',{value:'supplier'},'تأمین‌کننده'),h('option',{value:'both'},'هر دو'));
- const partyForm=h('form',{style:{display:'grid',gap:'9px'},onsubmit:async e=>{
-  e.preventDefault();const b=e.submitter;if(b){b.disabled=true;b.textContent='در حال ذخیره…'}
-  try{
-   await sbFetch('/rest/v1/accounting_parties',{method:'POST',auth:true,headers:{Prefer:'return=representation'},body:{
-    party_type:partyType.value,display_name:partyName.el.value.trim(),phone:partyPhone.el.value.trim()||null
-   }});
-   e.target.reset();toast('شخص جدید ثبت شد');await load();
-  }catch(err){toast('ثبت شخص انجام نشد: '+err.message)}
-  finally{if(b){b.disabled=false;b.textContent='ثبت شخص'}}
- }},h('label',{class:'f'},h('span',{class:'fl'},'نوع شخص'),partyType),partyName.node,partyPhone.node,h('button',{class:'btn',type:'submit'},I('user-plus',16),'ثبت شخص'));
- wrap.append(head,notice,stats,
-  h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,280px),1fr))',gap:'12px'}},
-   panel('ثبت هزینه','ثبت اولیه و ذخیره به‌صورت پیش‌نویس؛ هنوز سند قطعی حسابداری نیست.',expenseForm),
-   panel('ثبت مشتری و تأمین‌کننده','دفتر اشخاص حسابداری.',partyForm)),
-  panel('صندوق و بانک','مانده اولیه تا زمان ورود و تأیید مدیر، ثبت‌شده محسوب نمی‌شود.',cashList),
-  panel('هزینه‌های ثبت‌شده','آخرین هزینه‌ها؛ پیش‌نویس‌ها هنوز در مانده قطعی اثر ندارند.',expenseList),
-  panel('اشخاص','مشتریان و تأمین‌کنندگان ثبت‌شده.',partyList),
-  panel('دفتر روزنامه','اسناد حسابداری و وضعیت تراز.',journalList),
-  panel('کالاهای متصل به حسابداری','کد اختصاصی حسابداری در کنار شناسه اصلی محصول فروشگاه.',productList));
+ const root=h('div',{class:'ac glass',style:{padding:'18px',display:'grid',gap:'14px'}});
+ root.append(h('small',{class:'fh'},'SISE · FINANCE CONTROL'));
+ root.append(h('h2',{style:{margin:'0'}},'حسابداری فروشگاه'));
+ root.append(h('p',{class:'fh'},'تمام مبالغ به ریال · یک انبار مرکزی'));
+ const status=h('div',{class:'fh'},'در حال دریافت اطلاعات حسابداری…');
+ root.append(status);
+ const refresh=h('button',{class:'btn sec',type:'button',onclick:load},I('refresh-cw',16),'به‌روزرسانی');
+ root.append(refresh);
+ const summary=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:'10px'}});
+ root.append(summary);
  async function load(){
-  notice.textContent='در حال دریافت اطلاعات از دیتابیس امن…';
+  status.textContent='در حال اتصال امن به دیتابیس…';
   try{
-   const [accounts,cash,expenses,parties,journals,products,sales]=await Promise.all([
-    sbFetch('/rest/v1/chart_of_accounts?select=id,account_code,account_name,account_type&is_active=eq.true&order=account_code.asc',{auth:true}),
-    sbFetch('/rest/v1/cash_accounts?select=id,account_name,account_kind,opening_balance_irr,opening_balance_entered,is_active&is_active=eq.true&order=account_name.asc',{auth:true}),
-    sbFetch('/rest/v1/accounting_expenses?select=id,expense_number,expense_date,category,description,amount_irr,status&order=created_at.desc&limit=50',{auth:true}),
-    sbFetch('/rest/v1/accounting_parties?select=id,party_type,display_name,phone,is_active&order=created_at.desc&limit=50',{auth:true}),
-    sbFetch('/rest/v1/journal_entries?select=id,entry_number,entry_date,description,status&order=entry_date.desc&limit=50',{auth:true}),
-    sbFetch('/rest/v1/accounting_products?select=id,sku,product_name,is_active&order=sku.asc&limit=100',{auth:true}),
-    sbFetch('/rest/v1/sales_documents?select=id,total_irr,status&status=eq.posted',{auth:true})
+   const data=await Promise.all([
+    sbFetch('/rest/v1/chart_of_accounts?select=id&is_active=eq.true',{auth:true}),
+    sbFetch('/rest/v1/cash_accounts?select=id,account_name,opening_balance_irr,opening_balance_entered&is_active=eq.true',{auth:true}),
+    sbFetch('/rest/v1/accounting_products?select=id,sku,product_name&is_active=eq.true&limit=100',{auth:true}),
+    sbFetch('/rest/v1/accounting_expenses?select=id,amount_irr,status&limit=100',{auth:true}),
+    sbFetch('/rest/v1/accounting_parties?select=id&is_active=eq.true',{auth:true})
    ]);
-   const fmt=n=>Math.round(Number(n)||0).toLocaleString('fa-IR')+' ریال';
-   const postedExpenses=(expenses||[]).filter(x=>x.status==='posted').reduce((n,x)=>n+(+x.amount_irr||0),0);
-   const postedSales=(sales||[]).reduce((n,x)=>n+(+x.total_irr||0),0);
-   stats.innerHTML='';
-   [[(accounts||[]).length,'سرفصل حساب'],[(cash||[]).length,'صندوق و بانک'],[(products||[]).length,'کالای متصل'],[fmt(postedSales),'فروش حضوری قطعی'],[fmt(postedExpenses),'هزینه قطعی'],[(journals||[]).length,'اسناد دفتر روزنامه'],'سند دفتر روزنامه'].forEach(([v,l])=>{
-    stats.append(h('div',{class:'ac glass',style:{padding:'13px',minWidth:'0'}},h('small',{class:'fh'},l),h('div',{style:{fontSize:'17px',fontWeight:'800',marginTop:'4px',overflowWrap:'anywhere'}},String(v))));
-   });
-   cashList.innerHTML='';
-   (cash||[]).forEach(x=>cashList.append(h('div',{class:'row',style:{justifyContent:'space-between',padding:'10px 0',borderBottom:'1px solid var(--gb)',gap:'8px'}},
-    h('div',{},h('b',{},x.account_name),h('small',{class:'fh',style:{display:'block'}},x.account_kind==='bank'?'حساب بانکی':'صندوق نقدی')),
-    h('b',{},x.opening_balance_entered?fmt(x.opening_balance_irr):'مانده اول دوره ثبت نشده'))));
-   if(!(cash||[]).length)cashList.append(h('small',{class:'fh'},'صندوق و بانک تعریف نشده است.'));
-   expenseList.innerHTML='';
-   (expenses||[]).forEach(x=>expenseList.append(h('div',{class:'row',style:{justifyContent:'space-between',gap:'8px',padding:'9px 0',borderBottom:'1px solid var(--gb)'}},
-    h('div',{},h('b',{},x.description),h('small',{class:'fh',style:{display:'block'}},(x.expense_number||'')+' · '+(x.category||'')+' · '+(x.expense_date||'')),
-    h('b',{},fmt(x.amount_irr)),h('small',{class:'fh'},x.status==='posted'?'قطعی':x.status==='void'?'باطل‌شده':'پیش‌نویس'))));
-   if(!(expenses||[]).length)expenseList.append(h('small',{class:'fh'},'هنوز هزینه‌ای ثبت نشده است.'));
-   partyList.innerHTML='';
-   (parties||[]).forEach(x=>partyList.append(h('div',{class:'row',style:{justifyContent:'space-between',gap:'8px',padding:'8px 0',borderBottom:'1px solid var(--gb)'}},
-    h('div',{},h('b',{},x.display_name),h('small',{class:'fh',style:{display:'block'}},x.phone||'بدون شماره تماس')),
-    h('small',{class:'fh'},x.party_type==='supplier'?'تأمین‌کننده':x.party_type==='both'?'مشتری و تأمین‌کننده':'مشتری'))));
-   if(!(parties||[]).length)partyList.append(h('small',{class:'fh'},'دفتر اشخاص هنوز خالی است.'));
-   journalList.innerHTML='';
-   (journals||[]).forEach(x=>journalList.append(h('div',{class:'row',style:{justifyContent:'space-between',gap:'8px',padding:'8px 0',borderBottom:'1px solid var(--gb)'}},
-    h('div',{},h('b',{},x.entry_number),h('small',{class:'fh',style:{display:'block'}},x.description||'')),
-    h('small',{class:'fh'},x.status==='posted'?'ثبت قطعی':x.status==='reversed'?'برگشت‌شده':'پیش‌نویس'))));
-   if(!(journals||[]).length)journalList.append(h('small',{class:'fh'},'هنوز سندی در دفتر روزنامه ثبت نشده است.'));
-   productList.innerHTML='';
-   (products||[]).forEach(x=>productList.append(h('div',{class:'row',style:{justifyContent:'space-between',gap:'8px',padding:'7px 0',borderBottom:'1px solid var(--gb)'}},
-    h('span',{},x.product_name),h('b',{style:{direction:'ltr'}},x.sku))));
-   if(!(products||[]).length)productList.append(h('small',{class:'fh'},'کالایی به حسابداری متصل نشده است.'));
-   notice.textContent='اتصال امن برقرار است · '+(accounts||[]).length+' سرفصل حساب · داده‌های فعلی فروشگاه تغییر نکرده‌اند.';
+   const labels=['سرفصل حساب','صندوق و بانک','کالای متصل','هزینه ثبت‌شده','اشخاص'];
+   summary.innerHTML='';
+   data.forEach((rows,i)=>summary.append(h('div',{class:'ac glass',style:{padding:'12px'}},h('small',{class:'fh'},labels[i]),h('h3',{style:{margin:'6px 0 0'}},String((rows||[]).length)))));
+   const cash=data[1]||[];
+   const notes=cash.map(x=>x.account_name+' — '+(x.opening_balance_entered?Number(x.opening_balance_irr||0).toLocaleString('fa-IR')+' ریال':'مانده اول دوره ثبت نشده')).join(' | ');
+   status.textContent='اتصال برقرار است. '+(notes||'هنوز صندوق یا بانکی تعریف نشده است.')+' · ثبت‌ها تا زمان تأیید، پیش‌نویس هستند.';
   }catch(err){
-   notice.textContent='دریافت اطلاعات حسابداری ناموفق بود: '+err.message+' · اگر دسترسی مدیر تأیید نشده باشد، نشست را تازه‌سازی و دوباره وارد شوید.';
-   toast('حسابداری بارگذاری نشد: '+err.message);
+   status.textContent='بارگذاری انجام نشد: '+err.message;
   }
  }
  load();
- return[wrap];
+ return [root];
 },
 
 settings(){
