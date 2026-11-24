@@ -2554,31 +2554,104 @@ accounting(){
  const root=h('div',{class:'ac glass',style:{padding:'18px',display:'grid',gap:'14px'}});
  root.append(h('small',{class:'fh'},'SISE · FINANCE CONTROL'));
  root.append(h('h2',{style:{margin:'0'}},'حسابداری فروشگاه'));
- root.append(h('p',{class:'fh'},'تمام مبالغ به ریال · یک انبار مرکزی'));
- const status=h('div',{class:'fh'},'در حال دریافت اطلاعات حسابداری…');
- root.append(status);
- const refresh=h('button',{class:'btn sec',type:'button',onclick:load},I('refresh-cw',16),'به‌روزرسانی');
- root.append(refresh);
- const summary=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:'10px'}});
- root.append(summary);
+ root.append(h('p',{class:'fh'},'تمام مبالغ به ریال · یک انبار مرکزی · ثبت‌ها با حساب کاربری مدیر'));
+ const status=h('div',{class:'fh'},'در حال دریافت اطلاعات حسابداری…');root.append(status);
+ const nav=h('div',{class:'row',style:{gap:'7px',flexWrap:'wrap'}});
+ const body=h('div',{style:{display:'grid',gap:'12px'}});
+ root.append(nav,body);
+ const state={tab:'home',cash:[],parties:[],expenses:[],accounts:[],products:[]};
+ const fmt=n=>Number(n||0).toLocaleString('fa-IR');
+ const field=(label,type='text',ph='')=>{const wrap=h('label',{class:'f settings-field'},h('span',{class:'fl'},label));const el=h('input',{class:'in',type,placeholder:ph});wrap.append(el);return {wrap,el}};
+ const selectField=(label,items,placeholder)=>{const wrap=h('label',{class:'f settings-field'},h('span',{class:'fl'},label));const el=h('select',{class:'in'});el.append(h('option',{value:''},placeholder||'انتخاب کنید'));items.forEach(x=>el.append(h('option',{value:x.value},x.label)));wrap.append(el);return {wrap,el}};
+ const card=(title,...children)=>h('section',{class:'ac glass',style:{padding:'14px',display:'grid',gap:'10px'}},h('b',{},title),...children);
+ const btn=(label,fn,cls='btn')=>h('button',{class:cls,type:'button',onclick:fn},label);
+ const showError=e=>{status.textContent='خطا: '+(e&&e.message||e);};
+ const audit=async(action,type,id,after)=>{try{const ss=sbSess();await sbFetch('/rest/v1/accounting_audit_logs',{method:'POST',auth:true,headers:{Prefer:'return=minimal'},body:{actor_user_id:ss&&ss.user?ss.user.id:null,action,entity_type:type,entity_id:id||null,after_data:after||{}}})}catch(e){console.warn('audit log',e)}};
  async function load(){
   status.textContent='در حال اتصال امن به دیتابیس…';
   try{
    const data=await Promise.all([
-    sbFetch('/rest/v1/chart_of_accounts?select=id&is_active=eq.true',{auth:true}),
-    sbFetch('/rest/v1/cash_accounts?select=id,account_name,opening_balance_irr,opening_balance_entered&is_active=eq.true',{auth:true}),
-    sbFetch('/rest/v1/accounting_products?select=id,sku,product_name&is_active=eq.true&limit=100',{auth:true}),
-    sbFetch('/rest/v1/accounting_expenses?select=id,amount_irr,status&limit=100',{auth:true}),
-    sbFetch('/rest/v1/accounting_parties?select=id&is_active=eq.true',{auth:true})
+    sbFetch('/rest/v1/chart_of_accounts?select=id,account_code,account_name,account_type&is_active=eq.true&order=account_code',{auth:true}),
+    sbFetch('/rest/v1/cash_accounts?select=id,account_name,account_kind,opening_balance_irr,opening_balance_entered,ledger_account_id&is_active=eq.true&order=account_name',{auth:true}),
+    sbFetch('/rest/v1/accounting_products?select=id,sku,product_name&is_active=eq.true&order=product_name&limit=500',{auth:true}),
+    sbFetch('/rest/v1/accounting_expenses?select=id,expense_number,expense_date,category,description,amount_irr,status,created_at&order=created_at.desc&limit=100',{auth:true}),
+    sbFetch('/rest/v1/accounting_parties?select=id,party_type,display_name,phone,national_id,notes,is_active,created_at&is_active=eq.true&order=display_name&limit=500',{auth:true})
    ]);
-   const labels=['سرفصل حساب','صندوق و بانک','کالای متصل','هزینه ثبت‌شده','اشخاص'];
-   summary.innerHTML='';
-   data.forEach((rows,i)=>summary.append(h('div',{class:'ac glass',style:{padding:'12px'}},h('small',{class:'fh'},labels[i]),h('h3',{style:{margin:'6px 0 0'}},String((rows||[]).length)))));
-   const cash=data[1]||[];
-   const notes=cash.map(x=>x.account_name+' — '+(x.opening_balance_entered?Number(x.opening_balance_irr||0).toLocaleString('fa-IR')+' ریال':'مانده اول دوره ثبت نشده')).join(' | ');
-   status.textContent='اتصال برقرار است. '+(notes||'هنوز صندوق یا بانکی تعریف نشده است.')+' · ثبت‌ها تا زمان تأیید، پیش‌نویس هستند.';
-  }catch(err){
-   status.textContent='بارگذاری انجام نشد: '+err.message;
+   [state.accounts,state.cash,state.products,state.expenses,state.parties]=data.map(x=>x||[]);
+   status.textContent='اتصال برقرار است · '+fmt(state.accounts.length)+' سرفصل · '+fmt(state.cash.length)+' صندوق/بانک · '+fmt(state.products.length)+' کالا';
+   render();
+  }catch(e){showError(e);body.innerHTML='';body.append(h('p',{class:'fh'},'اطلاعات بارگذاری نشد. دکمه تلاش مجدد را بزنید.'),btn('تلاش مجدد',load,'btn sec'))}
+ }
+ function render(){
+  nav.innerHTML='';
+  [['home','نمای کلی'],['expense','ثبت هزینه'],['parties','اشخاص'],['cash','مانده صندوق و بانک'],['ledger','سرفصل‌ها']].forEach(([key,label])=>nav.append(btn(label,()=>{state.tab=key;render()},state.tab===key?'btn':'btn sec')));
+  body.innerHTML='';
+  if(state.tab==='home'){
+   const summary=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(125px,1fr))',gap:'9px'}});
+   [['سرفصل حساب',state.accounts.length],['صندوق و بانک',state.cash.length],['کالای متصل',state.products.length],['هزینه ثبت‌شده',state.expenses.length],['اشخاص',state.parties.length]].forEach(([l,n])=>summary.append(h('div',{class:'ac glass',style:{padding:'12px'}},h('small',{class:'fh'},l),h('h3',{style:{margin:'6px 0 0'}},fmt(n)))));
+   body.append(card('خلاصه حسابداری',summary,btn('به‌روزرسانی اطلاعات',load,'btn sec')));
+   body.append(card('وضعیت صندوق و بانک',...state.cash.map(c=>h('div',{class:'li'},h('b',{},c.account_name),h('div',{class:'fh'},c.opening_balance_entered?'مانده اول دوره: '+fmt(c.opening_balance_irr)+' ریال':'مانده اول دوره ثبت نشده')))));
+   body.append(card('آخرین هزینه‌ها',...(state.expenses.slice(0,5).map(e=>h('div',{class:'li'},h('b',{},e.description||e.category),h('div',{class:'fh'},fmt(e.amount_irr)+' ریال · '+(e.status==='draft'?'پیش‌نویس':e.status))))),btn('ثبت هزینه جدید',()=>{state.tab='expense';render()})));
+  }
+  if(state.tab==='expense'){
+   const cat=selectField('سرفصل هزینه',[['6000','هزینه‌های اداری و عمومی'],['6010','هزینه ارسال'],['6020','هزینه بسته‌بندی'],['6030','هزینه تبلیغات'],['6040','کارمزد درگاه و بانکی'],['6050','سایر هزینه‌ها']].map(([value,label])=>({value,label})),'نوع هزینه را انتخاب کنید');
+   const desc=field('شرح هزینه','text','مثلاً اجاره، بسته‌بندی یا تبلیغات');
+   const amount=field('مبلغ (ریال)','number','مبلغ را به ریال وارد کنید');
+   const date=field('تاریخ','date');date.el.value=new Date().toISOString().slice(0,10);
+   const party=selectField('طرف حساب (اختیاری)',state.parties.map(p=>({value:p.id,label:p.display_name})),'بدون طرف حساب');
+   const cash=selectField('پرداخت از (اختیاری)',state.cash.map(c=>({value:c.id,label:c.account_name})),'هنوز پرداخت نشده / نامشخص');
+   const save=btn('ذخیره پیش‌نویس هزینه',async()=>{
+    const n=Number(amount.el.value);
+    if(!cat.el.value||!desc.el.value.trim()||!Number.isSafeInteger(n)||n<=0)return toast('نوع، شرح و مبلغ معتبر را وارد کنید');
+    if(!date.el.value)return toast('تاریخ هزینه را انتخاب کنید');
+    try{
+     const code='EXP-'+Date.now().toString();
+     const payload={expense_number:code,expense_date:date.el.value,category:cat.el.options[cat.el.selectedIndex].text,description:desc.el.value.trim(),amount_irr:n,party_id:party.el.value||null,cash_account_id:cash.el.value||null,status:'draft'};
+     const r=await sbFetch('/rest/v1/accounting_expenses',{method:'POST',auth:true,headers:{Prefer:'return=representation'},body:payload});
+     await audit('create_expense','accounting_expense',r&&r[0]&&r[0].id,payload);
+     toast('پیش‌نویس هزینه ذخیره شد');await load();state.tab='expense';render();
+    }catch(e){toast('ذخیره هزینه ناموفق بود: '+e.message)}
+   });
+   body.append(card('ثبت هزینه جدید',h('p',{class:'fh'},'هزینه ابتدا به‌صورت پیش‌نویس ذخیره می‌شود؛ تا زمان تکمیل سند حسابداری، در دفتر قطعی ثبت نخواهد شد.'),cat.wrap,desc.wrap,amount.wrap,date.wrap,party.wrap,cash.wrap,save));
+   body.append(card('سوابق هزینه‌ها',...(state.expenses.length?state.expenses.map(e=>h('div',{class:'li'},h('div',{class:'li-h'},h('b',{},e.description||e.category),h('span',{class:'pill'},e.status==='draft'?'پیش‌نویس':e.status)),h('div',{class:'fh'},fmt(e.amount_irr)+' ریال · '+e.expense_date+' · '+e.expense_number))):[h('p',{class:'fh'},'هنوز هزینه‌ای ثبت نشده است.')])));
+  }
+  if(state.tab==='parties'){
+   const type=selectField('نوع شخص',[{value:'customer',label:'مشتری'},{value:'supplier',label:'تأمین‌کننده'},{value:'both',label:'مشتری و تأمین‌کننده'}],'انتخاب نوع');
+   const name=field('نام و نام خانوادگی / نام شرکت','text','نام شخص یا شرکت');
+   const phone=field('شماره تماس','tel','اختیاری');
+   const national=field('شناسه ملی / کد ملی','text','اختیاری');
+   const notes=field('یادداشت','text','توضیحات تکمیلی');
+   const save=btn('ثبت شخص',async()=>{
+    if(!type.el.value||!name.el.value.trim())return toast('نوع و نام شخص الزامی است');
+    try{
+     const payload={party_type:type.el.value,display_name:name.el.value.trim(),phone:phone.el.value.trim()||null,national_id:national.el.value.trim()||null,notes:notes.el.value.trim()||null,is_active:true};
+     const r=await sbFetch('/rest/v1/accounting_parties',{method:'POST',auth:true,headers:{Prefer:'return=representation'},body:payload});
+     await audit('create_party','accounting_party',r&&r[0]&&r[0].id,payload);
+     toast('شخص ثبت شد');await load();state.tab='parties';render();
+    }catch(e){toast('ثبت شخص ناموفق بود: '+e.message)}
+   });
+   body.append(card('افزودن شخص جدید',type.wrap,name.wrap,phone.wrap,national.wrap,notes.wrap,save));
+   body.append(card('فهرست اشخاص',...(state.parties.length?state.parties.map(p=>h('div',{class:'li'},h('b',{},p.display_name),h('div',{class:'fh'},({customer:'مشتری',supplier:'تأمین‌کننده',both:'مشتری و تأمین‌کننده'}[p.party_type]||p.party_type)+' · '+(p.phone||'بدون شماره')))): [h('p',{class:'fh'},'هنوز شخصی ثبت نشده است.')])));
+  }
+  if(state.tab==='cash'){
+   body.append(card('ثبت مانده اول دوره',h('p',{class:'fh'},'مانده واقعی هر حساب را وارد کنید. این عملیات فقط یک‌بار برای هر صندوق/بانک انجام می‌شود و سند افتتاحیه متوازن در دفتر ثبت می‌کند.'),...state.cash.map(c=>{
+    const amount=field('مانده '+c.account_name+' (ریال)','number','مبلغ به ریال');
+    amount.el.disabled=!!c.opening_balance_entered;
+    const save=btn(c.opening_balance_entered?'مانده ثبت شده':'ثبت مانده اول دوره',async()=>{
+     const n=Number(amount.el.value);
+     if(!Number.isSafeInteger(n)||n<0)return toast('مبلغ معتبر و غیرمنفی وارد کنید');
+     if(!confirm('مانده '+fmt(n)+' ریال برای «'+c.account_name+'» ثبت شود؟ این عملیات قابل ثبت مجدد نیست.'))return;
+     try{
+      await sbFetch('/rest/v1/rpc/accounting_set_opening_balance',{method:'POST',auth:true,body:{p_cash_account_id:c.id,p_amount_irr:n}});
+      toast('مانده اول دوره و سند افتتاحیه ثبت شد');await load();state.tab='cash';render();
+     }catch(e){toast('ثبت مانده ناموفق بود: '+e.message)}
+    },c.opening_balance_entered?'btn sec':'btn');
+    save.disabled=!!c.opening_balance_entered;
+    return h('div',{class:'li'},h('b',{},c.account_name),h('small',{class:'fh'},c.opening_balance_entered?'ثبت‌شده: '+fmt(c.opening_balance_irr)+' ریال':'هنوز ثبت نشده'),amount.wrap,save);
+   })));
+  }
+  if(state.tab==='ledger'){
+   body.append(card('سرفصل‌های حساب',...state.accounts.map(a=>h('div',{class:'li'},h('b',{},a.account_code+' · '+a.account_name),h('small',{class:'fh'},({asset:'دارایی',liability:'بدهی',equity:'حقوق مالکانه',revenue:'درآمد',expense:'هزینه'}[a.account_type]||a.account_type))))));
   }
  }
  load();
