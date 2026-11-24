@@ -241,4 +241,46 @@ comment on column public.accounting_postings.amount_irr is
 comment on table public.inventory_movements is
 'Append-only inventory ledger. Website order stock decrement is not repeated here.';
 
+
+alter table public.accounting_postings
+  add constraint accounting_postings_journal_entry_fk
+  foreign key (journal_entry_id) references public.journal_entries(id) on delete restrict;
+
+create or replace function public.accounting_post_journal_entry(p_entry_id uuid)
+returns void
+language plpgsql
+security invoker
+set search_path = ''
+as $function$
+declare
+  v_line_count bigint;
+  v_debit bigint;
+  v_credit bigint;
+begin
+  select count(*), coalesce(sum(debit_irr),0), coalesce(sum(credit_irr),0)
+    into v_line_count, v_debit, v_credit
+  from public.journal_lines
+  where journal_entry_id = p_entry_id;
+
+  if v_line_count < 2 then
+    raise exception 'A journal entry requires at least two lines';
+  end if;
+  if v_debit <> v_credit then
+    raise exception 'Journal entry is not balanced: debit %, credit %', v_debit, v_credit;
+  end if;
+
+  update public.journal_entries
+  set status = 'posted', posted_at = now()
+  where id = p_entry_id and status = 'draft';
+
+  if not found then
+    raise exception 'Journal entry does not exist or is not in draft status';
+  end if;
+end;
+$function$;
+
+revoke all on function public.accounting_post_journal_entry(uuid) from public, anon, authenticated;
+grant execute on function public.accounting_post_journal_entry(uuid) to service_role;
+
+
 commit;
