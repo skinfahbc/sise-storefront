@@ -1,0 +1,71 @@
+name: SISE backup restore verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "GitHub Actions run ID that contains the encrypted backup"
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check required secret and input
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          SOURCE_RUN_ID: ${{ inputs.run_id }}
+        run: |
+          set -euo pipefail
+          test -n "$BACKUP_ENCRYPTION_KEY" || { echo "Missing BACKUP_ENCRYPTION_KEY repository secret"; exit 1; }
+          [[ "$SOURCE_RUN_ID" =~ ^[0-9]+$ ]] || { echo "run_id must contain digits only"; exit 1; }
+
+      - name: Download encrypted backup artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sise-encrypted-db-backup-${{ inputs.run_id }}
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/sise-restore-test
+
+      - name: Decrypt and verify archive contents
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/sise-restore-test"
+          ENCRYPTED="$WORK/sise-database-backup.tar.gz.gpg"
+          DECRYPTED="$RUNNER_TEMP/sise-database-backup.tar.gz"
+          EXTRACTED="$RUNNER_TEMP/sise-restore-verified"
+
+          test -s "$ENCRYPTED" || { echo "Encrypted backup file is missing or empty"; exit 1; }
+
+          gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 \
+            --decrypt --output "$DECRYPTED" "$ENCRYPTED" \
+            3<<<"$BACKUP_ENCRYPTION_KEY"
+
+          gzip -t "$DECRYPTED"
+          tar -tzf "$DECRYPTED" > "$RUNNER_TEMP/archive-list.txt"
+          grep -Fxq "sise-backup/schema.sql" "$RUNNER_TEMP/archive-list.txt"
+          grep -Fxq "sise-backup/data.sql" "$RUNNER_TEMP/archive-list.txt"
+          grep -Fxq "sise-backup/roles.sql" "$RUNNER_TEMP/archive-list.txt"
+          grep -Fxq "sise-backup/README.txt" "$RUNNER_TEMP/archive-list.txt"
+          grep -Fxq "sise-backup/SHA256SUMS" "$RUNNER_TEMP/archive-list.txt"
+
+          mkdir -p "$EXTRACTED"
+          tar -xzf "$DECRYPTED" -C "$EXTRACTED" --no-same-owner
+          test -f "$EXTRACTED/sise-backup/schema.sql"
+          test -f "$EXTRACTED/sise-backup/data.sql"
+          test -f "$EXTRACTED/sise-backup/roles.sql"
+          test -f "$EXTRACTED/sise-backup/README.txt"
+          test -s "$EXTRACTED/sise-backup/SHA256SUMS"
+          (cd "$EXTRACTED/sise-backup" && sha256sum -c SHA256SUMS)
+
+          echo "PASS: decryption, gzip integrity, tar integrity, and all expected dump files verified."
+          rm -rf "$WORK" "$DECRYPTED" "$EXTRACTED" "$RUNNER_TEMP/archive-list.txt"

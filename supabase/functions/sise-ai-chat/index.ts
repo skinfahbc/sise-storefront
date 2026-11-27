@@ -29,20 +29,32 @@ Deno.serve(async (req: Request) => {
   if (req.headers.get("origin") !== ORIGIN) return json({ error: "origin_not_allowed" }, 403);
   if (Deno.env.get("SISE_AI_ENABLED") !== "true") return json({ error: "assistant_not_configured" }, 503);
 
-  const openAiKey = Deno.env.get("OPENAI_API_KEY");
+  const openRouterKey = Deno.env.get("OPENROUTER_API_KEY");
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   let supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
   if (!supabaseKey) {
     try { supabaseKey = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}").default || ""; } catch { /* no secret */ }
   }
-  if (!openAiKey || !supabaseUrl || !supabaseKey) return json({ error: "server_not_configured" }, 503);
+  if (!openRouterKey || !supabaseUrl || !supabaseKey) return json({ error: "server_not_configured" }, 503);
 
   try {
     const body = await req.json();
-    const uid = String(body.uid || "");
-    const token = String(body.token || "");
+    if (body.channel !== "ai") return json({ error: "invalid_channel" }, 400);
     const messageId = Number(body.message_id);
-    if (uid.length < 3 || token.length < 16 || !Number.isSafeInteger(messageId) || messageId < 1) return json({ error: "invalid_request" }, 400);
+    const bearer = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+    if (!bearer || !Number.isSafeInteger(messageId) || messageId < 1) return json({ error: "invalid_request" }, 400);
+    const headers = restHeaders(supabaseKey);
+    const api = supabaseUrl.replace(/\/$/, "") + "/rest/v1/";
+    const authRes = await fetch(supabaseUrl.replace(/\/$/, "") + "/auth/v1/user", {
+      headers: { apikey: supabaseKey, Authorization: "Bearer " + bearer },
+    });
+    if (!authRes.ok) return json({ error: "unauthorized" }, 401);
+    const authUser = await authRes.json();
+    const accountRes = await fetch(api + "pm_accounts?select=pm_uid&auth_user_id=eq." + encodeURIComponent(String(authUser.id)), { headers });
+    if (!accountRes.ok) throw new Error("Could not read customer account");
+    const accountRows = await accountRes.json();
+    const uid = String(accountRows?.[0]?.pm_uid || "");
+    if (!uid) return json({ error: "account_not_registered" }, 403);
 
     const now = Date.now();
     const callKey = uid + ":" + messageId;
@@ -51,20 +63,29 @@ Deno.serve(async (req: Request) => {
     recentCalls.set(callKey, now);
     if (recentCalls.size > 4000) for (const [k, v] of recentCalls) if (now - v > 60000) recentCalls.delete(k);
 
-    const headers = restHeaders(supabaseKey);
-    const api = supabaseUrl.replace(/\/$/, "") + "/rest/v1/";
-    const rowsRes = await fetch(api + "pm?select=id,uid,name,text,image,from_admin,tokh,created_at,ai_generated,needs_admin,reply_to_id&uid=eq." + encodeURIComponent(uid) + "&order=id.desc&limit=30", { headers });
+    const rowsRes = await fetch(api + "pm?select=id,uid,name,text,image,from_admin,tokh,created_at,ai_generated,needs_admin,reply_to_id&uid=eq." + encodeURIComponent(uid) + "&channel=eq.ai&order=id.desc&limit=30", { headers });
     if (!rowsRes.ok) throw new Error("Could not read private chat");
     const rows = await rowsRes.json();
-    const tokenHash = await sha256(token);
-    if (!rows.some((r: any) => r.tokh === tokenHash)) return json({ error: "unauthorized" }, 403);
-
     const trigger = rows.find((r: any) => Number(r.id) === messageId);
-    if (!trigger || trigger.from_admin || trigger.tokh !== tokenHash) return json({ error: "message_not_owned" }, 403);
+    if (!trigger || trigger.from_admin || trigger.tokh !== "auth:" + String(authUser.id)) return json({ error: "message_not_owned" }, 403);
     const existing = rows.some((r: any) => r.ai_generated && Number(r.reply_to_id) === messageId);
     if (existing) return json({ ok: true, duplicate: true });
     const newest = rows[0];
     if (!newest || Number(newest.id) !== messageId) return json({ ok: true, skipped: "newer_message_exists" });
+
+    const incomingText = String(trigger.text || "").trim();
+    const normalizedText = incomingText.replace(/[!！؟?.,،؛\s]/g, "");
+    const isGreeting = /^(سلام|درود|hi|hello|hey|وقتتونبخیر|وقتبهخیر|صبحبخیر|عصربخیر|شببخیر|خستهنباشید|سلامعلیک|سلامعلیکم)/i.test(normalizedText);
+    if (isGreeting) {
+      const greetingReply = "سلام، خوش اومدید به SISE 🌷\nمن دستیار هوشمند فروشگاهم و خودم پاسخ‌گوی شما هستم. درباره کیف‌ها، قیمت، رنگ، موجودی یا ارسال هر سؤالی دارید بپرسید؛ با کمال میل راهنمایی‌تون می‌کنم.";
+      const saved = await fetch(api + "pm", {
+        method: "POST",
+        headers: { ...headers, Prefer: "return=representation" },
+        body: JSON.stringify({ uid, name: "دستیار هوشمند SISE", text: greetingReply, from_admin: true, ai_generated: true, needs_admin: false, reply_to_id: messageId, channel: "ai" }),
+      });
+      if (!saved.ok) throw new Error("Could not save greeting reply");
+      return json({ ok: true, handoff: false, reply_id: (await saved.json())?.[0]?.id || null });
+    }
 
     const siteRes = await fetch(api + "site?id=eq.main&select=data&limit=1", { headers });
     const siteRows = siteRes.ok ? await siteRes.json() : [];
@@ -98,30 +119,56 @@ Deno.serve(async (req: Request) => {
 داده‌های فعلی فروشگاه:
 ${catalog}`;
 
-    const conversation = history.slice(-14).map((m: any) => ({ role: m.role, content: m.content }));
-    const aiRes = await fetch("https://api.openai.com/v1/responses", {
+    const conversation = [{ role: "user", content: "Please return the answer as valid JSON." }, ...history.slice(-14).map((m: any) => ({ role: m.role, content: m.content }))];
+    const chatMessages = [
+      { role: "system", content: instructions + "\\n\\nخروجی را فقط JSON معتبر با فیلدهای reply و handoff برگردان." },
+      ...history.slice(-14).map((m: any) => ({ role: m.role, content: m.content })),
+    ];
+    const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
-      headers: { Authorization: "Bearer " + openAiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "gpt-6-astra", instructions, input: conversation, text: { format: { type: "json_object" } }, max_output_tokens: 450, store: false }),
+      headers: {
+        Authorization: "Bearer " + openRouterKey,
+        "Content-Type": "application/json",
+        "HTTP-Referer": ORIGIN,
+        "X-Title": "SISE Store Assistant",
+      },
+      body: JSON.stringify({
+        model: "openrouter/free",
+        messages: chatMessages,
+        max_tokens: 450,
+        temperature: 0.4,
+        response_format: { type: "json_object" },
+      }),
     });
     if (!aiRes.ok) {
-      await fetch(api + "pm?id=eq." + messageId + "&uid=eq." + encodeURIComponent(uid), { method: "PATCH", headers: { ...headers, Prefer: "return=minimal" }, body: JSON.stringify({ needs_admin: true }) });
-      return json({ error: "model_request_failed", handoff: true }, 502);
+      const modelError = await aiRes.text();
+      console.error("OpenRouter Chat Completions failed", aiRes.status, modelError.slice(0, 1200));
+      const fallbackReply = "پیامتون رو دریافت کردم 🌷 برای اینکه پاسخ اشتباه ندم، لطفاً کمی بعد دوباره پیام بدید. اگر درباره یک کیف مشخص سؤال دارید، نام یا لینک محصول رو بفرستید تا راهنمایی‌تون کنم.";
+      const fallbackSave = await fetch(api + "pm", {
+        method: "POST",
+        headers: { ...headers, Prefer: "return=representation" },
+        body: JSON.stringify({ uid, name: "دستیار هوشمند SISE", text: fallbackReply, from_admin: true, ai_generated: true, needs_admin: false, reply_to_id: messageId, channel: "ai" }),
+      });
+      if (!fallbackSave.ok) throw new Error("Could not save fallback reply");
+      return json({ ok: true, fallback: true, model_status: aiRes.status, reply_id: (await fallbackSave.json())?.[0]?.id || null });
     }
     const aiPayload = await aiRes.json();
+    const modelContent = aiPayload?.choices?.[0]?.message?.content;
     let parsed: any;
-    try { parsed = JSON.parse(outputText(aiPayload)); } catch { parsed = null; }
+    try {
+      const contentText = typeof modelContent === "string" ? modelContent : Array.isArray(modelContent) ? modelContent.map((p: any) => p?.text || "").join("") : "";
+      parsed = JSON.parse(contentText);
+    } catch { parsed = null; }
     const reply = String(parsed?.reply || "").trim().slice(0, 1200);
-    const handoff = parsed?.handoff === true || !reply;
-    if (!reply) {
-      await fetch(api + "pm?id=eq." + messageId + "&uid=eq." + encodeURIComponent(uid), { method: "PATCH", headers: { ...headers, Prefer: "return=minimal" }, body: JSON.stringify({ needs_admin: true }) });
-      return json({ error: "empty_model_reply", handoff: true }, 502);
-    }
+    const humanOnlyRequest = /با\s*(مدیر|اپراتور|پشتیبان\s*انسانی)|صحبت\s*با\s*(مدیر|اپراتور|انسان)|شکایت|مرجوعی|عودت|لغو\s*سفارش|تغییر\s*(آدرس|سفارش)|پیگیری\s*سفارش|وضعیت\s*سفارش|تأیید\s*پرداخت|تاييد\s*پرداخت/i.test(incomingText);
+    const handoff = humanOnlyRequest && parsed?.handoff === true;
+    const safeReply = reply || "حتماً راهنمایی‌تون می‌کنم 🌷 لطفاً کمی دقیق‌تر بفرمایید درباره کدام محصول یا موضوع سؤال دارید تا پاسخ درست و کامل بدم.";
+    const finalReply = safeReply;
 
     const insertRes = await fetch(api + "pm", {
       method: "POST",
       headers: { ...headers, Prefer: "return=representation" },
-      body: JSON.stringify({ uid, name: "دستیار هوشمند SISE", text: reply, from_admin: true, ai_generated: true, needs_admin: handoff, reply_to_id: messageId }),
+      body: JSON.stringify({ uid, name: "دستیار هوشمند SISE", text: finalReply, from_admin: true, ai_generated: true, needs_admin: handoff, reply_to_id: messageId, channel: "ai" }),
     });
     if (!insertRes.ok) {
       const detail = await insertRes.text();

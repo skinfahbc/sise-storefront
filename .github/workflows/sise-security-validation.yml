@@ -1,0 +1,101 @@
+name: SISE free validation
+on:
+  push:
+    branches:
+      - integration/kifara-security-backup
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - 'admin.html'
+      - 'supabase/migrations/**'
+      - 'docs/archive/kifara-applied-migrations/**'
+      - 'tests/**'
+      - '.github/scripts/**'
+      - '.github/workflows/**'
+      - 'SECURITY.md'
+      - 'BACKUP.md'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate all imported workflow YAML files
+        run: |
+          ruby - <<'RUBY'
+          require 'yaml'
+          files = %w[
+            .github/workflows/sise-backup.yml
+            .github/workflows/sise-platform-backup.yml
+            .github/workflows/sise-restore-check.yml
+            .github/workflows/sise-restore-test.yml
+            .github/workflows/sise-platform-restore-check.yml
+            .github/workflows/sise-security-validation.yml
+          ]
+          files.each { |file| YAML.load_file(file); puts "PASS: #{file}" }
+          RUBY
+      - name: Check backup and restore verifier script syntax
+        run: python3 -m py_compile .github/scripts/sise-platform-backup.py .github/scripts/verify-platform-backup.py
+      - name: Run Python backup and recovery unit tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Check inline JavaScript syntax
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          count = 0
+          for page in ('index.html', 'admin.html'):
+              html = Path(page).read_text(encoding='utf-8')
+              for attrs, body in re.findall(r"<script\b([^>]*)>([\s\S]*?)</script\s*>", html, re.I):
+                  if not body.strip() or re.search(r"\bsrc\s*=", attrs, re.I):
+                      continue
+                  type_match = re.search(r"\btype\s*=\s*['\"]([^'\"]+)['\"]", attrs, re.I)
+                  script_type = type_match.group(1).lower() if type_match else 'text/javascript'
+                  if script_type not in ('text/javascript', 'application/javascript', 'module'):
+                      continue
+                  ext = 'mjs' if script_type == 'module' else 'js'
+                  target = Path(f'/tmp/sise-{page}-{count}.{ext}')
+                  target.write_text(body, encoding='utf-8')
+                  count += 1
+
+          if count == 0:
+              raise SystemExit('No inline JavaScript found in storefront or admin')
+          print(f'Extracted {count} executable inline JavaScript block(s)')
+          PY
+          find /tmp -maxdepth 1 -type f \( -name 'sise-index.html-*.js' -o -name 'sise-index.html-*.mjs' -o -name 'sise-admin.html-*.js' -o -name 'sise-admin.html-*.mjs' \) -print0 | while IFS= read -r -d '' file; do node --check "$file"; done
+      - name: Prepare isolated PostgreSQL fixture
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/checkout-fixture.sql
+      - name: Apply migration in disposable PostgreSQL
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/archive/kifara-applied-migrations/20261112111000_sise_secure_checkout.sql
+      - name: Apply post-deploy permission lockdown migration
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/archive/kifara-applied-migrations/20261112112000_sise_lockdown_direct_orders.sql
+      - name: Apply admin, chat and storage hardening migration
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/archive/kifara-applied-migrations/20261112130000_sise_admin_chat_storage_hardening.sql
+      - name: Apply guest chat rate-limit migration
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/archive/kifara-applied-migrations/20261112143000_sise_chat_rate_limit.sql
+      - name: Apply public Data API grants hardening migration
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261113083642_sise_public_api_grants_hardening.sql
+      - name: Test checkout, stock, tracking, chat rate limits and permissions
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/checkout-smoke.sql
+      - name: Smoke-test read-only production schema baseline
+        run: bash tests/production-baseline-smoke.sh
+      - name: Smoke-test read-only Storage recovery baseline
+        run: bash tests/storage-baseline-smoke.sh

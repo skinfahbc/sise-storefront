@@ -1,0 +1,400 @@
+name: SISE isolated database restore test
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Source backup workflow run ID"
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  restore-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: sise-local-restore-only
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: sise-local-restore-only
+      PGDATABASE: postgres
+
+    steps:
+      - name: Validate input and required secret
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          SOURCE_RUN_ID: ${{ inputs.run_id }}
+        run: |
+          set -euo pipefail
+          test -n "$BACKUP_ENCRYPTION_KEY" || { echo "Missing BACKUP_ENCRYPTION_KEY repository secret"; exit 1; }
+          [[ "$SOURCE_RUN_ID" =~ ^[0-9]+$ ]] || { echo "run_id must contain digits only"; exit 1; }
+
+      - name: Install PostgreSQL client
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Wait for isolated PostgreSQL 17
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            if pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE"; then
+              psql -v ON_ERROR_STOP=1 -Atqc "SHOW server_version;"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Temporary PostgreSQL service did not become ready"
+          exit 1
+
+      - name: Download encrypted backup artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sise-encrypted-db-backup-${{ inputs.run_id }}
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/sise-restore-test
+
+      - name: Decrypt backup
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/sise-restore-test"
+          ENCRYPTED="$WORK/sise-database-backup.tar.gz.gpg"
+          DECRYPTED="$RUNNER_TEMP/sise-database-backup.tar.gz"
+
+          test -s "$ENCRYPTED" || { echo "Encrypted backup file is missing or empty"; exit 1; }
+          gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 \
+            --decrypt --output "$DECRYPTED" "$ENCRYPTED" \
+            3<<<"$BACKUP_ENCRYPTION_KEY"
+
+          gzip -t "$DECRYPTED"
+          mkdir -p "$RUNNER_TEMP/sise-restore-extracted"
+          tar -xzf "$DECRYPTED" -C "$RUNNER_TEMP/sise-restore-extracted" --no-same-owner
+          for file in schema.sql data.sql roles.sql README.txt SHA256SUMS; do
+            test -s "$RUNNER_TEMP/sise-restore-extracted/sise-backup/$file" || {
+              echo "Required dump file is missing or empty: $file"
+              exit 1
+            }
+          done
+          (cd "$RUNNER_TEMP/sise-restore-extracted/sise-backup" && sha256sum -c SHA256SUMS)
+          echo "PASS: encrypted backup decrypted, SQL dumps extracted, and SHA-256 checksums verified."
+
+      - name: Restore roles, schema and data into temporary PostgreSQL
+        run: |
+          set -euo pipefail
+          DUMP="$RUNNER_TEMP/sise-restore-extracted/sise-backup"
+          BOOTSTRAP="$RUNNER_TEMP/sise-role-bootstrap.sql"
+
+          # Supabase's roles dump alters pre-existing platform roles. A vanilla
+          # PostgreSQL container does not have those roles, so create only the
+          # role names referenced by ALTER ROLE/USER before applying the dump.
+          python3 - "$DUMP/roles.sql" "$BOOTSTRAP" <<'PY'
+          import re
+          import sys
+
+          source, output = sys.argv[1], sys.argv[2]
+          sql = open(source, encoding="utf-8").read()
+          alter_pattern = re.compile(
+              r'^\s*ALTER\s+(?:ROLE|USER)\s+'
+              r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
+              re.IGNORECASE | re.MULTILINE,
+          )
+          create_pattern = re.compile(
+              r'^\s*CREATE\s+(?:ROLE|USER)\s+'
+              r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
+              re.IGNORECASE | re.MULTILINE,
+          )
+
+          def names_from(pattern, source):
+              return {
+                  quoted.replace('""', '"') if quoted else bare
+                  for quoted, bare in pattern.findall(source)
+              }
+
+          altered = names_from(alter_pattern, sql)
+          created = names_from(create_pattern, sql)
+          platform = {
+              'anon', 'authenticated', 'service_role', 'authenticator',
+              'supabase_admin', 'supabase_auth_admin', 'supabase_storage_admin',
+              'dashboard_user', 'pgbouncer'
+          }
+
+          # Bootstrap only roles altered by the dump but not created by it.
+          # Otherwise CREATE ROLE later in roles.sql would fail as a duplicate.
+          names = altered - created - platform
+          with open(output, "w", encoding="utf-8") as out:
+              for name in sorted(names):
+                  literal = name.replace("'", "''")
+                  identifier = '"' + name.replace('"', '""') + '"'
+                  out.write(
+                      "DO $bootstrap$ BEGIN "
+                      f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{literal}') "
+                      f"THEN CREATE ROLE {identifier} NOLOGIN; END IF; "
+                      "END $bootstrap$;\n"
+                  )
+
+          # The workflow pre-creates Supabase platform roles for schema GRANTs.
+          # Remove their CREATE statements from the test copy, retaining ALTERs.
+          filtered = []
+          create_line = re.compile(
+              r'^\s*CREATE\s+(?:ROLE|USER)\s+'
+              r'(?:"((?:""|[^"])*)"|([A-Za-z_][A-Za-z0-9_$]*))',
+              re.IGNORECASE,
+          )
+          removed_platform = 0
+          for line in sql.splitlines(keepends=True):
+              match = create_line.match(line)
+              if match:
+                  name = match.group(1).replace('""', '"') if match.group(1) else match.group(2)
+                  if name in platform:
+                      removed_platform += 1
+                      continue
+              filtered.append(line)
+
+          roles_test = output + '.roles.sql'
+          with open(roles_test, "w", encoding="utf-8") as out:
+              out.writelines(filtered)
+          print(
+              f"Prepared role bootstrap for {len(names)} missing custom roles; "
+              f"removed {removed_platform} duplicate platform-role CREATE statement(s)."
+          )
+          PY
+
+          # Supabase platform roles can be referenced by GRANT statements in
+          # schema.sql without appearing in roles.sql ALTER ROLE statements.
+          # Pre-create the standard roles only in this disposable test database.
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          DO $platform_roles$
+          DECLARE
+            role_name text;
+          BEGIN
+            FOREACH role_name IN ARRAY ARRAY[
+              'anon',
+              'authenticated',
+              'service_role',
+              'authenticator',
+              'supabase_admin',
+              'supabase_auth_admin',
+              'supabase_storage_admin',
+              'dashboard_user',
+              'pgbouncer'
+            ]
+            LOOP
+              IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = role_name) THEN
+                EXECUTE format('CREATE ROLE %I NOLOGIN', role_name);
+              END IF;
+            END LOOP;
+          END
+          $platform_roles$;
+          SQL
+
+          # Supabase dumps may create extensions inside this schema.
+          # Create it first because vanilla PostgreSQL does not provide it by default.
+          psql -v ON_ERROR_STOP=1 --command 'CREATE SCHEMA IF NOT EXISTS extensions;'
+          psql -v ON_ERROR_STOP=1 --command 'CREATE SCHEMA IF NOT EXISTS vault;'
+          # Supabase auth helpers are not part of vanilla PostgreSQL. The isolated
+          # restore only needs auth.uid() to exist while defining RLS policies;
+          # it must not impersonate a real user during this schema/data test.
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE SCHEMA IF NOT EXISTS auth;
+          CREATE OR REPLACE FUNCTION auth.uid()
+          RETURNS uuid
+          LANGUAGE sql
+          STABLE
+          AS 'SELECT NULL::uuid';
+          SQL
+          # Supabase schema dumps may change ownership of this publication.
+          # Create the empty publication in the disposable test database first.
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          DO $publication$
+          BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+              EXECUTE 'CREATE PUBLICATION supabase_realtime';
+            END IF;
+          END
+          $publication$;
+          SQL
+
+          # supabase_vault is a Supabase-managed extension and is not shipped
+          # in the stock PostgreSQL service image used for this isolated test.
+          # Keep the app schema/data restore test independent of that service extension.
+          python3 - "$DUMP/schema.sql" "$RUNNER_TEMP/sise-schema-test.sql" <<'PY'
+          import re
+          import sys
+
+          source, output = sys.argv[1], sys.argv[2]
+          sql = open(source, encoding="utf-8").read()
+          pattern = re.compile(
+              r"""^\s*CREATE\s+EXTENSION\s+(?:IF\s+NOT\s+EXISTS\s+)?["']?supabase_vault["']?\b[^;]*;[^\n]*(?:\n|$)""",
+              re.IGNORECASE | re.MULTILINE,
+          )
+          sql, removed = pattern.subn(
+              "-- SISE isolated test: skipped Supabase-managed supabase_vault extension.\n",
+              sql,
+          )
+          if removed == 0:
+              raise SystemExit("Expected supabase_vault extension declaration was not found")
+          with open(output, "w", encoding="utf-8") as out:
+              out.write(sql)
+          print(f"Prepared isolated schema; skipped {removed} Supabase-managed extension declaration(s).")
+          PY
+
+          # Supabase's managed auth and storage schemas are not recreated by
+          # the stock isolated PostgreSQL schema dump. Exclude only those
+          # platform-schema row-load statements; preserve application data.
+          DATA_TEST="$RUNNER_TEMP/sise-data-test.sql"
+          python3 - "$DUMP/data.sql" "$DATA_TEST" <<'PY'
+          import re
+          import sys
+
+          source, output = sys.argv[1], sys.argv[2]
+          start = re.compile(
+              r'^\s*(?:INSERT\s+INTO|COPY)\s+(?:"?(?:auth|storage)"?)\s*\.',
+              re.IGNORECASE,
+          )
+          lines = open(source, encoding="utf-8").readlines()
+          kept = []
+          skipping = None
+          skipped = {"auth": 0, "storage": 0}
+          current_schema = None
+
+          sequence_setval = re.compile(
+              r"""^\s*SELECT\s+pg_catalog\.setval\(\s*'"?(?:auth|storage)"?\.""",
+              re.IGNORECASE,
+          )
+
+          for line in lines:
+              if skipping is None and sequence_setval.search(line):
+                  schema_match = re.search(r'auth|storage', line, re.IGNORECASE)
+                  skipped[schema_match.group(0).lower()] += 1
+                  continue
+              if skipping is None and start.search(line):
+                  match = re.search(r'"?(auth|storage)"?\s*\.', line, re.IGNORECASE)
+                  current_schema = match.group(1).lower()
+                  skipping = "copy" if re.match(r'^\s*COPY\b', line, re.IGNORECASE) else "insert"
+                  skipped[current_schema] += 1
+                  if skipping == "insert" and line.rstrip().endswith(";"):
+                      skipping = None
+                      current_schema = None
+                  elif skipping == "copy" and line.strip() == r"\.":
+                      skipping = None
+                      current_schema = None
+                  continue
+              if skipping == "insert":
+                  if line.rstrip().endswith(";"):
+                      skipping = None
+                      current_schema = None
+                  continue
+              if skipping == "copy":
+                  if line.strip() == r"\.":
+                      skipping = None
+                      current_schema = None
+                  continue
+              kept.append(line)
+
+          if skipping is not None:
+              raise SystemExit("Incomplete managed-schema data statement while preparing isolated test")
+          with open(output, "w", encoding="utf-8") as out:
+              out.writelines(kept)
+          print(
+              "Prepared isolated data dump; excluded "
+              f"{skipped['auth']} auth and {skipped['storage']} storage "
+              "platform data load statement(s)."
+          )
+          PY
+
+          # This connection targets only the disposable PostgreSQL 17 service above.
+          # The original Supabase database URL is never used by this workflow.
+          psql -v ON_ERROR_STOP=1 --single-transaction --set=VERBOSITY=terse \
+            --file "$BOOTSTRAP" \
+            --file "$BOOTSTRAP.roles.sql"
+
+          psql -v ON_ERROR_STOP=1 --single-transaction --set=VERBOSITY=terse \
+            --file "$RUNNER_TEMP/sise-schema-test.sql" \
+            --command "SET session_replication_role = replica" \
+            --file "$DATA_TEST"
+
+          echo "PASS: roles, schema and data were restored into the isolated PostgreSQL 17 database."
+
+      - name: Verify restored tables, rows and foreign keys
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          DO $verify$
+          DECLARE
+            fk record;
+            tbl record;
+            row_count bigint;
+            total_rows bigint := 0;
+            total_tables integer := 0;
+          BEGIN
+            FOR fk IN
+              SELECT ns.nspname AS schema_name,
+                     cls.relname AS table_name,
+                     con.conname AS constraint_name
+              FROM pg_constraint con
+              JOIN pg_class cls ON cls.oid = con.conrelid
+              JOIN pg_namespace ns ON ns.oid = cls.relnamespace
+              WHERE con.contype = 'f'
+            LOOP
+              EXECUTE format(
+                'ALTER TABLE %I.%I VALIDATE CONSTRAINT %I',
+                fk.schema_name, fk.table_name, fk.constraint_name
+              );
+            END LOOP;
+
+            FOR tbl IN
+              SELECT schemaname, tablename
+              FROM pg_tables
+              WHERE schemaname NOT IN ('pg_catalog', 'information_schema')
+                AND schemaname NOT LIKE 'pg_toast%'
+            LOOP
+              EXECUTE format(
+                'SELECT count(*) FROM %I.%I',
+                tbl.schemaname, tbl.tablename
+              ) INTO row_count;
+              total_rows := total_rows + row_count;
+              total_tables := total_tables + 1;
+            END LOOP;
+
+            IF total_tables = 0 THEN
+              RAISE EXCEPTION 'Restore verification found no user tables';
+            END IF;
+
+            RAISE NOTICE 'SISE_RESTORE_TABLES=%', total_tables;
+            RAISE NOTICE 'SISE_RESTORE_ROWS=%', total_rows;
+            RAISE NOTICE 'SISE_RESTORE_FOREIGN_KEYS=validated';
+          END
+          $verify$;
+          SQL
+
+          echo "PASS: restored tables were counted and foreign-key constraints validated."
+
+      - name: Remove temporary backup files
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/sise-restore-test" \
+                 "$RUNNER_TEMP/sise-restore-extracted" \
+                 "$RUNNER_TEMP/sise-database-backup.tar.gz"

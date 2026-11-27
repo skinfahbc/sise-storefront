@@ -1,0 +1,69 @@
+name: SISE encrypted database backup
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check required secrets
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          test -n "$SUPABASE_DB_URL" || { echo "Missing SUPABASE_DB_URL repository secret"; exit 1; }
+          test -n "$BACKUP_ENCRYPTION_KEY" || { echo "Missing BACKUP_ENCRYPTION_KEY repository secret"; exit 1; }
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: v2.stable
+
+      - name: Export database schema, data and roles
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          python3 - "$SUPABASE_DB_URL" <<'PY'
+          import sys
+          from urllib.parse import urlparse
+
+          expected = "vwprdviufqukdvcroynt"
+          parsed = urlparse(sys.argv[1])
+          target = (parsed.hostname or "") + " " + (parsed.username or "")
+          if expected not in target:
+              raise SystemExit("SUPABASE_DB_URL does not identify the configured SISE production project")
+          PY
+          mkdir -p "$RUNNER_TEMP/sise-backup"
+          supabase db dump --db-url "$SUPABASE_DB_URL" --file "$RUNNER_TEMP/sise-backup/schema.sql"
+          supabase db dump --db-url "$SUPABASE_DB_URL" --data-only --file "$RUNNER_TEMP/sise-backup/data.sql"
+          supabase db dump --db-url "$SUPABASE_DB_URL" --role-only --file "$RUNNER_TEMP/sise-backup/roles.sql"
+          printf 'Project: vwprdviufqukdvcroynt\nCreated UTC: %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > "$RUNNER_TEMP/sise-backup/README.txt"
+          (cd "$RUNNER_TEMP/sise-backup" && sha256sum schema.sql data.sql roles.sql README.txt > SHA256SUMS)
+          tar -C "$RUNNER_TEMP" -czf "$RUNNER_TEMP/sise-database-backup.tar.gz" sise-backup
+
+      - name: Encrypt archive before artifact upload
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          set -euo pipefail
+          gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 \
+            --symmetric --cipher-algo AES256 \
+            --output "$RUNNER_TEMP/sise-database-backup.tar.gz.gpg" \
+            "$RUNNER_TEMP/sise-database-backup.tar.gz" \
+            3<<<"$BACKUP_ENCRYPTION_KEY"
+          rm -rf "$RUNNER_TEMP/sise-backup" "$RUNNER_TEMP/sise-database-backup.tar.gz"
+
+      - name: Upload encrypted backup only
+        uses: actions/upload-artifact@v4
+        with:
+          name: sise-encrypted-db-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/sise-database-backup.tar.gz.gpg
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,131 @@
+# SISE production recovery — verified completion ledger
+
+**Last checked:** 2026-11-22  
+**Canonical repository:** `skinfahbc/sise-storefront`  
+**Production project ref:** `vwprdviufqukdvcroynt`  
+**Working branch:** `integration/kifara-security-backup`  
+**Pull request:** [#66](https://github.com/skinfahbc/sise-storefront/pull/66)
+
+This ledger distinguishes repository work that has passed tests from production recovery tasks that still require credentials, source artifacts, an isolated Supabase target, or explicit approval. A green GitHub workflow is not evidence of a successful production backup or full platform restore.
+
+## Verified complete in the repository branch
+
+- [x] SISE is designated the sole maintained storefront repository; Kifara is historical evidence only.
+- [x] Production application schema baseline captured through read-only catalog inspection at `supabase/baselines/production-schema-baseline.sql`.
+- [x] Baseline includes app-owned `public`/`private` schema objects, constraints, RLS flags, sequences, indexes, functions, policies, triggers, and captured grants.
+- [x] Administrator UUIDs in the public baseline are redacted fail-closed; restore requires deliberate substitution of the intended administrator UUID.
+- [x] Baseline replay smoke-tested against disposable PostgreSQL 17 with minimal Supabase Auth stubs. This checks SQL structure, not equivalence with a full Supabase project.
+- [x] Static-page validation and free validation passed on branch head `df525689715d1a10006d431a9efcbf78077d0e82` (runs [45011153585](https://github.com/skinfahbc/sise-storefront/actions/runs/45011153585) and [45011153570](https://github.com/skinfahbc/sise-storefront/actions/runs/45011153570)).
+- [x] Supabase CLI backup workflow pinned to `v2.stable` to avoid the CLI v3 hosted-command default/flag transition until the workflow is deliberately migrated and tested.
+- [x] Production migration ledger re-read: 17 applied entries.
+
+## Production migration ledger reconciliation
+
+The live ledger currently contains these 17 versions:
+
+| Version | Ledger name | Repository evidence | Status |
+|---|---|---|---|
+| 20261111122719 | sise_security_hardening | No exact source found | **Missing original SQL** |
+| 20261112111637 | sise_secure_checkout | Archived snapshot with different version | Historical only; not exact ledger source |
+| 20261112113300 | sise_lockdown_direct_orders | Archived snapshot with different version | Historical only; not exact ledger source |
+| 20261112113842 | sise_admin_chat_storage_hardening | Archived snapshot with different version | Historical only; not exact ledger source |
+| 20261112114837 | sise_chat_rate_limit | Archived snapshot with different version | Historical only; not exact ledger source |
+| 20261113083642 | sise_public_api_grants_hardening | Exact versioned migration in SISE | Present |
+| 20261114120423 | sise_private_customer_admin_chat | No exact source found | **Missing original SQL** |
+| 20261114125326 | add_sise_ai_assistant | Candidate file uses version 202611140001 and legacy two-argument `pm_list` | **Not proven equivalent** |
+| 20261114162349 | separate_ai_and_management_chats | No exact source found | **Missing original SQL** |
+| 20261114162514 | remove_legacy_chat_rpc_overloads | No exact source found | **Missing original SQL** |
+| 20261114162602 | reload_postgrest_chat_schema | No exact source found | **Missing original SQL** |
+| 20261114205854 | customer_email_auth_private_chat | No exact source found | **Missing original SQL** |
+| 20261116105016 | sise_otpy_rate_limit | No exact source found | **Missing original SQL** |
+| 20261116105203 | sise_otpy_ip_rate_limit | No exact source found | **Missing original SQL** |
+| 20261116105327 | remove_old_sise_otp_limit_rpc | No exact source found | **Missing original SQL** |
+| 20261119073429 | sise_chat_reactions_read_receipts | Exact versioned migration in SISE | Present |
+| 20261119073816 | sise_chat_private_rpc_wrappers | Exact versioned migration in SISE | Present |
+
+**Count reconciliation:** 17 live ledger entries = 3 exact versioned files + 4 archived timestamp-mismatched snapshots + 1 AI candidate with unproven equivalence + 9 unrecovered original SQL sources. Do not fabricate the nine originals or replay the four archived snapshots under different versions.
+
+The AI candidate at `supabase/migrations/202611140001_add_sise_ai_assistant.sql` defines `pm_list(p_uid, p_tok)`; current Production exposes channel-aware `pm_list(p_uid, p_tok, p_channel)` and `public.pm.channel`. The candidate alone cannot represent the live applied migration. Recover the original migration or prove the complete sequence from trusted deployment artifacts before changing migration history.
+
+## Current recovery / backup gaps
+
+- [ ] Recover the nine original migration SQL files from trusted SQL-editor exports, deployment artifacts, backups, or developer working copies. If unavailable, document the loss and keep the catalog baseline separate from migration history.
+- [ ] Reconcile the AI migration and all subsequent channel-separation/overload-removal changes against exact live function definitions and schema state.
+- [x] Capture Storage bucket configuration and `storage.objects` policy definitions in separate recovery SQL files; the platform backup now packages generated bucket SQL, the policy snapshot, and bucket/object metadata with downloaded object bytes. The public policy snapshot redacts the administrator UUID fail-closed.
+- [ ] Apply the packaged Storage configuration/policies and restore object bytes in an isolated Supabase-compatible target; verify counts, sizes, MIME rules, and access behavior.
+- [ ] Define and test Auth recovery. The current Auth Admin export is not a full Auth backup: it omits password hashes, sessions, refresh tokens, MFA secrets, and other managed runtime state. A reset/re-invitation procedure is required.
+- [ ] Build and test an isolated Supabase-compatible restore for database + Storage metadata/object bytes + Auth user recovery strategy. The PostgreSQL 17 fixture test is not a Supabase platform restore.
+- [ ] Run the actual scheduled/manual encrypted database and platform backup workflows using repository secrets, inspect the resulting artifacts, decrypt them in an isolated environment, and retain copies outside the 7-day GitHub artifact window.
+- [ ] Verify the backup workflow secrets exist and are valid: `SUPABASE_DB_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `BACKUP_ENCRYPTION_KEY`. Secret values must never be committed or sent in chat.
+- [ ] Add automated checksums, object-count/byte-count verification, manifest validation, and a documented restore order/RTO/RPO.
+- [ ] Review every exposed `SECURITY DEFINER` RPC body, authorization predicate, fixed search_path, grants, token handling, rate limits, and abuse cases. Do not mass-revoke grants or change invoker/definer modes without regression tests.
+- [ ] Decide and test whether leaked-password protection should be enabled in Supabase Auth.
+- [ ] Review performance advisories (RLS init-plan warnings, permissive policy overlap, unused indexes) with query evidence before making changes.
+- [ ] Complete end-to-end storefront/admin tests against an isolated Supabase project, including checkout, payment callback/status, order tracking, stock updates, guest/admin chat, private management/AI channels, OTP login, reactions, read receipts, uploads, and recovery.
+- [ ] Update this ledger and PR description with evidence links after each item is actually verified.
+
+## Live advisor snapshot (read-only)
+
+Security advisor findings observed 2026-11-22:
+- 7 exposed `SECURITY DEFINER` functions callable by `anon`.
+- 10 exposed `SECURITY DEFINER` functions callable by `authenticated`.
+- `public.pm_accounts` and `private.sise_otp_send_limits` have RLS enabled but no policies.
+- Auth leaked-password protection is disabled.
+- `private.api_rate_limits` was previously flagged for RLS disabled; direct API-role table privileges were observed absent. Treat as defense-in-depth and test dependent functions before any change.
+
+Performance advisor findings observed 2026-11-22:
+- 15 RLS policy init-plan warnings.
+- 2 multiple-permissive-policy warnings.
+- 2 unused-index notices.
+
+Advisor warnings are review findings, not automatic instructions to revoke access or alter policies. Function-by-function analysis and isolated regression tests are required.
+
+### Specific RPC review observation — private-message token verifier
+
+A read-only inspection of the live function definitions on 2026-11-22 found that `public.pm_list(p_uid,p_tok,p_channel)` returns `SETOF public.pm` and explicitly selects the `tokh` column. `public.pm_list_auth(p_channel)` returns `p.*`, which also includes `tokh`. For guest messages, `tokh` contains a SHA-256 token verifier; returning it to the caller is unnecessary and may enable offline guessing if a guest token is weak or reused. The function checks the supplied token before returning rows, but that does not justify returning the verifier.
+
+- [ ] Treat this as a priority API-hardening item: design a backward-compatible response projection that omits `tokh`, inspect all frontend callers/types, and regression-test guest and authenticated private-message flows before proposing a migration.
+- [ ] Inspect the other SECURITY DEFINER RPCs and confirm each returns only the minimum required fields. `track_order` currently returns order code/status/time/total and item title/color/quantity (not customer name, phone, or address), and has an IP rate limit; preserve that minimization in tests.
+
+Do not hot-edit the live functions. The historical migration chain is incomplete, so any future remediation must be a new, properly versioned migration with isolated tests and an explicit Production approval.
+
+## Operational safety boundary
+
+This branch work has not changed Production database schema/data, migration history, RLS/grants, Auth settings, Storage policies/objects, Edge Functions, or the live website. No PR merge or deployment is authorized by this ledger. Production changes require a separate explicit approval after an isolated test and a verified rollback/backup plan.
+
+
+## Backup integrity controls added to this branch
+
+- Database backup workflow now writes `SHA256SUMS` for schema, data, roles and README before encryption; both artifact verification and isolated database restore workflows verify this manifest.
+- Platform backup now writes per-object SHA-256 checksums and byte counts into the Storage manifest, alongside total object count/bytes.
+- Auth export uses an explicit allowlist of account/profile/identity fields and recursively removes fields whose keys indicate password, token, secret, credential, OTP, session, or MFA material.
+- Storage backup fails closed if the current bucket set differs from the reviewed Storage object-policy snapshot.
+
+The expanded Python unit test workflow previously failed on one incorrect JSON assertion in run [45011953437](https://github.com/skinfahbc/sise-storefront/actions/runs/45011953437); the assertion was corrected, and additional tests were added afterward. No successful CI result for the latest expanded test suite has yet been verified. Do not mark these new controls fully validated until the workflow passes on the current branch head.
+
+
+### Additional chat-token boundary check
+
+A separate read-only privilege inspection of `public.chat_messages` confirmed that `anon` and `authenticated` have column-level SELECT only for the public chat display fields; the `tokh` column is not SELECT-granted to either role. Both roles can INSERT `tokh` as part of guest message submission. This means the direct table REST read path does not expose the chat token hash. The separate `public.pm_list` / `public.pm_list_auth` RPC projection issue above remains valid and distinct.
+
+
+## Latest branch validation
+
+The expanded branch head `e7b64776ac93da30b4fb9c7ecf14e3c3c073a249` passed:
+- [SISE free validation — run 45012507644](https://github.com/skinfahbc/sise-storefront/actions/runs/45012507644): Python backup/restore verifier tests, workflow YAML validation, checkout/security smoke tests, production schema baseline smoke replay, and Storage baseline smoke replay all succeeded.
+- [Validate SISE static pages — run 45012507669](https://github.com/skinfahbc/sise-storefront/actions/runs/45012507669): success.
+
+The new manual Auth/Storage artifact-verification workflow is present and syntax-validated, but it has not yet been run against a real encrypted Production artifact. Actual backup and restore evidence still requires configured GitHub Actions secrets and a real backup run.
+
+
+### Additional SECURITY DEFINER review observations
+
+- `public.track_order(c)` returns a minimized order summary (code, status, created time, total and item title/color/quantity), not customer contact/address fields. It applies an IP-based rate limit, but still accepts legacy `K[0-9]{6}` and `K[A-F0-9]{8}` lookup formats in addition to the newer high-entropy `SI...` code. Retire the weaker legacy formats after confirming no valid outstanding orders depend on them, or add a second verification factor.
+- `public.pay_order(c,r)` changes an order from `new` to `pending_review`; it does not itself set an order to paid. Preserve the distinction between a customer-submitted payment reference and verified gateway settlement.
+- The live `public.pm_send` and `public.pm_send_auth` function bodies do not show an explicit database-side per-user rate limit or message-length bound. Check the complete client/Edge Function path and add server-side abuse controls if none exist.
+- `private.chat_mark_read_impl` and `private.chat_react_impl` are SECURITY DEFINER and grant EXECUTE to anon/authenticated at the database privilege layer. Their schema is `private`; whether they are callable through PostgREST depends on the project's exposed-schema configuration, which was not established by the read-only catalog check. Keep the public wrappers as the intended API and verify private schema is not exposed.
+
+
+## Search for missing historical SQL sources
+
+On 2026-11-22, the nine exact migration identifiers were also searched in the available prior-conversation context and Library files. No original SQL migration contents or migration source files were recovered. This does not prove no copy exists elsewhere (developer machines, CI artifacts, database backup archives, or SQL-editor exports may still contain them). The nine originals remain unrecovered; no synthetic files have been mislabeled as historical migrations.
